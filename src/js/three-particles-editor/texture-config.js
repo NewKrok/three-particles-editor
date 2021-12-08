@@ -7,7 +7,7 @@ export const TextureId = {
 export const textureConfigs = [
   {
     id: TextureId.Point,
-    url: "/assets/textures/point.webp",
+    url: "./assets/textures/point.webp",
   } /* ,
   {
     id: TextureId.Tile,

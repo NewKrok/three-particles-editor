@@ -76,7 +76,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"TextureId\": () => (/* binding */ TextureId),\n/* harmony export */   \"textureConfigs\": () => (/* binding */ textureConfigs)\n/* harmony export */ });\n\r\n\r\nconst TextureId = {\r\n  Point: \"Point\",\r\n};\r\n\r\nconst textureConfigs = [\r\n  {\r\n    id: TextureId.Point,\r\n    url: \"/assets/textures/point.webp\",\r\n  } /* ,\r\n  {\r\n    id: TextureId.Tile,\r\n    url: \"/assets/textures/tile.png\",\r\n    tiles: new THREE.Vector2(7.0, 7.0),\r\n  }, */,\r\n];\r\n\n\n//# sourceURL=webpack://three-particles-editor/./src/js/three-particles-editor/texture-config.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"TextureId\": () => (/* binding */ TextureId),\n/* harmony export */   \"textureConfigs\": () => (/* binding */ textureConfigs)\n/* harmony export */ });\n\r\n\r\nconst TextureId = {\r\n  Point: \"Point\",\r\n};\r\n\r\nconst textureConfigs = [\r\n  {\r\n    id: TextureId.Point,\r\n    url: \"./assets/textures/point.webp\",\r\n  } /* ,\r\n  {\r\n    id: TextureId.Tile,\r\n    url: \"/assets/textures/tile.png\",\r\n    tiles: new THREE.Vector2(7.0, 7.0),\r\n  }, */,\r\n];\r\n\n\n//# sourceURL=webpack://three-particles-editor/./src/js/three-particles-editor/texture-config.js?");
 
 /***/ }),
 
