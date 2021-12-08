@@ -1,0 +1,19 @@
+{
+  "name": "three-particles-editor",
+  "version": "0.0.1",
+  "private": false,
+  "homepage": "https://github.com/NewKrok/three-particles-editor",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "three": "^0.135.0"
+  },
+  "scripts": {
+    "start": "http-server ./dist | webpack --mode=development --watch",
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "eslint": "^7.31.0",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  }
+}
