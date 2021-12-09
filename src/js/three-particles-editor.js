@@ -6,7 +6,7 @@ import {
   createParticleSystem,
   destroyParticleSystem,
   updateParticleSystems,
-} from "./effects/three-particles.js";
+} from "@newkrok/three-particles/src/js/effects/three-particles.js";
 import { getTexture, initAssets } from "./three-particles-editor/assets.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
