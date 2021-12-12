@@ -6,10 +6,12 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "three": "^0.135.0",
-    "@newkrok/three-particles": "0.0.1"
+    "@newkrok/three-particles": "0.1.0"
   },
   "scripts": {
+    "http": "http-server ./dist",
     "start": "http-server ./dist | webpack --mode=development --watch",
+    "dev-build": "webpack --mode=development",
     "build": "webpack"
   },
   "devDependencies": {

@@ -98,9 +98,22 @@ let particleSystemSetting = {
   },
   shape: {
     shape: Shape.SPHERE,
-    radius: 1,
-    radiusThickness: 1,
-    arc: 360,
+    sphere: {
+      radius: 1,
+      radiusThickness: 1,
+      arc: 360,
+    },
+    cone: {
+      angle: 25,
+      radius: 1,
+      radiusThickness: 1,
+      arc: 360,
+    },
+    circle: {
+      radius: 1,
+      radiusThickness: 1,
+      arc: 360,
+    },
   },
   map: null,
   textureSheetAnimation: { tiles: null },
@@ -284,7 +297,6 @@ const recreateParticleSystem = () => {
   const { texture, tiles } = getTexture(TextureId.Point);
   particleSystemSetting.map = texture;
   particleSystemSetting.textureSheetAnimation.tiles = tiles;
-
   particleSystem = createParticleSystem(particleSystemSetting);
   scene.add(particleSystem);
   updateLocalAxesHelper();
@@ -464,17 +476,149 @@ const destroyShapeControllers = () => {
 
 const createShapeSphereEntries = (folder) => {
   shapeControllers.push(
-    folder.add({ radius: 1 }, "radius", 0.0001, 10, 0.0001).onChange((v) => {
-      particleSystemSetting.shape.radius = v;
-      recreateParticleSystem();
-    })
+    folder
+      .add(
+        { radius: particleSystemSetting.shape.sphere.radius },
+        "radius",
+        0.0001,
+        10,
+        0.0001
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.sphere.radius = v;
+        recreateParticleSystem();
+      })
   );
 
   shapeControllers.push(
     folder
-      .add({ radiusThickness: 1 }, "radiusThickness", 0.0, 1, 0.01)
+      .add(
+        { radiusThickness: particleSystemSetting.shape.sphere.radiusThickness },
+        "radiusThickness",
+        0.0,
+        1,
+        0.01
+      )
       .onChange((v) => {
-        particleSystemSetting.shape.radiusThickness = v;
+        particleSystemSetting.shape.sphere.radiusThickness = v;
+        recreateParticleSystem();
+      })
+  );
+
+  shapeControllers.push(
+    folder
+      .add(
+        { arc: particleSystemSetting.shape.sphere.arc },
+        "arc",
+        0.0,
+        360,
+        0.01
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.sphere.arc = v;
+        recreateParticleSystem();
+      })
+  );
+};
+
+const createShapeConeEntries = (folder) => {
+  shapeControllers.push(
+    folder
+      .add(
+        { angle: particleSystemSetting.shape.cone.angle },
+        "angle",
+        0,
+        90,
+        0.0001
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.cone.angle = v;
+        recreateParticleSystem();
+      })
+  );
+
+  shapeControllers.push(
+    folder
+      .add(
+        { radius: particleSystemSetting.shape.cone.radius },
+        "radius",
+        0.0001,
+        10,
+        0.0001
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.cone.radius = v;
+        recreateParticleSystem();
+      })
+  );
+
+  shapeControllers.push(
+    folder
+      .add(
+        { radiusThickness: particleSystemSetting.shape.cone.radiusThickness },
+        "radiusThickness",
+        0.0,
+        1,
+        0.01
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.cone.radiusThickness = v;
+        recreateParticleSystem();
+      })
+  );
+
+  shapeControllers.push(
+    folder
+      .add({ arc: particleSystemSetting.shape.cone.arc }, "arc", 0.0, 360, 0.01)
+      .onChange((v) => {
+        particleSystemSetting.shape.cone.arc = v;
+        recreateParticleSystem();
+      })
+  );
+};
+
+const createShapeCircleEntries = (folder) => {
+  shapeControllers.push(
+    folder
+      .add(
+        { radius: particleSystemSetting.shape.circle.radius },
+        "radius",
+        0.0001,
+        10,
+        0.0001
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.circle.radius = v;
+        recreateParticleSystem();
+      })
+  );
+
+  shapeControllers.push(
+    folder
+      .add(
+        { radiusThickness: particleSystemSetting.shape.circle.radiusThickness },
+        "radiusThickness",
+        0.0,
+        1,
+        0.01
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.circle.radiusThickness = v;
+        recreateParticleSystem();
+      })
+  );
+
+  shapeControllers.push(
+    folder
+      .add(
+        { arc: particleSystemSetting.shape.circle.arc },
+        "arc",
+        0.0,
+        360,
+        0.01
+      )
+      .onChange((v) => {
+        particleSystemSetting.shape.circle.arc = v;
         recreateParticleSystem();
       })
   );
@@ -485,9 +629,9 @@ const createShapeEntries = (folder) => {
     .add({ shape: Shape.SPHERE }, "shape", [
       Shape.SPHERE,
       Shape.CONE,
-      Shape.BOX,
+      // Shape.BOX,
       Shape.CIRCLE,
-      Shape.RECTANGLE,
+      // Shape.RECTANGLE,
     ])
     .onChange((v) => {
       particleSystemSetting.shape.shape = v;
@@ -495,6 +639,15 @@ const createShapeEntries = (folder) => {
       switch (v) {
         case Shape.SPHERE:
           createShapeSphereEntries(folder);
+          break;
+
+        case Shape.CONE:
+          createShapeConeEntries(folder);
+          break;
+
+        case Shape.CIRCLE:
+          createShapeCircleEntries(folder);
+          break;
       }
       recreateParticleSystem();
     });
