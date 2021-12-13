@@ -1,4 +1,11 @@
+import {
+  createVector2FolderEntry,
+  createVector3FolderEntry,
+} from "./entry-helpers";
+
 import { Shape } from "@newkrok/three-particles/src/js/effects/three-particles";
+
+let shapeControllers = [];
 
 export const createShapeEntries = ({
   parentFolder,
@@ -9,45 +16,23 @@ export const createShapeEntries = ({
   folder.close();
 
   folder
-    .add({ shape: Shape.SPHERE }, "shape", [
+    .add(particleSystemConfig.shape, "shape", [
       Shape.SPHERE,
       Shape.CONE,
       // Shape.BOX,
       Shape.CIRCLE,
-      // Shape.RECTANGLE,
+      Shape.RECTANGLE,
     ])
     .onChange((v) => {
       particleSystemConfig.shape.shape = v;
-      destroyShapeControllers();
-      switch (v) {
-        case Shape.SPHERE:
-          createShapeSphereEntries({
-            folder,
-            particleSystemConfig,
-            recreateParticleSystem,
-          });
-          break;
-
-        case Shape.CONE:
-          createShapeConeEntries({
-            folder,
-            particleSystemConfig,
-            recreateParticleSystem,
-          });
-          break;
-
-        case Shape.CIRCLE:
-          createShapeCircleEntries({
-            folder,
-            particleSystemConfig,
-            recreateParticleSystem,
-          });
-          break;
-      }
-      recreateParticleSystem();
+      createEntriesByShape({
+        folder,
+        particleSystemConfig,
+        recreateParticleSystem,
+      });
     });
 
-  createShapeSphereEntries({
+  createEntriesByShape({
     folder,
     particleSystemConfig,
     recreateParticleSystem,
@@ -59,7 +44,47 @@ export const createShapeEntries = ({
   };
 };
 
-let shapeControllers = [];
+const createEntriesByShape = ({
+  folder,
+  particleSystemConfig,
+  recreateParticleSystem,
+}) => {
+  destroyShapeControllers();
+  switch (particleSystemConfig.shape.shape) {
+    case Shape.SPHERE:
+      createShapeSphereEntries({
+        folder,
+        particleSystemConfig,
+        recreateParticleSystem,
+      });
+      break;
+
+    case Shape.CONE:
+      createShapeConeEntries({
+        folder,
+        particleSystemConfig,
+        recreateParticleSystem,
+      });
+      break;
+
+    case Shape.CIRCLE:
+      createShapeCircleEntries({
+        folder,
+        particleSystemConfig,
+        recreateParticleSystem,
+      });
+      break;
+
+    case Shape.RECTANGLE:
+      createShapeRectangleEntries({
+        folder,
+        particleSystemConfig,
+        recreateParticleSystem,
+      });
+      break;
+  }
+  recreateParticleSystem();
+};
 
 const destroyShapeControllers = () => {
   shapeControllers.forEach((controller) => controller.destroy());
@@ -225,5 +250,37 @@ const createShapeCircleEntries = ({
         particleSystemConfig.shape.circle.arc = v;
         recreateParticleSystem();
       })
+  );
+};
+
+const createShapeRectangleEntries = ({
+  folder,
+  particleSystemConfig,
+  recreateParticleSystem,
+}) => {
+  shapeControllers.push(
+    createVector2FolderEntry({
+      particleSystemConfig,
+      recreateParticleSystem,
+      parentFolder: folder,
+      rootPropertyName: "shape.rectangle",
+      propertyName: "rotation",
+      min: 0.0,
+      max: 360.0,
+      step: 0.001,
+    })
+  );
+
+  shapeControllers.push(
+    createVector2FolderEntry({
+      particleSystemConfig,
+      recreateParticleSystem,
+      parentFolder: folder,
+      rootPropertyName: "shape.rectangle",
+      propertyName: "scale",
+      min: 0.001,
+      max: 10.0,
+      step: 0.001,
+    })
   );
 };

@@ -12,12 +12,12 @@ export const createGeneralEntries = ({
 }) => {
   const folder = parentFolder.addFolder("General");
 
-  folder.add({ duration: 5.0 }, "duration", 0.0, 30, 0.01).onChange((v) => {
+  folder.add(particleSystemConfig, "duration", 0.0, 30, 0.01).onChange((v) => {
     particleSystemConfig.duration = v;
     recreateParticleSystem();
   });
 
-  folder.add({ looping: true }, "looping").onChange((v) => {
+  folder.add(particleSystemConfig, "looping").onChange((v) => {
     particleSystemConfig.looping = v;
     recreateParticleSystem();
   });
@@ -27,9 +27,7 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startDelay",
-    defaultMin: 0.0,
     min: 0.0,
-    defaultMax: 0.0,
     max: 30.0,
     step: 0.01,
   });
@@ -39,9 +37,7 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startLifeTime",
-    defaultMin: 5.0,
     min: 0.01,
-    defaultMax: 5.0,
     max: 30.0,
     step: 0.01,
   });
@@ -51,9 +47,7 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startSpeed",
-    defaultMin: 5.0,
     min: 0.0,
-    defaultMax: 5.0,
     max: 30.0,
     step: 0.01,
   });
@@ -63,9 +57,7 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startSize",
-    defaultMin: 1.0,
     min: 0.0,
-    defaultMax: 1.0,
     max: 100.0,
     step: 0.01,
   });
@@ -75,9 +67,7 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startRotation",
-    defaultMin: 1.0,
     min: 0.0,
-    defaultMax: 1.0,
     max: 360.0,
     step: 0.01,
   });
@@ -96,20 +86,18 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startOpacity",
-    defaultMin: 1.0,
     min: 0.0,
-    defaultMax: 1.0,
     max: 1.0,
     step: 0.001,
   });
 
-  folder.add({ gravity: 0.0 }, "gravity", 0.0, 1, 0.001).onChange((v) => {
+  folder.add(particleSystemConfig, "gravity", 0.0, 1, 0.001).onChange((v) => {
     particleSystemConfig.gravity = v;
     recreateParticleSystem();
   });
 
   folder
-    .add({ simulationSpace: SimulationSpace.LOCAL }, "simulationSpace", [
+    .add(particleSystemConfig, "simulationSpace", [
       SimulationSpace.LOCAL,
       SimulationSpace.WORLD,
     ])
@@ -119,7 +107,7 @@ export const createGeneralEntries = ({
     });
 
   folder
-    .add({ maxParticles: 100.0 }, "maxParticles", 1.0, 1000, 1.0)
+    .add(particleSystemConfig, "maxParticles", 1.0, 1000, 1.0)
     .onChange((v) => {
       particleSystemConfig.maxParticles = v;
       recreateParticleSystem();

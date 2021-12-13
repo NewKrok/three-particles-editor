@@ -7,14 +7,14 @@ import {
   updateParticleSystems,
 } from "@newkrok/three-particles/src/js/effects/three-particles.js";
 import { createWorld, updateWorld } from "./three-particles-editor/world.js";
-import { getTexture, initAssets } from "./three-particles-editor/assets.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
-import { TextureId } from "./three-particles-editor/texture-config.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
 import { createHelperEntries } from "./three-particles-editor/entries/helper-entries.js";
+import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
 import { createShapeEntries } from "./three-particles-editor/entries/shape-entries.js";
+import { initAssets } from "./three-particles-editor/assets.js";
 
 const particleSystemConfig = getDefaultParticleSystemConfig();
 const cycleData = {};
@@ -48,10 +48,6 @@ const recreateParticleSystem = () => {
     destroyParticleSystem(particleSystem);
     particleSystem = null;
   }
-
-  const { texture, tiles } = getTexture(TextureId.Point);
-  particleSystemConfig.map = texture;
-  particleSystemConfig.textureSheetAnimation.tiles = tiles;
   particleSystem = createParticleSystem(particleSystemConfig);
   scene.add(particleSystem);
 
@@ -87,8 +83,13 @@ const createPanel = () => {
       recreateParticleSystem,
     })
   );
-
-  particleSystemConfig.map = getTexture(TextureId.Point).texture;
+  configEntries.push(
+    createRendererEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
   recreateParticleSystem();
 };
 

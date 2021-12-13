@@ -1,39 +1,47 @@
+const resolveProperty = (rootObject, property) =>
+  property !== ""
+    ? property.split(".").reduce((prev, current) => prev[current], rootObject)
+    : rootObject;
+
 export const createMinMaxFloatFolderEntry = ({
   particleSystemConfig,
   recreateParticleSystem,
   parentFolder,
+  rootPropertyName = "",
   propertyName,
-  rootPropertyName,
-  defaultMin,
   min,
-  defaultMax,
   max,
   step,
 }) => {
   const folder = parentFolder.addFolder(propertyName);
-  const folderConfig = { min: defaultMin, max: defaultMax };
+  const currentValue = resolveProperty(particleSystemConfig, rootPropertyName)[
+    propertyName
+  ];
+
   folder
-    .add(folderConfig, "min", min, max, step)
+    .add(currentValue, "min", min, max, step)
     .onChange((v) => {
-      const propRef = rootPropertyName
-        ? particleSystemConfig[rootPropertyName][propertyName]
-        : particleSystemConfig[propertyName];
-      propRef.min = Math.min(v, propRef.max);
-      folderConfig.min = propRef.min;
+      const currentValue = resolveProperty(
+        particleSystemConfig,
+        rootPropertyName
+      )[propertyName];
+      currentValue.min = Math.min(v, currentValue.max);
       recreateParticleSystem();
     })
     .listen();
   folder
-    .add(folderConfig, "max", min, max, step)
+    .add(currentValue, "max", min, max, step)
     .onChange((v) => {
-      const propRef = rootPropertyName
-        ? particleSystemConfig[rootPropertyName][propertyName]
-        : particleSystemConfig[propertyName];
-      propRef.max = Math.max(v, propRef.min);
-      folderConfig.max = propRef.max;
+      const currentValue = resolveProperty(
+        particleSystemConfig,
+        rootPropertyName
+      )[propertyName];
+      currentValue.max = Math.max(v, currentValue.min);
       recreateParticleSystem();
     })
     .listen();
+
+  return folder;
 };
 
 export const createMinMaxColorFolderEntry = ({
@@ -63,52 +71,114 @@ export const createMinMaxColorFolderEntry = ({
       recreateParticleSystem();
     })
     .listen();
+
+  return folder;
 };
 
-/*const createMinMaxVector3FolderEntry = ({
-    parentFolder,
+export const createVector2FolderEntry = ({
+  particleSystemConfig,
+  recreateParticleSystem,
+  parentFolder,
+  rootPropertyName = "",
+  propertyName,
+  min,
+  max,
+  step,
+}) => {
+  const folder = parentFolder.addFolder(propertyName);
+  const currentValue = resolveProperty(particleSystemConfig, rootPropertyName)[
+    propertyName
+  ];
+
+  folder.add({ x: currentValue.x }, "x", min, max, step).onChange((v) => {
+    resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].x = v;
+    recreateParticleSystem();
+  });
+  folder.add({ y: currentValue.y }, "y", min, max, step).onChange((v) => {
+    resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].y = v;
+    recreateParticleSystem();
+  });
+
+  return folder;
+};
+
+export const createVector3FolderEntry = ({
+  particleSystemConfig,
+  recreateParticleSystem,
+  parentFolder,
+  rootPropertyName = "",
+  propertyName,
+  min,
+  max,
+  step,
+}) => {
+  const folder = parentFolder.addFolder(propertyName);
+  const currentValue = resolveProperty(particleSystemConfig, rootPropertyName)[
+    propertyName
+  ];
+
+  folder.add({ x: currentValue.x }, "x", min, max, step).onChange((v) => {
+    resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].x = v;
+    recreateParticleSystem();
+  });
+  folder.add({ y: currentValue.y }, "y", min, max, step).onChange((v) => {
+    resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].y = v;
+    recreateParticleSystem();
+  });
+  folder.add({ z: currentValue.z }, "z", min, max, step).onChange((v) => {
+    resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].z = v;
+    recreateParticleSystem();
+  });
+
+  return folder;
+};
+
+/* export const createMinMaxVector3FolderEntry = ({
+  parentFolder,
+  rootPropertyName,
+  propertyName,
+  defaultMin,
+  min,
+  defaultMax,
+  max,
+  step,
+}) => {
+  const folder = parentFolder.addFolder(propertyName);
+
+  createMinMaxFloatFolderEntry({
+    parentFolder: folder,
     rootPropertyName,
-    propertyName,
+    propertyName: "x",
     defaultMin,
     min,
     defaultMax,
     max,
     step,
-  }) => {
-    const folder = parentFolder.addFolder(propertyName)
-  
-    createMinMaxFloatFolderEntry({
-      parentFolder: folder,
-      rootPropertyName,
-      propertyName: "x",
-      defaultMin,
-      min,
-      defaultMax,
-      max,
-      step,
-    })
-    createMinMaxFloatFolderEntry({
-      parentFolder: folder,
-      rootPropertyName,
-      propertyName: "y",
-      defaultMin,
-      min,
-      defaultMax,
-      max,
-      step,
-    })
-    createMinMaxFloatFolderEntry({
-      parentFolder: folder,
-      rootPropertyName,
-      propertyName: "z",
-      defaultMin,
-      min,
-      defaultMax,
-      max,
-      step,
-    })
-  }
-  */
+  });
+  createMinMaxFloatFolderEntry({
+    parentFolder: folder,
+    rootPropertyName,
+    propertyName: "y",
+    defaultMin,
+    min,
+    defaultMax,
+    max,
+    step,
+  });
+  createMinMaxFloatFolderEntry({
+    parentFolder: folder,
+    rootPropertyName,
+    propertyName: "z",
+    defaultMin,
+    min,
+    defaultMax,
+    max,
+    step,
+  });
+
+  return folder;
+}; */
+
 /*const createMinMaxVector4FolderEntry = ({
     parentFolder,
     rootPropertyName,
