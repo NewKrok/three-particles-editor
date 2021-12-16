@@ -10,7 +10,9 @@ export const getTexture = (id) =>
 const loadTextures = ({ textureConfigs, onComplete }) => {
   const { id, url } = textureConfigs[0];
   textureLoader.load(url, (texture) => {
-    getTexture(id).texture = texture;
+    texture.flipX = false;
+    texture.flipY = false;
+    getTexture(id).map = texture;
     if (textureConfigs.length > 1)
       loadTextures({ textureConfigs: textureConfigs.slice(1), onComplete });
     else onComplete();

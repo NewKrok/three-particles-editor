@@ -1,12 +1,15 @@
 # THREE Particles Editor
-Particle sytem editor for ThreeJS in style of Unity
+
+Particle system editor for ThreeJS in style of Unity
 
 THREE Particles lib is avalible here https://github.com/NewKrok/three-particles
 
 # Live demo
+
 https://newkrok.com/three-particles-editor/index.html
 
 # Screenshots
+
 ![image](https://user-images.githubusercontent.com/13141660/145306717-482e9699-bed8-4e8c-801f-6431d1b34614.png)
 ![image](https://user-images.githubusercontent.com/13141660/145306919-be017f8b-d84b-4f4a-8323-84f9fb53ab72.png)
 ![image](https://user-images.githubusercontent.com/13141660/145735458-e8b1d8d4-77d4-4466-be4a-d40587502d50.png)
