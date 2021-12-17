@@ -14,6 +14,7 @@ import { createGeneralEntries } from "./three-particles-editor/entries/general-e
 import { createHelperEntries } from "./three-particles-editor/entries/helper-entries.js";
 import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
 import { createShapeEntries } from "./three-particles-editor/entries/shape-entries.js";
+import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
 import { initAssets } from "./three-particles-editor/assets.js";
 
 const particleSystemConfig = getDefaultParticleSystemConfig();
@@ -48,9 +49,9 @@ const recreateParticleSystem = () => {
     destroyParticleSystem(particleSystem);
     particleSystem = null;
   }
+
   particleSystem = createParticleSystem(particleSystemConfig);
   scene.add(particleSystem);
-
   configEntries.forEach(
     ({ onParticleSystemChange }) =>
       onParticleSystemChange && onParticleSystemChange(particleSystem)
@@ -78,6 +79,13 @@ const createPanel = () => {
   );
   configEntries.push(
     createShapeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createTextureSheetAnimationEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem,

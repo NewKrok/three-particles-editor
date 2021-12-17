@@ -1,9 +1,5 @@
-import {
-  createVector2FolderEntry,
-  createVector3FolderEntry,
-} from "./entry-helpers";
-
 import { Shape } from "@newkrok/three-particles/src/js/effects/three-particles";
+import { createVector2FolderEntry } from "./entry-helpers";
 
 let shapeControllers = [];
 

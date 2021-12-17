@@ -12,9 +12,13 @@ export const createRendererEntries = ({
   const defaultTetxureId = TextureId.POINT;
   const setConfigByTexture = ({ map, tiles, fps, startFrame }) => {
     particleSystemConfig.map = map;
-    particleSystemConfig.textureSheetAnimation.tiles = tiles;
-    particleSystemConfig.textureSheetAnimation.fps = fps;
-    particleSystemConfig.textureSheetAnimation.startFrame = startFrame;
+    particleSystemConfig.textureSheetAnimation.tiles.x = tiles?.x || 1;
+    particleSystemConfig.textureSheetAnimation.tiles.y = tiles?.y || 1;
+    particleSystemConfig.textureSheetAnimation.fps = fps || 0;
+    particleSystemConfig.textureSheetAnimation.startFrame.min =
+      startFrame?.min || 0;
+    particleSystemConfig.textureSheetAnimation.startFrame.max =
+      startFrame?.max || 0;
   };
 
   folder

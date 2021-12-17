@@ -12,34 +12,33 @@ export const createMinMaxFloatFolderEntry = ({
   min,
   max,
   step,
+  useListen = false,
 }) => {
   const folder = parentFolder.addFolder(propertyName);
-  const currentValue = resolveProperty(particleSystemConfig, rootPropertyName)[
-    propertyName
-  ];
+  const propertyReference = resolveProperty(
+    particleSystemConfig,
+    rootPropertyName
+  )[propertyName];
 
-  folder
-    .add(currentValue, "min", min, max, step)
+  const minFolder = folder
+    .add(propertyReference, "min", min, max, step)
     .onChange((v) => {
-      const currentValue = resolveProperty(
-        particleSystemConfig,
-        rootPropertyName
-      )[propertyName];
-      currentValue.min = Math.min(v, currentValue.max);
+      propertyReference.min = Math.min(v, propertyReference.max);
       recreateParticleSystem();
     })
     .listen();
-  folder
-    .add(currentValue, "max", min, max, step)
+  const maxFolder = folder
+    .add(propertyReference, "max", min, max, step)
     .onChange((v) => {
-      const currentValue = resolveProperty(
-        particleSystemConfig,
-        rootPropertyName
-      )[propertyName];
-      currentValue.max = Math.max(v, currentValue.min);
+      propertyReference.max = Math.max(v, propertyReference.min);
       recreateParticleSystem();
     })
     .listen();
+
+  if (useListen) {
+    minFolder.listen();
+    maxFolder.listen();
+  }
 
   return folder;
 };
@@ -84,20 +83,27 @@ export const createVector2FolderEntry = ({
   min,
   max,
   step,
+  useListen = false,
 }) => {
   const folder = parentFolder.addFolder(propertyName);
-  const currentValue = resolveProperty(particleSystemConfig, rootPropertyName)[
-    propertyName
-  ];
+  const propertyReference = resolveProperty(
+    particleSystemConfig,
+    rootPropertyName
+  )[propertyName];
 
-  folder.add({ x: currentValue.x }, "x", min, max, step).onChange((v) => {
+  const x = folder.add(propertyReference, "x", min, max, step).onChange((v) => {
     resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].x = v;
     recreateParticleSystem();
   });
-  folder.add({ y: currentValue.y }, "y", min, max, step).onChange((v) => {
+  const y = folder.add(propertyReference, "y", min, max, step).onChange((v) => {
     resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].y = v;
     recreateParticleSystem();
   });
+
+  if (useListen) {
+    x.listen();
+    y.listen();
+  }
 
   return folder;
 };
