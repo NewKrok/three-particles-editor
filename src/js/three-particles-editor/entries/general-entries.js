@@ -42,7 +42,7 @@ export const createGeneralEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startLifeTime",
+    propertyName: "startLifetime",
     min: 0.01,
     max: 30.0,
     step: 0.01,

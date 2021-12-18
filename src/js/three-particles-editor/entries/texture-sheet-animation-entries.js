@@ -39,7 +39,7 @@ export const createTextureSheetAnimationEntries = ({
 
   folder
     .add(particleSystemConfig.textureSheetAnimation, "timeMode", [
-      TimeMode.LIFE_TIME,
+      TimeMode.LIFETIME,
       TimeMode.FPS,
     ])
     .onChange((v) => {

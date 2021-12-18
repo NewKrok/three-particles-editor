@@ -66,27 +66,27 @@ export const textureConfigs = [
   },
   {
     id: TextureId.NUMBERS,
-    url: "/assets/textures/numbers.webp",
+    url: "./assets/textures/numbers.webp",
     tiles: new THREE.Vector2(5.0, 2.0),
   },
   {
     id: TextureId.NUMBERS_TOON,
-    url: "/assets/textures/numbers-toon.webp",
+    url: "./assets/textures/numbers-toon.webp",
     tiles: new THREE.Vector2(5.0, 2.0),
   },
   {
     id: TextureId.CONFETTI,
-    url: "/assets/textures/confetti.webp",
+    url: "./assets/textures/confetti.webp",
     tiles: new THREE.Vector2(5.0, 2.0),
   },
   {
     id: TextureId.CONFETTI_TOON,
-    url: "/assets/textures/confetti-toon.webp",
+    url: "./assets/textures/confetti-toon.webp",
     tiles: new THREE.Vector2(5.0, 2.0),
   },
   {
     id: TextureId.MAGIC_EXPLOSION,
-    url: "/assets/textures/magic-explosion.webp",
+    url: "./assets/textures/magic-explosion.webp",
     tiles: new THREE.Vector2(5.0, 2.0),
   },
 ];

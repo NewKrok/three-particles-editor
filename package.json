@@ -6,7 +6,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "three": "^0.135.0",
-    "@newkrok/three-particles": "0.2.0"
+    "@newkrok/three-particles": "0.2.2"
   },
   "scripts": {
     "http": "http-server ./dist",
