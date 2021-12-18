@@ -24,7 +24,6 @@ export const createTextureSheetAnimationEntries = ({
     min: 1.0,
     max: 10.0,
     step: 1.0,
-    useListen: true,
   });
 
   createMinMaxFloatFolderEntry({
@@ -36,7 +35,6 @@ export const createTextureSheetAnimationEntries = ({
     min: 0.0,
     max: 100.0,
     step: 1.0,
-    useListen: true,
   });
 
   folder

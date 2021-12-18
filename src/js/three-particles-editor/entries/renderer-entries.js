@@ -14,11 +14,6 @@ export const createRendererEntries = ({
     particleSystemConfig.map = map;
     particleSystemConfig.textureSheetAnimation.tiles.x = tiles?.x || 1;
     particleSystemConfig.textureSheetAnimation.tiles.y = tiles?.y || 1;
-    particleSystemConfig.textureSheetAnimation.fps = fps || 0;
-    particleSystemConfig.textureSheetAnimation.startFrame.min =
-      startFrame?.min || 0;
-    particleSystemConfig.textureSheetAnimation.startFrame.max =
-      startFrame?.max || 0;
   };
 
   folder
@@ -40,6 +35,7 @@ export const createRendererEntries = ({
       TextureId.CONFETTI_TOON,
       TextureId.MAGIC_EXPLOSION,
     ])
+    .listen()
     .onChange((v) => {
       setConfigByTexture(getTexture(v));
       recreateParticleSystem();

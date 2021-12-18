@@ -12,15 +12,21 @@ export const createGeneralEntries = ({
 }) => {
   const folder = parentFolder.addFolder("General");
 
-  folder.add(particleSystemConfig, "duration", 0.0, 30, 0.01).onChange((v) => {
-    particleSystemConfig.duration = v;
-    recreateParticleSystem();
-  });
+  folder
+    .add(particleSystemConfig, "duration", 0.0, 30, 0.01)
+    .onChange((v) => {
+      particleSystemConfig.duration = v;
+      recreateParticleSystem();
+    })
+    .listen();
 
-  folder.add(particleSystemConfig, "looping").onChange((v) => {
-    particleSystemConfig.looping = v;
-    recreateParticleSystem();
-  });
+  folder
+    .add(particleSystemConfig, "looping")
+    .onChange((v) => {
+      particleSystemConfig.looping = v;
+      recreateParticleSystem();
+    })
+    .listen();
 
   createMinMaxFloatFolderEntry({
     particleSystemConfig,
@@ -77,8 +83,6 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startColor",
-    defaultColorA: { r: 1, g: 1, b: 1 },
-    defaultColorB: { r: 1, g: 1, b: 1 },
   });
 
   createMinMaxFloatFolderEntry({
@@ -91,10 +95,13 @@ export const createGeneralEntries = ({
     step: 0.001,
   });
 
-  folder.add(particleSystemConfig, "gravity", 0.0, 1, 0.001).onChange((v) => {
-    particleSystemConfig.gravity = v;
-    recreateParticleSystem();
-  });
+  folder
+    .add(particleSystemConfig, "gravity", 0.0, 1, 0.001)
+    .onChange((v) => {
+      particleSystemConfig.gravity = v;
+      recreateParticleSystem();
+    })
+    .listen();
 
   folder
     .add(particleSystemConfig, "simulationSpace", [
@@ -104,14 +111,16 @@ export const createGeneralEntries = ({
     .onChange((v) => {
       particleSystemConfig.simulationSpace = v;
       recreateParticleSystem();
-    });
+    })
+    .listen();
 
   folder
     .add(particleSystemConfig, "maxParticles", 1.0, 1000, 1.0)
     .onChange((v) => {
       particleSystemConfig.maxParticles = v;
       recreateParticleSystem();
-    });
+    })
+    .listen();
 
   return {
     onParticleSystemChange: () => {},

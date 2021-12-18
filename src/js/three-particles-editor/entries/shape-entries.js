@@ -19,6 +19,7 @@ export const createShapeEntries = ({
       Shape.CIRCLE,
       Shape.RECTANGLE,
     ])
+    .listen()
     .onChange((v) => {
       particleSystemConfig.shape.shape = v;
       createEntriesByShape({
