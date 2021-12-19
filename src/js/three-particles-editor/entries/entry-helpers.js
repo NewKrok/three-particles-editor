@@ -115,31 +115,29 @@ export const createVector3FolderEntry = ({
   step,
 }) => {
   const folder = parentFolder.addFolder(propertyName);
-  const currentValue = resolveProperty(particleSystemConfig, rootPropertyName)[
-    propertyName
-  ];
+  const propertyReference = resolveProperty(
+    particleSystemConfig,
+    rootPropertyName
+  )[propertyName];
 
   folder
-    .add({ x: currentValue.x }, "x", min, max, step)
+    .add(propertyReference, "x", min, max, step)
     .onChange((v) => {
-      resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].x =
-        v;
+      propertyReference.x = v;
       recreateParticleSystem();
     })
     .listen();
   folder
-    .add({ y: currentValue.y }, "y", min, max, step)
+    .add(propertyReference, "y", min, max, step)
     .onChange((v) => {
-      resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].y =
-        v;
+      propertyReference.y = v;
       recreateParticleSystem();
     })
     .listen();
   folder
-    .add({ z: currentValue.z }, "z", min, max, step)
+    .add(propertyReference, "z", min, max, step)
     .onChange((v) => {
-      resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].z =
-        v;
+      propertyReference.z = v;
       recreateParticleSystem();
     })
     .listen();

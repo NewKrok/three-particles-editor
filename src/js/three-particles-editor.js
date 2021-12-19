@@ -1,6 +1,10 @@
 import * as THREE from "three/build/three.module";
 
 import {
+  copyToClipboard,
+  loadFromClipboard,
+} from "./three-particles-editor/save-and-load.js";
+import {
   createParticleSystem,
   destroyParticleSystem,
   getDefaultParticleSystemConfig,
@@ -15,7 +19,7 @@ import { createHelperEntries } from "./three-particles-editor/entries/helper-ent
 import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
 import { createShapeEntries } from "./three-particles-editor/entries/shape-entries.js";
 import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
-import { deepMerge } from "@newkrok/three-particles/src/js/effects/three-particles-utils";
+import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
 import { initAssets } from "./three-particles-editor/assets.js";
 
 const particleSystemConfig = getDefaultParticleSystemConfig();
@@ -61,6 +65,7 @@ const recreateParticleSystem = () => {
   }
 
   particleSystem = createParticleSystem(particleSystemConfig);
+
   scene.add(particleSystem);
   configEntries.forEach(
     ({ onParticleSystemChange }) =>
@@ -70,75 +75,46 @@ const recreateParticleSystem = () => {
 
 const configEntries = [];
 
-export const getObjectDiff = (
-  objectA,
-  objectB,
-  config = { skippedProperties: [] }
-) => {
-  const result = {};
-  Object.keys(objectA).forEach((key) => {
-    if (!config.skippedProperties || !config.skippedProperties.includes(key)) {
-      if (typeof objectA[key] === "object" && objectA[key] && objectB[key]) {
-        const objectDiff = getObjectDiff(objectA[key], objectB[key], config);
-        if (Object.keys(objectDiff).length > 0) result[key] = objectDiff;
-      } else {
-        const mergedValue =
-          objectB[key] === 0 ? 0 : objectB[key] || objectA[key];
-        if (mergedValue !== objectA[key]) result[key] = mergedValue;
-      }
-    }
-  });
-  return result;
-};
-
-const copyToClipboard = () => {
-  const type = "text/plain";
-  const blob = new Blob(
-    [
-      JSON.stringify(
-        getObjectDiff(getDefaultParticleSystemConfig(), particleSystemConfig, {
-          skippedProperties: ["map"],
-        })
-      ),
-    ],
-    {
-      type: "text/plain",
-    }
-  );
-  const data = [new ClipboardItem({ [type]: blob })];
-
-  navigator.clipboard.write(data);
-};
-
-const loadFromClipboard = () => {
-  navigator.clipboard
-    .readText()
-    .then((text) => {
-      const externalObject = JSON.parse(text);
-      deepMerge(particleSystemConfig, externalObject, {
-        skippedProperties: ["map"],
-        applyToFirstObject: true,
-      });
-      console.log("Loaded particle system config:");
-      console.log(particleSystemConfig);
-      recreateParticleSystem();
-    })
-    .catch((err) => {
-      console.error("Failed to read clipboard contents: ", err);
-    });
-};
-
 const createPanel = () => {
   const panel = new GUI({ width: 310, title: "Particle System Editor" });
 
   panel
-    .add({ copyToClipboard }, "copyToClipboard")
+    .add(
+      { copyToClipboard: () => copyToClipboard(particleSystemConfig) },
+      "copyToClipboard"
+    )
     .name("Copy config to clipboard");
   panel
-    .add({ loadFromClipboard }, "loadFromClipboard")
+    .add(
+      {
+        loadFromClipboard: () =>
+          loadFromClipboard({ particleSystemConfig, recreateParticleSystem }),
+      },
+      "loadFromClipboard"
+    )
     .name("Load config from clipboard");
 
   configEntries.push(createHelperEntries({ parentFolder: panel, scene }));
+  configEntries.push(
+    createTransformEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem: () => {
+        // Transform change not requires a real re creation
+        particleSystem.position.copy(particleSystemConfig.transform.position);
+        particleSystem.rotation.x = THREE.Math.degToRad(
+          particleSystemConfig.transform.rotation.x
+        );
+        particleSystem.rotation.y = THREE.Math.degToRad(
+          particleSystemConfig.transform.rotation.y
+        );
+        particleSystem.rotation.z = THREE.Math.degToRad(
+          particleSystemConfig.transform.rotation.z
+        );
+        particleSystem.scale.copy(particleSystemConfig.transform.scale);
+      },
+    })
+  );
   configEntries.push(
     createGeneralEntries({
       parentFolder: panel,

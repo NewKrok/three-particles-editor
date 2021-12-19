@@ -73,9 +73,9 @@ export const createGeneralEntries = ({
     recreateParticleSystem,
     parentFolder: folder,
     propertyName: "startRotation",
-    min: 0.0,
+    min: -360.0,
     max: 360.0,
-    step: 0.01,
+    step: 0.001,
   });
 
   createMinMaxColorFolderEntry({
