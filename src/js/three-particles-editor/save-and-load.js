@@ -1,5 +1,5 @@
 import { getDefaultParticleSystemConfig } from "@newkrok/three-particles/src/js/effects/three-particles";
-import { patchObject } from "@newkrok/three-particles/src/js/effects/three-particles-utils";
+import { patchObject } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-utils";
 
 const getObjectDiff = (
   objectA,
@@ -26,11 +26,16 @@ export const copyToClipboard = (particleSystemConfig) => {
   const type = "text/plain";
   const blob = new Blob(
     [
-      JSON.stringify(
-        getObjectDiff(getDefaultParticleSystemConfig(), particleSystemConfig, {
-          skippedProperties: ["map"],
-        })
-      ),
+      JSON.stringify({
+        ...getObjectDiff(
+          getDefaultParticleSystemConfig(),
+          particleSystemConfig,
+          {
+            skippedProperties: ["map"],
+          }
+        ),
+        _editorData: { ...particleSystemConfig._editorData },
+      }),
     ],
     {
       type: "text/plain",
@@ -53,6 +58,8 @@ export const loadFromClipboard = ({
         skippedProperties: ["map"],
         applyToFirstObject: true,
       });
+      particleSystemConfig._editorData =
+        externalObject._editorData || particleSystemConfig._editorData;
       recreateParticleSystem();
     })
     .catch((err) => {

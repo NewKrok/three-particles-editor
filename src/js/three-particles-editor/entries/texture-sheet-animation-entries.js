@@ -12,7 +12,7 @@ export const createTextureSheetAnimationEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }) => {
-  const folder = parentFolder.addFolder("Texture Sheet Animation");
+  const folder = parentFolder.addFolder("Texture sheet animation");
   folder.close();
 
   createVector2FolderEntry({

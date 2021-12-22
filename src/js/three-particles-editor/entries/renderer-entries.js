@@ -6,18 +6,25 @@ export const createRendererEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }) => {
+  let lastUsedTextureId = "";
+
   const folder = parentFolder.addFolder("Renderer");
   folder.close();
 
-  const defaultTetxureId = TextureId.POINT;
-  const setConfigByTexture = ({ map, tiles, fps, startFrame }) => {
+  particleSystemConfig._editorData.textureId =
+    particleSystemConfig._editorData.textureId || TextureId.POINT;
+
+  const setConfigByTexture = (textureId) => {
+    lastUsedTextureId = textureId;
+    const { map, tiles } = getTexture(textureId);
     particleSystemConfig.map = map;
+    particleSystemConfig._editorData.textureId = textureId;
     particleSystemConfig.textureSheetAnimation.tiles.x = tiles?.x || 1;
     particleSystemConfig.textureSheetAnimation.tiles.y = tiles?.y || 1;
   };
 
   folder
-    .add({ textureId: defaultTetxureId }, "textureId", [
+    .add(particleSystemConfig._editorData, "textureId", [
       TextureId.POINT,
       TextureId.GRADIENT_POINT,
       TextureId.CIRCLE,
@@ -29,6 +36,7 @@ export const createRendererEntries = ({
       TextureId.PLUS_TOON,
       TextureId.MOON,
       TextureId.RAINDROP,
+      TextureId.LEAF_TOON,
       TextureId.NUMBERS,
       TextureId.NUMBERS_TOON,
       TextureId.CONFETTI,
@@ -37,14 +45,19 @@ export const createRendererEntries = ({
     ])
     .listen()
     .onChange((v) => {
-      setConfigByTexture(getTexture(v));
+      setConfigByTexture(v);
       recreateParticleSystem();
     });
-
-  setConfigByTexture(getTexture(defaultTetxureId));
+  setConfigByTexture(particleSystemConfig._editorData.textureId);
 
   return {
-    onParticleSystemChange: () => {},
+    onParticleSystemChange: () => {
+      // It looks onChange doesn't work on dropdown entry so have to handle it manually
+      if (lastUsedTextureId !== particleSystemConfig._editorData.textureId) {
+        setConfigByTexture(particleSystemConfig._editorData.textureId);
+        recreateParticleSystem();
+      }
+    },
     onUpdate: () => {},
   };
 };

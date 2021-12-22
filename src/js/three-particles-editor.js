@@ -13,16 +13,22 @@ import {
 import { createWorld, updateWorld } from "./three-particles-editor/world.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { createColorOverLifeTimeEntries } from "./three-particles-editor/entries/color-over-lifetime-entries.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
 import { createHelperEntries } from "./three-particles-editor/entries/helper-entries.js";
+import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries.js";
 import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
 import { createShapeEntries } from "./three-particles-editor/entries/shape-entries.js";
+import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/size-over-lifetime-entries.js";
 import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
 import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
 import { initAssets } from "./three-particles-editor/assets.js";
 
-const particleSystemConfig = getDefaultParticleSystemConfig();
+const particleSystemConfig = {
+  ...getDefaultParticleSystemConfig(),
+  _editorData: {},
+};
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 
 let scene, particleSystem, clock;
@@ -131,6 +137,27 @@ const createPanel = () => {
   );
   configEntries.push(
     createShapeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
+  /*configEntries.push(
+    createColorOverLifeTimeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );*/
+  configEntries.push(
+    createOpacityOverLifeTimeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createSizeOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem,

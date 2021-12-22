@@ -12,6 +12,7 @@ export const TextureId = {
   PLUS_TOON: "PLUS_TOON",
   MOON: "MOON",
   RAINDROP: "RAINDROP",
+  LEAF_TOON: "LEAF_TOON",
   NUMBERS: "NUMBERS",
   NUMBERS_TOON: "NUMBERS_TOON",
   CONFETTI: "CONFETTI",
@@ -63,6 +64,10 @@ export const textureConfigs = [
   {
     id: TextureId.RAINDROP,
     url: "./assets/textures/raindrop.webp",
+  },
+  {
+    id: TextureId.LEAF_TOON,
+    url: "./assets/textures/leaf-toon.webp",
   },
   {
     id: TextureId.NUMBERS,

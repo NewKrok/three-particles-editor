@@ -6,6 +6,7 @@ export const createTransformEntries = ({
   recreateParticleSystem,
 }) => {
   const folder = parentFolder.addFolder("Transform");
+  folder.close();
 
   createVector3FolderEntry({
     particleSystemConfig,
