@@ -17,12 +17,15 @@ import { createColorOverLifeTimeEntries } from "./three-particles-editor/entries
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
 import { createHelperEntries } from "./three-particles-editor/entries/helper-entries.js";
+import { createNoiseEntries } from "./three-particles-editor/entries/noise-entries.js";
 import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries.js";
 import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
+import { createRotationOverLifeTimeEntries } from "./three-particles-editor/entries/rotation-over-lifetime-entries.js";
 import { createShapeEntries } from "./three-particles-editor/entries/shape-entries.js";
 import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/size-over-lifetime-entries.js";
 import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
 import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
+import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries.js";
 import { initAssets } from "./three-particles-editor/assets.js";
 
 const particleSystemConfig = {
@@ -142,13 +145,20 @@ const createPanel = () => {
       recreateParticleSystem,
     })
   );
-  /*configEntries.push(
+  configEntries.push(
+    createVelocityOverLifeTimeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
+  /* configEntries.push(
     createColorOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem,
     })
-  );*/
+  ); */
   configEntries.push(
     createOpacityOverLifeTimeEntries({
       parentFolder: panel,
@@ -158,6 +168,20 @@ const createPanel = () => {
   );
   configEntries.push(
     createSizeOverLifeTimeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createRotationOverLifeTimeEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createNoiseEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem,

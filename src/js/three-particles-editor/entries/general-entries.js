@@ -14,18 +14,12 @@ export const createGeneralEntries = ({
 
   folder
     .add(particleSystemConfig, "duration", 0.0, 30, 0.01)
-    .onChange((v) => {
-      particleSystemConfig.duration = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   folder
     .add(particleSystemConfig, "looping")
-    .onChange((v) => {
-      particleSystemConfig.looping = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   createMinMaxFloatFolderEntry({
@@ -96,7 +90,7 @@ export const createGeneralEntries = ({
   });
 
   folder
-    .add(particleSystemConfig, "gravity", 0.0, 1, 0.001)
+    .add(particleSystemConfig, "gravity", -0.2, 0.2, 0.001)
     .onChange((v) => {
       particleSystemConfig.gravity = v;
       recreateParticleSystem();

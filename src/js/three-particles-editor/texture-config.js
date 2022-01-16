@@ -13,6 +13,7 @@ export const TextureId = {
   MOON: "MOON",
   RAINDROP: "RAINDROP",
   LEAF_TOON: "LEAF_TOON",
+  SNOWFLAKE: "SNOWFLAKE",
   NUMBERS: "NUMBERS",
   NUMBERS_TOON: "NUMBERS_TOON",
   CONFETTI: "CONFETTI",
@@ -68,6 +69,10 @@ export const textureConfigs = [
   {
     id: TextureId.LEAF_TOON,
     url: "./assets/textures/leaf-toon.webp",
+  },
+  {
+    id: TextureId.SNOWFLAKE,
+    url: "./assets/textures/snowflake.webp",
   },
   {
     id: TextureId.NUMBERS,

@@ -1,4 +1,7 @@
+import * as THREE from "three/build/three.module";
+
 import { TextureId } from "../texture-config";
+import { blendingMap } from "@newkrok/three-particles/src/js/effects/three-particles";
 import { getTexture } from "../assets";
 
 export const createRendererEntries = ({
@@ -37,6 +40,7 @@ export const createRendererEntries = ({
       TextureId.MOON,
       TextureId.RAINDROP,
       TextureId.LEAF_TOON,
+      TextureId.SNOWFLAKE,
       TextureId.NUMBERS,
       TextureId.NUMBERS_TOON,
       TextureId.CONFETTI,
@@ -49,6 +53,36 @@ export const createRendererEntries = ({
       recreateParticleSystem();
     });
   setConfigByTexture(particleSystemConfig._editorData.textureId);
+
+  if (typeof particleSystemConfig.renderer.blending === "number")
+    particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
+      (entry) => blendingMap[entry] === particleSystemConfig.renderer.blending
+    );
+  folder
+    .add(particleSystemConfig.renderer, "blending", [
+      "THREE.NoBlending",
+      "THREE.NormalBlending",
+      "THREE.AdditiveBlending",
+      "THREE.SubtractiveBlending",
+      "THREE.MultiplyBlending",
+    ])
+    .listen()
+    .onChange(recreateParticleSystem);
+
+  folder
+    .add(particleSystemConfig.renderer, "transparent")
+    .onChange(recreateParticleSystem)
+    .listen();
+
+  folder
+    .add(particleSystemConfig.renderer, "depthTest")
+    .onChange(recreateParticleSystem)
+    .listen();
+
+  folder
+    .add(particleSystemConfig.renderer, "depthWrite")
+    .onChange(recreateParticleSystem)
+    .listen();
 
   return {
     onParticleSystemChange: () => {
