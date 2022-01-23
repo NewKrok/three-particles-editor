@@ -41,7 +41,7 @@ export const createParticleSystemEditor = (targetQuery) => {
   scene = createWorld(targetQuery);
   initAssets(() => {
     createPanel();
-    createCurveEditor(document.querySelector("body"));
+    createCurveEditor();
     animate();
   });
 
@@ -101,7 +101,6 @@ const createPanel = () => {
   panel
     .add(
       {
-        // TODO apply first the default: getDefaultParticleSystemConfig
         loadFromClipboard: () =>
           loadFromClipboard({ particleSystemConfig, recreateParticleSystem }),
       },

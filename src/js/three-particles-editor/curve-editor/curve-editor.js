@@ -1,60 +1,135 @@
 const EDITOR_SIZE = { x: 300, y: 200 };
 const DEFAULT_CONTROL_OFFSET = 100;
 
-const createControlPoint = ({ parent, className, offset = { x: 0, y: 0 } }) => {
-  const controlPoint = document.createElement("div");
-  controlPoint.className = `control-point ${className}`;
-  controlPoint.style.left = `${offset.x}px`;
-  controlPoint.style.top = `${offset.y}px`;
-  parent.appendChild(controlPoint);
-};
-
-const createPoint = (parent, x, y) => {
-  const point = document.createElement("div");
-  point.className = "bezier-point";
-  point.style.left = `${x}px`;
-  point.style.top = `${y}px`;
-  parent.appendChild(point);
-
-  createControlPoint({
-    parent: point,
-    className: "control-point--left",
-    offset: { x: -DEFAULT_CONTROL_OFFSET, y: 0 },
-  });
-  createControlPoint({
-    parent: point,
-    className: "control-point--right",
-    offset: { x: DEFAULT_CONTROL_OFFSET, y: 0 },
-  });
-
-  return point;
-};
+let wrapper, ctx, selectedPoint, affectedControlPoint;
 
 const getPosition = (target) => ({
   left: parseFloat(target.style.left.replace("px", "")),
   top: parseFloat(target.style.top.replace("px", "")),
 });
 
-export const createCurveEditor = (parent) => {
-  const wrapper = document.querySelector(".curve-editor");
-  const canvas = document.querySelector(".curve-editor__canvas");
-
-  // Temporary just 3 point is allowed
-  createPoint(wrapper, 0, EDITOR_SIZE.y);
-  createPoint(wrapper, EDITOR_SIZE.x / 2, 0);
-  createPoint(wrapper, EDITOR_SIZE.x, EDITOR_SIZE.y);
-
-  const ctx = canvas.getContext("2d");
-
-  render({
-    ctx,
-    points: Array.from(document.querySelectorAll(".bezier-point")),
-  });
+const createControlPoint = ({ parent, className, offset = { x: 0, y: 0 } }) => {
+  const controlPoint = createDraggablePoint();
+  controlPoint.className += ` control-point ${className}`;
+  controlPoint.style.left = `${offset.x}px`;
+  controlPoint.style.top = `${offset.y}px`;
+  parent.appendChild(controlPoint);
 };
 
-const render = ({ ctx, points }) => {
-  ctx.clearRect(0, 0, EDITOR_SIZE.x, EDITOR_SIZE.y);
+const updateSelectedPoint = (e) => {
+  if (selectedPoint) {
+    const rect = wrapper.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+    if (selectedPoint.className.includes("control-point")) {
+      const bezierPointPosition = getPosition(selectedPoint.parentElement);
+      x -= bezierPointPosition.left;
+      y -= bezierPointPosition.top;
+    } else {
+      x = Math.min(Math.max(x, 0), EDITOR_SIZE.x);
+      y = Math.min(Math.max(y, 0), EDITOR_SIZE.y);
+    }
 
+    if (selectedPoint.className.includes("bezier-point--first")) {
+      x = 0;
+    } else if (selectedPoint.className.includes("bezier-point--last")) {
+      x = EDITOR_SIZE.x;
+    }
+
+    selectedPoint.style.left = `${x}px`;
+    selectedPoint.style.top = `${y}px`;
+
+    if (affectedControlPoint) {
+      const selectedAngle = Math.atan2(y, x);
+      const oppositeAngle = selectedAngle + Math.PI;
+      const oppositePositon = getPosition(affectedControlPoint);
+      const oppositeDistance = Math.sqrt(
+        Math.pow(oppositePositon.left, 2) + Math.pow(oppositePositon.top, 2)
+      );
+      affectedControlPoint.style.left = `${
+        oppositeDistance * Math.cos(oppositeAngle)
+      }px`;
+      affectedControlPoint.style.top = `${
+        oppositeDistance * Math.sin(oppositeAngle)
+      }px`;
+    }
+
+    render();
+  }
+};
+
+const selectPoint = (e) => {
+  selectedPoint = e.currentTarget;
+  if (selectedPoint.className.includes("control-point"))
+    affectedControlPoint = selectedPoint.parentElement.querySelector(
+      selectedPoint.className.includes("control-point--right")
+        ? ".control-point--left"
+        : ".control-point--right"
+    );
+  else affectedControlPoint = null;
+  wrapper.addEventListener("mousemove", updateSelectedPoint, false);
+  e.stopPropagation();
+};
+
+const createDraggablePoint = () => {
+  const point = document.createElement("div");
+  point.className = "draggable-point";
+  point.addEventListener("mousedown", selectPoint);
+
+  return point;
+};
+
+const createPoint = ({ wrapper, x, y, isFirst = false, isLast = false }) => {
+  const point = createDraggablePoint();
+  point.className += ` bezier-point ${isFirst && "bezier-point--first"} ${
+    isLast && "bezier-point--last"
+  }`;
+  point.style.left = `${x}px`;
+  point.style.top = `${y}px`;
+  wrapper.appendChild(point);
+
+  if (!isFirst)
+    createControlPoint({
+      parent: point,
+      className: "draggable-point control-point--left",
+      offset: { x: -DEFAULT_CONTROL_OFFSET, y: 0 },
+    });
+
+  if (!isLast)
+    createControlPoint({
+      parent: point,
+      className: "draggable-point control-point--right",
+      offset: { x: DEFAULT_CONTROL_OFFSET, y: 0 },
+    });
+
+  return point;
+};
+
+const onMouseUp = () => {
+  if (selectedPoint) {
+    wrapper.removeEventListener("mousemove", updateSelectedPoint, false);
+    selectedPoint = null;
+  }
+};
+
+export const createCurveEditor = () => {
+  wrapper = document.querySelector(".draggable-points");
+  const canvas = document.querySelector(".curve-editor__canvas");
+  document.addEventListener("mouseup", onMouseUp);
+
+  // Temporary just 3 point is allowed
+  createPoint({ wrapper, x: 0, y: EDITOR_SIZE.y, isFirst: true });
+  createPoint({ wrapper, x: EDITOR_SIZE.x / 2, y: 0 });
+  createPoint({ wrapper, x: EDITOR_SIZE.x, y: EDITOR_SIZE.y, isLast: true });
+
+  ctx = canvas.getContext("2d");
+  render();
+};
+
+const render = () => {
+  const points = Array.from(document.querySelectorAll(".bezier-point"));
+
+  ctx.clearRect(0, 0, EDITOR_SIZE.x, EDITOR_SIZE.y);
   ctx.beginPath();
   ctx.lineWidth = 1;
   ctx.strokeStyle = "#444";
@@ -101,7 +176,7 @@ const render = ({ ctx, points }) => {
   ctx.strokeStyle = "#00FF0022";
   ctx.lineWidth = 1;
 
-  points.forEach(function (point, index) {
+  points.forEach(function (point) {
     const pointPos = getPosition(point);
 
     Array.from(point.children).forEach((child) => {
@@ -112,4 +187,48 @@ const render = ({ ctx, points }) => {
     });
   });
   ctx.closePath();
+};
+
+export const setCurveEditorTarget = (target) => {
+  const points = Array.from(document.querySelectorAll(".bezier-point"));
+  target.bezierPoints = points.reduce((prev, current, index) => {
+    const position = getPosition(current);
+    const leftControlPosition =
+      index === 0
+        ? null
+        : getPosition(current.querySelector(".control-point--left"));
+    const rightControlPosition =
+      index === points.length - 1
+        ? null
+        : getPosition(current.querySelector(".control-point--right"));
+
+    if (leftControlPosition)
+      prev.push({
+        x: (position.left + leftControlPosition.left) / EDITOR_SIZE.x,
+        y: 1 - (position.top + leftControlPosition.top) / EDITOR_SIZE.y,
+      });
+    prev.push({
+      x: position.left / EDITOR_SIZE.x,
+      y: 1 - position.top / EDITOR_SIZE.y,
+      percentage:
+        index === 0
+          ? 0
+          : index === points.length - 1
+          ? 1
+          : position.left / EDITOR_SIZE.x,
+    });
+    if (rightControlPosition)
+      prev.push({
+        x: (position.left + rightControlPosition.left) / EDITOR_SIZE.x,
+        y: 1 - (position.top + rightControlPosition.top) / EDITOR_SIZE.y,
+      });
+
+    return prev;
+  }, []);
+
+  console.log(">>", target.bezierPoints);
+};
+
+export const setCurveEditorPositions = (positions) => {
+  console.log(positions);
 };

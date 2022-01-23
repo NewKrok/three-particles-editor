@@ -55,6 +55,7 @@ export const loadFromClipboard = ({
     .readText()
     .then((text) => {
       const externalObject = JSON.parse(text);
+      patchObject(particleSystemConfig, getDefaultParticleSystemConfig());
       patchObject(particleSystemConfig, externalObject, {
         skippedProperties: ["map"],
         applyToFirstObject: true,

@@ -1,3 +1,8 @@
+import {
+  setCurveEditorPositions,
+  setCurveEditorTarget,
+} from "../curve-editor/curve-editor";
+
 import { CurveFunction } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-curves";
 
 export const createSizeOverLifeTimeEntries = ({
@@ -28,15 +33,27 @@ export const createSizeOverLifeTimeEntries = ({
     .listen()
     .onChange(recreateParticleSystem);
 
-  particleSystemConfig.sizeOverLifetime.bezierPoints = [
-    { x: 0, y: 1 - 200 / 200, percentage: 0 },
-    { x: 50 / 300, y: 1 - 200 / 200 },
-    { x: 100 / 300, y: 1 - 0 },
-    { x: 150 / 300, y: 1 - 0, percentage: 150 / 300 },
-    { x: 200 / 300, y: 1 - 0 },
-    { x: 250 / 300, y: 1 - 200 / 200 },
-    { x: 300 / 300, y: 1 - 200 / 200, percentage: 1 },
-  ];
+  folder
+    .add(
+      {
+        editCurve: () => {
+          setCurveEditorTarget(particleSystemConfig.sizeOverLifetime);
+          recreateParticleSystem();
+        },
+      },
+      "editCurve"
+    )
+    .name("Apply curve");
+
+  folder
+    .add(
+      {
+        loadCurve: () =>
+          setCurveEditorPositions(particleSystemConfig.sizeOverLifetime),
+      },
+      "loadCurve"
+    )
+    .name("Edit curve");
 
   return {
     onParticleSystemChange: () => {},
