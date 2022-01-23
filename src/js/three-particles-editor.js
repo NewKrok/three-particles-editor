@@ -7,6 +7,7 @@ import {
 import {
   copyToClipboard,
   loadFromClipboard,
+  loadParticleSystem,
 } from "./three-particles-editor/save-and-load.js";
 import {
   createParticleSystem,
@@ -63,7 +64,13 @@ export const createParticleSystemEditor = (targetQuery) => {
   clock = new THREE.Clock();
   scene = createWorld(targetQuery);
   initAssets(() => {
-    createExamples();
+    createExamples((config) =>
+      loadParticleSystem({
+        config,
+        particleSystemConfig,
+        recreateParticleSystem,
+      })
+    );
     createPanel();
     createCurveEditor();
     animate();

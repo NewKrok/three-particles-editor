@@ -189,44 +189,86 @@ const render = () => {
   ctx.closePath();
 };
 
+const round = (value) => Math.floor(value * 10000) / 10000;
+
 export const setCurveEditorTarget = (target) => {
   const points = Array.from(document.querySelectorAll(".bezier-point"));
-  target.bezierPoints = points.reduce((prev, current, index) => {
-    const position = getPosition(current);
-    const leftControlPosition =
-      index === 0
-        ? null
-        : getPosition(current.querySelector(".control-point--left"));
-    const rightControlPosition =
-      index === points.length - 1
-        ? null
-        : getPosition(current.querySelector(".control-point--right"));
-
-    if (leftControlPosition)
-      prev.push({
-        x: (position.left + leftControlPosition.left) / EDITOR_SIZE.x,
-        y: 1 - (position.top + leftControlPosition.top) / EDITOR_SIZE.y,
-      });
-    prev.push({
-      x: position.left / EDITOR_SIZE.x,
-      y: 1 - position.top / EDITOR_SIZE.y,
-      percentage:
+  target.bezierPoints = points
+    .reduce((prev, current, index) => {
+      const position = getPosition(current);
+      const leftControlPosition =
         index === 0
-          ? 0
-          : index === points.length - 1
-          ? 1
-          : position.left / EDITOR_SIZE.x,
-    });
-    if (rightControlPosition)
-      prev.push({
-        x: (position.left + rightControlPosition.left) / EDITOR_SIZE.x,
-        y: 1 - (position.top + rightControlPosition.top) / EDITOR_SIZE.y,
-      });
+          ? null
+          : getPosition(current.querySelector(".control-point--left"));
+      const rightControlPosition =
+        index === points.length - 1
+          ? null
+          : getPosition(current.querySelector(".control-point--right"));
 
-    return prev;
-  }, []);
+      if (leftControlPosition)
+        prev.push({
+          x: (position.left + leftControlPosition.left) / EDITOR_SIZE.x,
+          y: 1 - (position.top + leftControlPosition.top) / EDITOR_SIZE.y,
+        });
+      prev.push({
+        x: position.left / EDITOR_SIZE.x,
+        y: 1 - position.top / EDITOR_SIZE.y,
+        percentage:
+          index === 0
+            ? 0
+            : index === points.length - 1
+            ? 1
+            : round(position.left / EDITOR_SIZE.x),
+      });
+      if (rightControlPosition)
+        prev.push({
+          x: (position.left + rightControlPosition.left) / EDITOR_SIZE.x,
+          y: 1 - (position.top + rightControlPosition.top) / EDITOR_SIZE.y,
+        });
+
+      return prev;
+    }, [])
+    .map((entry) => ({ ...entry, x: round(entry.x), y: round(entry.y) }));
 };
 
-export const setCurveEditorPositions = (positions) => {
-  console.log(positions);
+export const setCurveEditorPositions = ({ bezierPoints }) => {
+  const points = Array.from(document.querySelectorAll(".bezier-point"));
+  // TODO Temporary only 3 ponts allowed
+  if (points.length === 3) {
+    let positionIndex = 0;
+    points.forEach((point) => {
+      const leftPoint = point.querySelector(".control-point--left");
+      if (leftPoint) {
+        leftPoint.style.left = `${
+          (bezierPoints[positionIndex].x - bezierPoints[positionIndex + 1].x) *
+          EDITOR_SIZE.x
+        }px`;
+        leftPoint.style.top = `${
+          (bezierPoints[positionIndex].y - bezierPoints[positionIndex + 1].y) *
+          -EDITOR_SIZE.y
+        }px`;
+        positionIndex++;
+      }
+
+      point.style.left = `${bezierPoints[positionIndex].x * EDITOR_SIZE.x}px`;
+      point.style.top = `${
+        (1 - bezierPoints[positionIndex].y) * EDITOR_SIZE.y
+      }px`;
+      positionIndex++;
+
+      const rightPoint = point.querySelector(".control-point--right");
+      if (rightPoint) {
+        rightPoint.style.left = `${
+          (bezierPoints[positionIndex].x - bezierPoints[positionIndex - 1].x) *
+          EDITOR_SIZE.x
+        }px`;
+        rightPoint.style.top = `${
+          (bezierPoints[positionIndex].y - bezierPoints[positionIndex - 1].y) *
+          -EDITOR_SIZE.y
+        }px`;
+        positionIndex++;
+      }
+    });
+    render();
+  }
 };

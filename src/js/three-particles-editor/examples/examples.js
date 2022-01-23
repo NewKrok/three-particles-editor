@@ -2,7 +2,7 @@ import { examples } from "./examples-config";
 
 let wrapper;
 
-const createExampleEntry = ({ name, preview }) => {
+const createExampleEntry = ({ name, preview, config, load }) => {
   const exampleWrapper = document.createElement("div");
   exampleWrapper.className = "example";
 
@@ -16,11 +16,13 @@ const createExampleEntry = ({ name, preview }) => {
   title.innerHTML = name;
   exampleWrapper.appendChild(title);
 
+  exampleWrapper.onclick = () => load(JSON.parse(config));
+
   wrapper.appendChild(exampleWrapper);
 };
 
-export const createExamples = () => {
+export const createExamples = (load) => {
   wrapper = document.querySelector(".left-panel");
 
-  examples.forEach(createExampleEntry);
+  examples.forEach((example) => createExampleEntry({ ...example, load }));
 };

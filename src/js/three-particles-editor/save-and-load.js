@@ -59,20 +59,32 @@ export const loadFromClipboard = ({
   navigator.clipboard
     .readText()
     .then((text) => {
-      const externalObject = JSON.parse(text);
-      patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
-        applyToFirstObject: true,
+      loadParticleSystem({
+        config: JSON.parse(text),
+        particleSystemConfig,
+        recreateParticleSystem,
       });
-      patchObject(particleSystemConfig, externalObject, {
-        skippedProperties: ["map"],
-        applyToFirstObject: true,
-      });
-      particleSystemConfig._editorData =
-        externalObject._editorData || particleSystemConfig._editorData;
-      setTerrain(particleSystemConfig._editorData.terrain?.textureId);
-      recreateParticleSystem();
     })
     .catch((err) => {
       console.error("Failed to read clipboard contents: ", err);
     });
+};
+
+export const loadParticleSystem = ({
+  config,
+  particleSystemConfig,
+  recreateParticleSystem,
+}) => {
+  patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
+    applyToFirstObject: true,
+  });
+  patchObject(particleSystemConfig, config, {
+    skippedProperties: ["map"],
+    applyToFirstObject: true,
+  });
+  particleSystemConfig._editorData =
+    config._editorData || particleSystemConfig._editorData;
+  setTerrain(particleSystemConfig._editorData.terrain?.textureId);
+
+  recreateParticleSystem();
 };
