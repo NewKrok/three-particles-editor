@@ -43,8 +43,9 @@ export const createWorld = (targetQuery) => {
   controls.target.set(0, 0, 0);
   controls.update();
 
+  const statsContainer = document.querySelector(".stats");
   stats = new Stats();
-  container.appendChild(stats.dom);
+  statsContainer.appendChild(stats.dom);
 
   window.addEventListener("resize", onWindowResize);
 

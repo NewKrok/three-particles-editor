@@ -42,6 +42,54 @@
         height: 100%;
       }
 
+      .stats {
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+
+      .stats > div {
+        left: 250px !important;
+      }
+
+      .left-panel {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        overflow-y: auto;
+        background: #1f1f1f;
+        min-height: 100%;
+        max-height: 100%;
+      }
+
+      .example {
+        width: calc(100% - 10px);
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        overflow: hidden;
+        background: #424242;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .example:hover {
+        background: #525252;
+      }
+
+      .example-image {
+        width: 100%;
+        object-fit: contain;
+      }
+
+      .example-title {
+        font-size: 15px;
+        font-weight: bold;
+        color: #fff;
+        font-family: verdana;
+      }
+
       .right-panel {
         font-family: "verdana";
         font-weight: 600;
@@ -120,6 +168,8 @@
   </head>
   <body>
     <div id="three-particles-editor"></div>
+    <div class="stats"></div>
+    <div class="left-panel"></div>
     <div class="right-panel">
       <div class="curve-editor">
         <div class="curve-editor__title">Curve editor</div>

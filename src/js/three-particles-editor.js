@@ -1,6 +1,10 @@
 import * as THREE from "three/build/three.module";
 
 import {
+  WIREFRAME,
+  createHelperEntries,
+} from "./three-particles-editor/entries/helper-entries.js";
+import {
   copyToClipboard,
   loadFromClipboard,
 } from "./three-particles-editor/save-and-load.js";
@@ -10,13 +14,18 @@ import {
   getDefaultParticleSystemConfig,
   updateParticleSystems,
 } from "@newkrok/three-particles/src/js/effects/three-particles.js";
-import { createWorld, updateWorld } from "./three-particles-editor/world.js";
+import {
+  createWorld,
+  setTerrain,
+  updateWorld,
+} from "./three-particles-editor/world.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { TextureId } from "./three-particles-editor/texture-config.js";
 import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
+import { createExamples } from "./three-particles-editor/examples/examples.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
-import { createHelperEntries } from "./three-particles-editor/entries/helper-entries.js";
 import { createNoiseEntries } from "./three-particles-editor/entries/noise-entries.js";
 import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries.js";
 import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
@@ -27,10 +36,21 @@ import { createTextureSheetAnimationEntries } from "./three-particles-editor/ent
 import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
 import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries.js";
 import { initAssets } from "./three-particles-editor/assets.js";
+import { patchObject } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-utils";
+
+const defaultEditorData = {
+  textureId: TextureId.POINT,
+  simulateMovements: false,
+  showLocalAxes: false,
+  showWorldAxes: false,
+  terrain: {
+    textureId: WIREFRAME,
+  },
+};
 
 const particleSystemConfig = {
   ...getDefaultParticleSystemConfig(),
-  _editorData: {},
+  _editorData: { ...defaultEditorData },
 };
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 
@@ -40,6 +60,7 @@ export const createParticleSystemEditor = (targetQuery) => {
   clock = new THREE.Clock();
   scene = createWorld(targetQuery);
   initAssets(() => {
+    createExamples();
     createPanel();
     createCurveEditor();
     animate();
@@ -92,6 +113,23 @@ const createPanel = () => {
     container: document.querySelector(".right-panel"),
   });
 
+  panel
+    .add(
+      {
+        reset: () => {
+          patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
+            applyToFirstObject: true,
+          });
+          patchObject(particleSystemConfig._editorData, defaultEditorData, {
+            applyToFirstObject: true,
+          });
+          setTerrain();
+          recreateParticleSystem();
+        },
+      },
+      "reset"
+    )
+    .name("Reset to default");
   panel
     .add(
       { copyToClipboard: () => copyToClipboard(particleSystemConfig) },

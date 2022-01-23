@@ -8,7 +8,7 @@ const localAxesHelper = new THREE.AxesHelper(1);
 
 let _particleSystem = null;
 
-const WIREFRAME = "WIREFRAME";
+export const WIREFRAME = "WIREFRAME";
 
 export const createHelperEntries = ({
   parentFolder,
@@ -18,10 +18,6 @@ export const createHelperEntries = ({
   const folder = parentFolder.addFolder("Helper");
   folder.close();
 
-  particleSystemConfig._editorData.simulateMovements =
-    particleSystemConfig._editorData.simulateMovements === undefined
-      ? false
-      : particleSystemConfig._editorData.simulateMovements;
   folder
     .add(particleSystemConfig._editorData, "simulateMovements")
     .name("Simulate movements")
@@ -31,12 +27,9 @@ export const createHelperEntries = ({
         _particleSystem.position.y = 0;
         _particleSystem.position.z = 0;
       }
-    });
+    })
+    .listen();
 
-  particleSystemConfig._editorData.showLocalAxes =
-    particleSystemConfig._editorData.showLocalAxes === undefined
-      ? false
-      : particleSystemConfig._editorData.showLocalAxes;
   const updateLocalAxesHelper = () => {
     if (_particleSystem)
       if (particleSystemConfig._editorData.showLocalAxes) {
@@ -48,27 +41,22 @@ export const createHelperEntries = ({
   folder
     .add(particleSystemConfig._editorData, "showLocalAxes")
     .name("Show local axes")
-    .onChange(updateLocalAxesHelper);
+    .onChange(updateLocalAxesHelper)
+    .listen();
 
-  particleSystemConfig._editorData.showWorldAxes =
-    particleSystemConfig._editorData.showWorldAxes === undefined
-      ? false
-      : particleSystemConfig._editorData.showWorldAxes;
+  const updateWorldAxesHelper = () => {
+    if (particleSystemConfig._editorData.showWorldAxes) {
+      scene.add(worldAxesHelper);
+    } else {
+      scene.remove(worldAxesHelper);
+    }
+  };
   folder
     .add(particleSystemConfig._editorData, "showWorldAxes")
     .name("Show world axes")
-    .onChange((v) => {
-      if (v) {
-        scene.add(worldAxesHelper);
-      } else {
-        scene.remove(worldAxesHelper);
-      }
-    });
+    .onChange(updateWorldAxesHelper)
+    .listen();
 
-  particleSystemConfig._editorData.terrain =
-    particleSystemConfig._editorData.terrain || {};
-  particleSystemConfig._editorData.terrain.textureId =
-    particleSystemConfig._editorData.terrain.textureId || WIREFRAME;
   folder
     .add(particleSystemConfig._editorData.terrain, "textureId", [
       WIREFRAME,
@@ -84,6 +72,7 @@ export const createHelperEntries = ({
     onParticleSystemChange: (particleSystem) => {
       _particleSystem = particleSystem;
       updateLocalAxesHelper();
+      updateWorldAxesHelper();
     },
     onUpdate: ({ elapsed }) => {
       if (

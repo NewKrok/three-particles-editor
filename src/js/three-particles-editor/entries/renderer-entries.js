@@ -14,9 +14,6 @@ export const createRendererEntries = ({
   const folder = parentFolder.addFolder("Renderer");
   folder.close();
 
-  particleSystemConfig._editorData.textureId =
-    particleSystemConfig._editorData.textureId || TextureId.POINT;
-
   const setConfigByTexture = (textureId) => {
     lastUsedTextureId = textureId;
     const { map, tiles } = getTexture(textureId);

@@ -2,6 +2,7 @@ import { Shape } from "@newkrok/three-particles/src/js/effects/three-particles";
 import { createVector2FolderEntry } from "./entry-helpers";
 
 let shapeControllers = [];
+let lastInitedShape = null;
 
 export const createShapeEntries = ({
   parentFolder,
@@ -36,7 +37,14 @@ export const createShapeEntries = ({
   });
 
   return {
-    onParticleSystemChange: () => {},
+    onParticleSystemChange: () => {
+      if (lastInitedShape !== particleSystemConfig.shape.shape)
+        createEntriesByShape({
+          folder,
+          particleSystemConfig,
+          recreateParticleSystem,
+        });
+    },
     onUpdate: () => {},
   };
 };
@@ -46,6 +54,7 @@ const createEntriesByShape = ({
   particleSystemConfig,
   recreateParticleSystem,
 }) => {
+  lastInitedShape = particleSystemConfig.shape.shape;
   destroyShapeControllers();
   switch (particleSystemConfig.shape.shape) {
     case Shape.SPHERE:

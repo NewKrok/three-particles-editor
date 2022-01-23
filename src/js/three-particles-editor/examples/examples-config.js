@@ -1,4 +1,4 @@
-const LEAFS =
+const FALLING_LEAVES =
   '{"transform":{"position":{"y":1.5},"rotation":{"x":90}},"startLifetime":{"min":4,"max":6},"startSpeed":{"min":0,"max":0},"startSize":{"min":3.11,"max":5.86},"startRotation":{"min":-360,"max":360},"gravity":0.001,"maxParticles":10,"emission":{"rateOverTime":2},"shape":{"shape":"CONE","cone":{"angle":21.6024,"radius":0.4687}},"opacityOverLifetime":{"isActive":true,"curveFunction":"EXPONENTIAL_OUT"},"noise":{"isActive":true,"useRandomOffset":true,"strength":0.16},"_editorData":{"textureId":"LEAF_TOON"}}';
 
 const HEALING =
@@ -9,3 +9,56 @@ const SNOW =
 
 const SMOKE =
   '{"transform":{"rotation":{"x":-90}},"startLifetime":{"min":4.23,"max":7.25},"startSpeed":{"min":0.31,"max":0.58},"startSize":{"min":18.86,"max":26.89},"startRotation":{"min":-360,"max":360},"startOpacity":{"min":0.141,"max":0.296},"shape":{"shape":"CONE","sphere":{"radius":0.4687},"cone":{"angle":0,"radius":0.3813}},"renderer":{"blending":"THREE.NormalBlending"},"opacityOverLifetime":{"isActive":true,"curveFunction":"CUBIC_OUT"},"rotationOverLifetime":{"isActive":true,"min":-22.4,"max":24.3},"noise":{"isActive":true,"useRandomOffset":true,"strength":0.09,"positionAmount":0.191,"rotationAmount":2.202,"sizeAmount":1.24},"_editorData":{"textureId":"CLOUD"}}';
+
+export const examples = [
+  {
+    name: "Falling leaves",
+    preview: "https://picsum.photos/640/480",
+    config: FALLING_LEAVES,
+  },
+  {
+    name: "Healing",
+    preview: "https://picsum.photos/640/480",
+    config: HEALING,
+  },
+  {
+    name: "Healing",
+    preview: "https://picsum.photos/640/480",
+    config: HEALING,
+  },
+  {
+    name: "Snow",
+    preview: "https://picsum.photos/640/480",
+    config: SNOW,
+  },
+  {
+    name: "Smoke",
+    preview: "https://picsum.photos/640/480",
+    config: SMOKE,
+  },
+  {
+    name: "Falling leaves",
+    preview: "https://picsum.photos/640/480",
+    config: FALLING_LEAVES,
+  },
+  {
+    name: "Healing",
+    preview: "https://picsum.photos/640/480",
+    config: HEALING,
+  },
+  {
+    name: "Healing",
+    preview: "https://picsum.photos/640/480",
+    config: HEALING,
+  },
+  {
+    name: "Snow",
+    preview: "https://picsum.photos/640/480",
+    config: SNOW,
+  },
+  {
+    name: "Smoke",
+    preview: "https://picsum.photos/640/480",
+    config: SMOKE,
+  },
+];
