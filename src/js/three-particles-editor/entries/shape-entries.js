@@ -21,14 +21,13 @@ export const createShapeEntries = ({
       Shape.RECTANGLE,
     ])
     .listen()
-    .onChange((v) => {
-      particleSystemConfig.shape.shape = v;
+    .onChange(() =>
       createEntriesByShape({
         folder,
         particleSystemConfig,
         recreateParticleSystem,
-      });
-    });
+      })
+    );
 
   createEntriesByShape({
     folder,

@@ -64,15 +64,14 @@ export const createHelperEntries = ({
       TextureId.TERRAIN_CHESS_BOARD_COLORFUL,
       TextureId.TERRAIN_DIRT,
     ])
-    .name("Terrain texture")
     .listen()
+    .name("Terrain texture")
     .onChange(setTerrain);
 
   return {
     onParticleSystemChange: (particleSystem) => {
       _particleSystem = particleSystem;
       updateLocalAxesHelper();
-      updateWorldAxesHelper();
     },
     onUpdate: ({ elapsed }) => {
       if (
@@ -84,6 +83,9 @@ export const createHelperEntries = ({
           Math.cos(elapsed) * Math.sin(elapsed) * 0.5;
         _particleSystem.position.z = Math.sin(elapsed * 0.5) * 1;
       }
+    },
+    onReset: () => {
+      updateWorldAxesHelper();
     },
   };
 };

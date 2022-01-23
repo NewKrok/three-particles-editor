@@ -50,7 +50,10 @@ const defaultEditorData = {
 
 const particleSystemConfig = {
   ...getDefaultParticleSystemConfig(),
-  _editorData: { ...defaultEditorData },
+  _editorData: {
+    ...defaultEditorData,
+    terrain: { ...defaultEditorData.terrain },
+  },
 };
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 
@@ -117,10 +120,10 @@ const createPanel = () => {
     .add(
       {
         reset: () => {
-          patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
+          patchObject(particleSystemConfig._editorData, defaultEditorData, {
             applyToFirstObject: true,
           });
-          patchObject(particleSystemConfig._editorData, defaultEditorData, {
+          patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
             applyToFirstObject: true,
           });
           setTerrain();

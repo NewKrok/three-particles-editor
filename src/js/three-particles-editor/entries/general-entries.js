@@ -91,10 +91,7 @@ export const createGeneralEntries = ({
 
   folder
     .add(particleSystemConfig, "gravity", -0.2, 0.2, 0.001)
-    .onChange((v) => {
-      particleSystemConfig.gravity = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   folder
@@ -102,18 +99,12 @@ export const createGeneralEntries = ({
       SimulationSpace.LOCAL,
       SimulationSpace.WORLD,
     ])
-    .onChange((v) => {
-      particleSystemConfig.simulationSpace = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   folder
     .add(particleSystemConfig, "maxParticles", 1.0, 1000, 1.0)
-    .onChange((v) => {
-      particleSystemConfig.maxParticles = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   return {
