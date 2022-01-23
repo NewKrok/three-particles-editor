@@ -55,14 +55,16 @@ export const loadFromClipboard = ({
     .readText()
     .then((text) => {
       const externalObject = JSON.parse(text);
-      patchObject(particleSystemConfig, getDefaultParticleSystemConfig());
+      patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
+        applyToFirstObject: true,
+      });
       patchObject(particleSystemConfig, externalObject, {
         skippedProperties: ["map"],
         applyToFirstObject: true,
       });
       particleSystemConfig._editorData =
         externalObject._editorData || particleSystemConfig._editorData;
-      setTerrain(particleSystemConfig._editorData.terrain.textureId);
+      setTerrain(particleSystemConfig._editorData.terrain?.textureId);
       recreateParticleSystem();
     })
     .catch((err) => {

@@ -225,8 +225,6 @@ export const setCurveEditorTarget = (target) => {
 
     return prev;
   }, []);
-
-  console.log(">>", target.bezierPoints);
 };
 
 export const setCurveEditorPositions = (positions) => {
