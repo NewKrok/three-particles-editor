@@ -10,7 +10,12 @@ const getObjectDiff = (
   const result = {};
   Object.keys(objectA).forEach((key) => {
     if (!config.skippedProperties || !config.skippedProperties.includes(key)) {
-      if (typeof objectA[key] === "object" && objectA[key] && objectB[key]) {
+      if (
+        typeof objectA[key] === "object" &&
+        objectA[key] &&
+        objectB[key] &&
+        !Array.isArray(objectA[key])
+      ) {
         const objectDiff = getObjectDiff(objectA[key], objectB[key], config);
         if (Object.keys(objectDiff).length > 0) result[key] = objectDiff;
       } else {
