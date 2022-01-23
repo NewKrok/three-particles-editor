@@ -1,6 +1,9 @@
 import * as THREE from "three/build/three.module";
 
 export const TextureId = {
+  TERRAIN_CHESS_BOARD: "TERRAIN_CHESS_BOARD",
+  TERRAIN_CHESS_BOARD_COLORFUL: "TERRAIN_CHESS_BOARD_COLORFUL",
+  TERRAIN_DIRT: "TERRAIN_DIRT",
   POINT: "POINT",
   GRADIENT_POINT: "GRADIENT_POINT",
   CIRCLE: "CIRCLE",
@@ -22,6 +25,18 @@ export const TextureId = {
 };
 
 export const textureConfigs = [
+  {
+    id: TextureId.TERRAIN_CHESS_BOARD,
+    url: "./assets/textures/terrain/chess-board.webp",
+  },
+  {
+    id: TextureId.TERRAIN_CHESS_BOARD_COLORFUL,
+    url: "./assets/textures/terrain/chess-board-colorful.webp",
+  },
+  {
+    id: TextureId.TERRAIN_DIRT,
+    url: "./assets/textures/terrain/dirt.webp",
+  },
   {
     id: TextureId.POINT,
     url: "./assets/textures/point.webp",

@@ -10,10 +10,7 @@ export const createVelocityOverLifeTimeEntries = ({
 
   folder
     .add(particleSystemConfig.velocityOverLifetime, "isActive")
-    .onChange((v) => {
-      particleSystemConfig.velocityOverLifetime.isActive = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   const linearVelocityFolder = folder.addFolder("Linear velocity");
@@ -85,6 +82,3 @@ export const createVelocityOverLifeTimeEntries = ({
     onUpdate: () => {},
   };
 };
-
-// https://github.com/WesleyClements/asm-noise
-// https://www.npmjs.com/package/@leodeslf/perlin-noise

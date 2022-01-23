@@ -8,17 +8,15 @@ export const createSizeOverLifeTimeEntries = ({
   const folder = parentFolder.addFolder("Size over lifetime");
   folder.close();
 
-  particleSystemConfig.sizeOverLifetime =
-    typeof particleSystemConfig.sizeOverLifetime === "function"
-      ? CurveFunction.LINEAR
-      : particleSystemConfig.sizeOverLifetime || CurveFunction.LINEAR;
+  particleSystemConfig.sizeOverLifetime.curveFunction =
+    typeof particleSystemConfig.sizeOverLifetime.curveFunction === "function"
+      ? CurveFunction.BEZIER
+      : particleSystemConfig.sizeOverLifetime.curveFunction ||
+        CurveFunction.BEZIER;
 
   folder
     .add(particleSystemConfig.sizeOverLifetime, "isActive")
-    .onChange((v) => {
-      particleSystemConfig.looping = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   folder
@@ -28,10 +26,17 @@ export const createSizeOverLifeTimeEntries = ({
       Object.keys(CurveFunction)
     )
     .listen()
-    .onChange((v) => {
-      particleSystemConfig.sizeOverLifetime.curveFunction = v;
-      recreateParticleSystem();
-    });
+    .onChange(recreateParticleSystem);
+
+  particleSystemConfig.sizeOverLifetime.bezierPoints = [
+    { x: 0, y: 1 - 200 / 200, percentage: 0 },
+    { x: 50 / 300, y: 1 - 200 / 200 },
+    { x: 100 / 300, y: 1 - 0 },
+    { x: 150 / 300, y: 1 - 0, percentage: 150 / 300 },
+    { x: 200 / 300, y: 1 - 0 },
+    { x: 250 / 300, y: 1 - 200 / 200 },
+    { x: 300 / 300, y: 1 - 200 / 200, percentage: 1 },
+  ];
 
   return {
     onParticleSystemChange: () => {},

@@ -23,6 +23,10 @@
       content="width=device-width, user-scalable=no, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0"
     />
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
       html,
       body {
         margin: 0;
@@ -35,10 +39,52 @@
         width: 100%;
         height: 100%;
       }
+
+      .right-panel {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        height: 100%;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+        overflow: hidden;
+      }
+
+      .lil-gui.root {
+        max-height: calc(100% - 210px);
+      }
+
+      .curve-editor {
+        background: #222;
+        border: 1px solid #333;
+        line-height: 0;
+        padding: 5px;
+        position: relative;
+      }
+
+      .curve-editor__canvas {
+        width: 300px;
+        height: 200px;
+      }
+
+      .bezier-point {
+        position: absolute;
+      }
+
+      .control-point {
+        position: absolute;
+      }
     </style>
   </head>
   <body>
     <div id="three-particles-editor"></div>
+    <div class="right-panel">
+      <div class="curve-editor">
+        <canvas class="curve-editor__canvas" width="300px" height="200px">
+      </div>
+    </div>
     <script src="main.js"></script>
   </body>
 </html>

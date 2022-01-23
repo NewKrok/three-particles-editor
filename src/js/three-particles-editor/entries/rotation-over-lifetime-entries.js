@@ -10,10 +10,7 @@ export const createRotationOverLifeTimeEntries = ({
 
   folder
     .add(particleSystemConfig.rotationOverLifetime, "isActive")
-    .onChange((v) => {
-      particleSystemConfig.rotationOverLifetime.isActive = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
   const linearVelocityFolder = folder.addFolder("Angular velocity");

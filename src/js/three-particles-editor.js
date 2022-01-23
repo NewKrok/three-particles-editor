@@ -13,7 +13,7 @@ import {
 import { createWorld, updateWorld } from "./three-particles-editor/world.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
-import { createColorOverLifeTimeEntries } from "./three-particles-editor/entries/color-over-lifetime-entries.js";
+import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
 import { createHelperEntries } from "./three-particles-editor/entries/helper-entries.js";
@@ -41,6 +41,7 @@ export const createParticleSystemEditor = (targetQuery) => {
   scene = createWorld(targetQuery);
   initAssets(() => {
     createPanel();
+    createCurveEditor(document.querySelector("body"));
     animate();
   });
 
@@ -85,7 +86,11 @@ const recreateParticleSystem = () => {
 const configEntries = [];
 
 const createPanel = () => {
-  const panel = new GUI({ width: 310, title: "Particle System Editor" });
+  const panel = new GUI({
+    width: 310,
+    title: "Particle System Editor",
+    container: document.querySelector(".right-panel"),
+  });
 
   panel
     .add(
@@ -96,6 +101,7 @@ const createPanel = () => {
   panel
     .add(
       {
+        // TODO apply first the default: getDefaultParticleSystemConfig
         loadFromClipboard: () =>
           loadFromClipboard({ particleSystemConfig, recreateParticleSystem }),
       },
@@ -103,7 +109,13 @@ const createPanel = () => {
     )
     .name("Load config from clipboard");
 
-  configEntries.push(createHelperEntries({ parentFolder: panel, scene }));
+  configEntries.push(
+    createHelperEntries({
+      parentFolder: panel,
+      particleSystemConfig,
+      scene,
+    })
+  );
   configEntries.push(
     createTransformEntries({
       parentFolder: panel,

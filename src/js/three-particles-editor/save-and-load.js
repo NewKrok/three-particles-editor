@@ -1,5 +1,6 @@
 import { getDefaultParticleSystemConfig } from "@newkrok/three-particles/src/js/effects/three-particles";
 import { patchObject } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-utils";
+import { setTerrain } from "./world";
 
 const getObjectDiff = (
   objectA,
@@ -60,6 +61,7 @@ export const loadFromClipboard = ({
       });
       particleSystemConfig._editorData =
         externalObject._editorData || particleSystemConfig._editorData;
+      setTerrain(particleSystemConfig._editorData.terrain.textureId);
       recreateParticleSystem();
     })
     .catch((err) => {
