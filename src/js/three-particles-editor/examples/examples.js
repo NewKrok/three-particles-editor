@@ -22,7 +22,11 @@ const createExampleEntry = ({ name, preview, config, load }) => {
 };
 
 export const createExamples = (load) => {
-  wrapper = document.querySelector(".left-panel");
-
+  wrapper = document.querySelector("#example-list");
   examples.forEach((example) => createExampleEntry({ ...example, load }));
+
+  const showHideButton = document.querySelector("#show-hide-button");
+  showHideButton.onclick = () =>
+    (wrapper.style.display =
+      wrapper.style.display === "none" ? "block" : "none");
 };
