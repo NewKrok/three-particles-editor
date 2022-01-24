@@ -13,7 +13,7 @@ https://youtu.be/dtN_bndvoGU
 
 # Screenshots
 
-![image](https://user-images.githubusercontent.com/13141660/149682454-42ec3146-e6d4-4d32-a902-821384054090.png)
-![image](https://user-images.githubusercontent.com/13141660/149682474-d7e76b6e-967b-49d5-91e9-fe3c45f94136.png)
-![image](https://user-images.githubusercontent.com/13141660/149682500-fe013623-5771-462f-a00e-89da9f36a95d.png)
-![image](https://user-images.githubusercontent.com/13141660/149682521-8b3957d1-34a0-48d4-a7fe-41ee1e9e7f62.png)
+![image](https://user-images.githubusercontent.com/13141660/150704162-8ce82a25-5d9e-4ccb-a798-2e07c13ea638.png)
+![image](https://user-images.githubusercontent.com/13141660/150704176-36f12c41-097b-4629-b9de-ec29f7730506.png)
+![image](https://user-images.githubusercontent.com/13141660/150704196-1d262cc4-e1d2-45a9-ab7f-f197a2d96f22.png)
+![image](https://user-images.githubusercontent.com/13141660/150704227-71a359d3-82f3-4aaf-a21c-2cf7750d6144.png)
