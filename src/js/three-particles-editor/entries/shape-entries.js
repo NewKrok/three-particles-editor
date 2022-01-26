@@ -1,5 +1,11 @@
-import { Shape } from "@newkrok/three-particles/src/js/effects/three-particles";
-import { createVector2FolderEntry } from "./entry-helpers";
+import {
+  EmitFrom,
+  Shape,
+} from "@newkrok/three-particles/src/js/effects/three-particles";
+import {
+  createVector2FolderEntry,
+  createVector3FolderEntry,
+} from "./entry-helpers";
 
 let shapeControllers = [];
 let lastInitedShape = null;
@@ -16,7 +22,7 @@ export const createShapeEntries = ({
     .add(particleSystemConfig.shape, "shape", [
       Shape.SPHERE,
       Shape.CONE,
-      // Shape.BOX,
+      Shape.BOX,
       Shape.CIRCLE,
       Shape.RECTANGLE,
     ])
@@ -72,6 +78,14 @@ const createEntriesByShape = ({
       });
       break;
 
+    case Shape.BOX:
+      createShapeBoxEntries({
+        folder,
+        particleSystemConfig,
+        recreateParticleSystem,
+      });
+      break;
+
     case Shape.CIRCLE:
       createShapeCircleEntries({
         folder,
@@ -104,28 +118,19 @@ const createShapeSphereEntries = ({
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.sphere, "radius", 0.0001, 10, 0.0001)
-      .onChange((v) => {
-        particleSystemConfig.shape.sphere.radius = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.sphere, "radiusThickness", 0.0, 1, 0.01)
-      .onChange((v) => {
-        particleSystemConfig.shape.sphere.radiusThickness = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.sphere, "arc", -360.0, 360, 0.001)
-      .onChange((v) => {
-        particleSystemConfig.shape.sphere.arc = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 };
 
@@ -137,37 +142,55 @@ const createShapeConeEntries = ({
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.cone, "angle", 0, 90, 0.0001)
-      .onChange((v) => {
-        particleSystemConfig.shape.cone.angle = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.cone, "radius", 0.0001, 10, 0.0001)
-      .onChange((v) => {
-        particleSystemConfig.shape.cone.radius = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.cone, "radiusThickness", 0.0, 1, 0.01)
-      .onChange((v) => {
-        particleSystemConfig.shape.cone.radiusThickness = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.cone, "arc", -360.0, 360, 0.001)
-      .onChange((v) => {
-        particleSystemConfig.shape.cone.arc = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
+  );
+};
+
+const createShapeBoxEntries = ({
+  folder,
+  particleSystemConfig,
+  recreateParticleSystem,
+}) => {
+  shapeControllers.push(
+    folder
+      .add(particleSystemConfig.shape.box, "emitFrom", [
+        EmitFrom.VOLUME,
+        EmitFrom.SHELL,
+        EmitFrom.EDGE,
+      ])
+      .onChange(recreateParticleSystem)
+      .listen()
+  );
+
+  shapeControllers.push(
+    createVector3FolderEntry({
+      particleSystemConfig,
+      recreateParticleSystem,
+      parentFolder: folder,
+      rootPropertyName: "shape.box",
+      propertyName: "scale",
+      min: 0.001,
+      max: 10.0,
+      step: 0.001,
+    })
   );
 };
 
@@ -179,28 +202,19 @@ const createShapeCircleEntries = ({
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.circle, "radius", 0.0001, 10, 0.0001)
-      .onChange((v) => {
-        particleSystemConfig.shape.circle.radius = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.circle, "radiusThickness", 0.0, 1, 0.01)
-      .onChange((v) => {
-        particleSystemConfig.shape.circle.radiusThickness = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.circle, "arc", -360.0, 360, 0.001)
-      .onChange((v) => {
-        particleSystemConfig.shape.circle.arc = v;
-        recreateParticleSystem();
-      })
+      .onChange(recreateParticleSystem)
   );
 };
 

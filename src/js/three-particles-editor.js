@@ -1,6 +1,7 @@
 import * as THREE from "three/build/three.module";
 
 import {
+  MovementSimulations,
   WIREFRAME,
   createHelperEntries,
 } from "./three-particles-editor/entries/helper-entries.js";
@@ -41,7 +42,9 @@ import { patchObject } from "@newkrok/three-particles/src/js/effects/three-parti
 
 const defaultEditorData = {
   textureId: TextureId.POINT,
-  simulateMovements: false,
+  simulation: {
+    movements: MovementSimulations.DISABLED,
+  },
   showLocalAxes: false,
   showWorldAxes: false,
   terrain: {
@@ -53,7 +56,8 @@ const particleSystemConfig = {
   ...getDefaultParticleSystemConfig(),
   _editorData: {
     ...defaultEditorData,
-    terrain: { ...defaultEditorData.terrain },
+    terrain: { ...defaultEditorData.terrain, ...defaultEditorData.simulation },
+    simulation: { ...defaultEditorData.simulation },
   },
 };
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };

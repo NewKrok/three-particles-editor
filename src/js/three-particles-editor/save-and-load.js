@@ -82,8 +82,6 @@ export const loadParticleSystem = ({
     skippedProperties: ["map"],
     applyToFirstObject: true,
   });
-  particleSystemConfig._editorData =
-    config._editorData || particleSystemConfig._editorData;
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
 
   recreateParticleSystem();
