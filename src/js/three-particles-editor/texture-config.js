@@ -1,4 +1,4 @@
-import * as THREE from "three/build/three.module";
+import * as THREE from "three";
 
 export const TextureId = {
   TERRAIN_CHESS_BOARD: "TERRAIN_CHESS_BOARD",

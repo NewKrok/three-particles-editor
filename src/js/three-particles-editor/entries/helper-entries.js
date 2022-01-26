@@ -1,4 +1,4 @@
-import * as THREE from "three/build/three.module";
+import * as THREE from "three";
 
 import { TextureId } from "../texture-config";
 import { setTerrain } from "../world";

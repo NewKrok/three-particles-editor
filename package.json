@@ -5,7 +5,7 @@
   "homepage": "https://github.com/NewKrok/three-particles-editor",
   "dependencies": {
     "lodash": "4.17.21",
-    "three": "0.136.0",
+    "three": "0.137.0",
     "@newkrok/three-particles": "0.5.0"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-import * as THREE from "three/build/three.module";
+import * as THREE from "three";
 
 import { textureConfigs } from "./texture-config";
 

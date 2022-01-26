@@ -1,5 +1,3 @@
-import * as THREE from "three/build/three.module";
-
 import { TextureId } from "../texture-config";
 import { blendingMap } from "@newkrok/three-particles/src/js/effects/three-particles";
 import { getTexture } from "../assets";
