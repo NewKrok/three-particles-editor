@@ -23,6 +23,7 @@ import {
 } from "./three-particles-editor/world.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { Object3D } from "three";
 import { TextureId } from "./three-particles-editor/texture-config.js";
 import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
@@ -62,11 +63,15 @@ const particleSystemConfig = {
 };
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 
-let scene, particleSystem, clock;
+let scene, particleSystemContainer, particleSystem, clock;
 
 export const createParticleSystemEditor = (targetQuery) => {
   clock = new THREE.Clock();
   scene = createWorld(targetQuery);
+
+  particleSystemContainer = new Object3D();
+  scene.add(particleSystemContainer);
+
   initAssets(() => {
     createExamples((config) =>
       loadParticleSystem({
@@ -111,7 +116,7 @@ const recreateParticleSystem = () => {
 
   particleSystem = createParticleSystem(particleSystemConfig);
 
-  scene.add(particleSystem);
+  particleSystemContainer.add(particleSystem);
   configEntries.forEach(
     ({ onParticleSystemChange }) =>
       onParticleSystemChange && onParticleSystemChange(particleSystem)
@@ -165,6 +170,7 @@ const createPanel = () => {
       parentFolder: panel,
       particleSystemConfig,
       scene,
+      particleSystemContainer,
     })
   );
   configEntries.push(

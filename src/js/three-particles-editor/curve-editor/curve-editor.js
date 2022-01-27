@@ -1,3 +1,5 @@
+import { examples } from "./predefined-bezier-curve-config";
+
 const EDITOR_SIZE = { x: 300, y: 200 };
 const DEFAULT_CONTROL_OFFSET = 100;
 
@@ -124,6 +126,8 @@ export const createCurveEditor = () => {
 
   ctx = canvas.getContext("2d");
   render();
+
+  createPredefinedButtons();
 };
 
 const render = () => {
@@ -271,4 +275,19 @@ export const setCurveEditorPositions = ({ bezierPoints }) => {
     });
     render();
   }
+};
+
+const createPredefinedButton = ({ bezierPoints, preview, wrapper }) => {
+  const exampleWrapper = document.createElement("div");
+  exampleWrapper.className = "curve-editor__predefined-entry";
+  exampleWrapper.style.backgroundImage = `url(${preview})`;
+
+  exampleWrapper.onclick = () => setCurveEditorPositions({ bezierPoints });
+
+  wrapper.appendChild(exampleWrapper);
+};
+
+const createPredefinedButtons = () => {
+  const wrapper = document.querySelector(".curve-editor__predefined-list");
+  examples.forEach((entry) => createPredefinedButton({ ...entry, wrapper }));
 };

@@ -16,8 +16,5 @@ export const createEmissionEntries = ({
     .onChange(recreateParticleSystem)
     .listen();
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

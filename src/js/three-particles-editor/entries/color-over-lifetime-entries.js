@@ -24,8 +24,5 @@ export const createColorOverLifeTimeEntries = ({
     propertyName: "gradient",
   });
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

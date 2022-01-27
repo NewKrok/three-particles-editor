@@ -55,8 +55,5 @@ export const createSizeOverLifeTimeEntries = ({
     )
     .name("Edit curve");
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

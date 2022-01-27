@@ -13,22 +13,22 @@ const SMOKE =
 export const examples = [
   {
     name: "Falling leaves",
-    preview: "./assets/examples/falling-leaves.webp",
+    preview: "./assets/examples/effects/falling-leaves.webp",
     config: FALLING_LEAVES,
   },
   {
     name: "Healing",
-    preview: "./assets/examples/healing.webp",
+    preview: "./assets/examples/effects/healing.webp",
     config: HEALING,
   },
   {
     name: "Snowfall",
-    preview: "./assets/examples/snowfall.webp",
+    preview: "./assets/examples/effects/snowfall.webp",
     config: SNOWFALL,
   },
   {
     name: "Smoke",
-    preview: "./assets/examples/smoke.webp",
+    preview: "./assets/examples/effects/smoke.webp",
     config: SMOKE,
   },
 ];

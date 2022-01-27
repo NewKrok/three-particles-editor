@@ -55,8 +55,5 @@ export const createOpacityOverLifeTimeEntries = ({
     )
     .name("Edit curve");
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

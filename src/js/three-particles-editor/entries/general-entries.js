@@ -107,8 +107,5 @@ export const createGeneralEntries = ({
     .onChange(recreateParticleSystem)
     .listen();
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

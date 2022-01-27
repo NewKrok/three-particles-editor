@@ -41,8 +41,5 @@ export const createTransformEntries = ({
     step: 0.001,
   });
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

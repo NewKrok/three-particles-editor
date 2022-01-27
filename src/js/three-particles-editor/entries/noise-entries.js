@@ -46,8 +46,5 @@ export const createNoiseEntries = ({
     .onChange(recreateParticleSystem)
     .listen();
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

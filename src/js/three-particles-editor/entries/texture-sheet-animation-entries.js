@@ -51,10 +51,7 @@ export const createTextureSheetAnimationEntries = ({
       });
     });
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };
 
 const destroyTimeModeControllers = () => {

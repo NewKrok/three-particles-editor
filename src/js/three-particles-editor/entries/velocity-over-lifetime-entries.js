@@ -77,8 +77,5 @@ export const createVelocityOverLifeTimeEntries = ({
     step: 0.001,
   });
 */
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

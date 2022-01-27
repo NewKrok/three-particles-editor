@@ -24,8 +24,5 @@ export const createRotationOverLifeTimeEntries = ({
     step: 0.1,
   });
 
-  return {
-    onParticleSystemChange: () => {},
-    onUpdate: () => {},
-  };
+  return {};
 };

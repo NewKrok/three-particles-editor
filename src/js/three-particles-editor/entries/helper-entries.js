@@ -24,6 +24,7 @@ export const createHelperEntries = ({
   parentFolder,
   particleSystemConfig,
   scene,
+  particleSystemContainer,
 }) => {
   const folder = parentFolder.addFolder("Helper");
   folder.close();
@@ -102,56 +103,57 @@ export const createHelperEntries = ({
       updateLocalAxesHelper();
     },
     onUpdate: ({ elapsed }) => {
-      if (_particleSystem) {
+      if (particleSystemContainer) {
         let percentage, speed;
         switch (particleSystemConfig._editorData.simulation.movements) {
           case MovementSimulations.PROJECTILE_STRAIGHT:
             speed = 2;
             percentage =
               (elapsed - Math.floor(elapsed / speed) * speed) / speed;
-            _particleSystem.position.x = percentage * 5;
-            _particleSystem.position.y = 1;
-            _particleSystem.position.z = 0;
+            particleSystemContainer.position.x = percentage * 5;
+            particleSystemContainer.position.y = 1;
+            particleSystemContainer.position.z = 0;
             break;
 
           case MovementSimulations.PROJECTILE_ARC:
             speed = 2;
             percentage =
               (elapsed - Math.floor(elapsed / speed) * speed) / speed;
-            _particleSystem.position.x = percentage * 5;
-            _particleSystem.position.y = 1 + Math.sin(percentage * Math.PI);
-            _particleSystem.position.z = 0;
+            particleSystemContainer.position.x = percentage * 5;
+            particleSystemContainer.position.y =
+              1 + Math.sin(percentage * Math.PI);
+            particleSystemContainer.position.z = 0;
             break;
 
           case MovementSimulations.CIRCLE:
-            _particleSystem.position.x = Math.cos(elapsed * 0.5) * 2;
-            _particleSystem.position.y = 0;
-            _particleSystem.position.z = Math.sin(elapsed * 0.5) * 2;
+            particleSystemContainer.position.x = Math.cos(elapsed * 0.5) * 2;
+            particleSystemContainer.position.y = 0;
+            particleSystemContainer.position.z = Math.sin(elapsed * 0.5) * 2;
             break;
 
           case MovementSimulations.CIRCLE_WITH_WAVE:
-            _particleSystem.position.x = Math.cos(elapsed * 0.5) * 2;
-            _particleSystem.position.y =
+            particleSystemContainer.position.x = Math.cos(elapsed * 0.5) * 2;
+            particleSystemContainer.position.y =
               Math.cos(elapsed) * Math.sin(elapsed) * 0.5;
-            _particleSystem.position.z = Math.sin(elapsed * 0.5) * 2;
+            particleSystemContainer.position.z = Math.sin(elapsed * 0.5) * 2;
             break;
 
           case MovementSimulations.RANDOM_MOVEMENT:
             if (randomMovement.time-- <= 0) {
               const endPoint = {
-                x: _particleSystem.position.x + Math.random() * 2 - 4,
-                z: _particleSystem.position.z + Math.random() * 2 - 4,
+                x: particleSystemContainer.position.x + Math.random() * 2 - 4,
+                z: particleSystemContainer.position.z + Math.random() * 2 - 4,
               };
               randomMovement = {
-                speedX: (endPoint.x - _particleSystem.position.x) / 300,
-                speedZ: (endPoint.z - _particleSystem.position.z) / 300,
+                speedX: (endPoint.x - particleSystemContainer.position.x) / 300,
+                speedZ: (endPoint.z - particleSystemContainer.position.z) / 300,
                 time: 300 + Math.random() * 300,
               };
             }
 
-            _particleSystem.position.x += randomMovement.speedX;
-            _particleSystem.position.y = 0;
-            _particleSystem.position.z += randomMovement.speedZ;
+            particleSystemContainer.position.x += randomMovement.speedX;
+            particleSystemContainer.position.y = 0;
+            particleSystemContainer.position.z += randomMovement.speedZ;
             break;
 
           default:
