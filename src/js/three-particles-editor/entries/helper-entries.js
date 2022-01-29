@@ -42,19 +42,19 @@ export const createHelperEntries = ({
     .name("Simulate movements")
     .onChange((v) => {
       if (v === MovementSimulations.DISABLED) {
-        _particleSystem.position.x = 0;
-        _particleSystem.position.y = 0;
-        _particleSystem.position.z = 0;
+        particleSystemContainer.position.x = 0;
+        particleSystemContainer.position.y = 0;
+        particleSystemContainer.position.z = 0;
       }
       if (v === MovementSimulations.RANDOM_MOVEMENT) {
-        _particleSystem.position.x = 0;
-        _particleSystem.position.y = 0;
-        _particleSystem.position.z = 0;
-        const endPoint = { x: Math.random() * 2 - 4, z: Math.random() * 2 - 4 };
+        particleSystemContainer.position.x = 0;
+        particleSystemContainer.position.y = 0;
+        particleSystemContainer.position.z = 0;
+        const endPoint = { x: Math.random() * 2 - 1, z: Math.random() * 2 - 1 };
         randomMovement = {
-          speedX: (endPoint.x - _particleSystem.position.x) / 300,
-          speedZ: (endPoint.z - _particleSystem.position.z) / 300,
-          time: 300,
+          speedX: (endPoint.x - particleSystemContainer.position.x) / 100,
+          speedZ: (endPoint.z - particleSystemContainer.position.z) / 100,
+          time: 100,
         };
       }
     });
@@ -142,13 +142,13 @@ export const createHelperEntries = ({
           case MovementSimulations.RANDOM_MOVEMENT:
             if (randomMovement.time-- <= 0) {
               const endPoint = {
-                x: particleSystemContainer.position.x + Math.random() * 2 - 4,
-                z: particleSystemContainer.position.z + Math.random() * 2 - 4,
+                x: particleSystemContainer.position.x + Math.random() * 2 - 1,
+                z: particleSystemContainer.position.z + Math.random() * 2 - 1,
               };
               randomMovement = {
-                speedX: (endPoint.x - particleSystemContainer.position.x) / 300,
-                speedZ: (endPoint.z - particleSystemContainer.position.z) / 300,
-                time: 300 + Math.random() * 300,
+                speedX: (endPoint.x - particleSystemContainer.position.x) / 100,
+                speedZ: (endPoint.z - particleSystemContainer.position.z) / 100,
+                time: 300 + Math.random() * 200,
               };
             }
 
@@ -164,6 +164,9 @@ export const createHelperEntries = ({
     },
     onReset: () => {
       updateWorldAxesHelper();
+      particleSystemContainer.position.x = 0;
+      particleSystemContainer.position.y = 0;
+      particleSystemContainer.position.z = 0;
     },
   };
 };

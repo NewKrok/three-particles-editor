@@ -64,6 +64,19 @@ const particleSystemConfig = {
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 
 let scene, particleSystemContainer, particleSystem, clock;
+const configEntries = [];
+
+const reset = () => {
+  patchObject(particleSystemConfig._editorData, defaultEditorData, {
+    applyToFirstObject: true,
+  });
+  patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
+    applyToFirstObject: true,
+  });
+  setTerrain();
+  recreateParticleSystem();
+  configEntries.forEach(({ onReset }) => onReset && onReset());
+};
 
 export const createParticleSystemEditor = (targetQuery) => {
   clock = new THREE.Clock();
@@ -73,13 +86,14 @@ export const createParticleSystemEditor = (targetQuery) => {
   scene.add(particleSystemContainer);
 
   initAssets(() => {
-    createExamples((config) =>
+    createExamples((config) => {
+      reset();
       loadParticleSystem({
         config,
         particleSystemConfig,
         recreateParticleSystem,
-      })
-    );
+      });
+    });
     createPanel();
     createCurveEditor();
     animate();
@@ -123,8 +137,6 @@ const recreateParticleSystem = () => {
   );
 };
 
-const configEntries = [];
-
 const createPanel = () => {
   const panel = new GUI({
     width: 310,
@@ -132,23 +144,7 @@ const createPanel = () => {
     container: document.querySelector(".right-panel"),
   });
 
-  panel
-    .add(
-      {
-        reset: () => {
-          patchObject(particleSystemConfig._editorData, defaultEditorData, {
-            applyToFirstObject: true,
-          });
-          patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
-            applyToFirstObject: true,
-          });
-          setTerrain();
-          recreateParticleSystem();
-        },
-      },
-      "reset"
-    )
-    .name("Reset to default");
+  panel.add({ reset }, "reset").name("Reset to default");
   panel
     .add(
       { copyToClipboard: () => copyToClipboard(particleSystemConfig) },
