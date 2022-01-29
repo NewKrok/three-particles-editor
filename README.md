@@ -9,6 +9,7 @@ THREE Particles lib is avalible here https://github.com/NewKrok/three-particles
 https://newkrok.com/three-particles-editor/index.html
 
 # Video
+https://youtu.be/Q352JuxON04
 https://youtu.be/dtN_bndvoGU
 
 # Screenshots
