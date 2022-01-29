@@ -101,6 +101,7 @@ export const createHelperEntries = ({
     onParticleSystemChange: (particleSystem) => {
       _particleSystem = particleSystem;
       updateLocalAxesHelper();
+      updateWorldAxesHelper();
     },
     onUpdate: ({ elapsed }) => {
       if (particleSystemContainer) {

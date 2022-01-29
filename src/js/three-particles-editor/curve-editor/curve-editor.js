@@ -237,8 +237,8 @@ export const setCurveEditorTarget = (target) => {
 
 export const setCurveEditorPositions = ({ bezierPoints }) => {
   const points = Array.from(document.querySelectorAll(".bezier-point"));
-  // TODO Temporary only 3 ponts allowed
-  if (points.length === 3 && bezierPoints.length === 3) {
+  // TODO Temporary only 3 ponts allowed, it's 7 with control points
+  if (points.length === 3 && bezierPoints.length === 7) {
     let positionIndex = 0;
     points.forEach((point) => {
       const leftPoint = point.querySelector(".control-point--left");
