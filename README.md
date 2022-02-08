@@ -9,6 +9,7 @@ THREE Particles lib is avalible here https://github.com/NewKrok/three-particles
 https://newkrok.com/three-particles-editor/index.html
 
 # Video
+- In action: https://youtu.be/5IUqO5P-T6Q
 - Projectiles: https://youtu.be/Q352JuxON04
 - First preview: https://youtu.be/dtN_bndvoGU
 
