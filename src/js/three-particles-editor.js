@@ -45,6 +45,7 @@ const defaultEditorData = {
   textureId: TextureId.POINT,
   simulation: {
     movements: MovementSimulations.DISABLED,
+    movementSpeed: 1,
   },
   showLocalAxes: false,
   showWorldAxes: false,

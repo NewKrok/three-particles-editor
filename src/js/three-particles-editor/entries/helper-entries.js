@@ -52,12 +52,25 @@ export const createHelperEntries = ({
         particleSystemContainer.position.z = 0;
         const endPoint = { x: Math.random() * 2 - 1, z: Math.random() * 2 - 1 };
         randomMovement = {
-          speedX: (endPoint.x - particleSystemContainer.position.x) / 100,
-          speedZ: (endPoint.z - particleSystemContainer.position.z) / 100,
-          time: 100,
+          speedX: (endPoint.x - particleSystemContainer.position.x) / 200,
+          speedZ: (endPoint.z - particleSystemContainer.position.z) / 200,
+          time:
+            100 *
+            (1 / particleSystemConfig._editorData.simulation.movementSpeed),
         };
       }
     });
+
+  folder
+    .add(
+      particleSystemConfig._editorData.simulation,
+      "movementSpeed",
+      0.1,
+      10,
+      0.1
+    )
+    .name("Movement speed")
+    .listen();
 
   const updateLocalAxesHelper = () => {
     if (_particleSystem)
@@ -105,13 +118,16 @@ export const createHelperEntries = ({
     },
     onUpdate: ({ elapsed }) => {
       if (particleSystemContainer) {
+        let movementMultiplier =
+          particleSystemConfig._editorData.simulation.movementSpeed;
         let percentage, speed;
         switch (particleSystemConfig._editorData.simulation.movements) {
           case MovementSimulations.PROJECTILE_STRAIGHT:
             speed = 2;
             percentage =
               (elapsed - Math.floor(elapsed / speed) * speed) / speed;
-            particleSystemContainer.position.x = percentage * 5;
+            particleSystemContainer.position.x =
+              percentage * 5 * movementMultiplier;
             particleSystemContainer.position.y = 1;
             particleSystemContainer.position.z = 0;
             break;
@@ -120,23 +136,30 @@ export const createHelperEntries = ({
             speed = 2;
             percentage =
               (elapsed - Math.floor(elapsed / speed) * speed) / speed;
-            particleSystemContainer.position.x = percentage * 5;
+            particleSystemContainer.position.x =
+              percentage * 5 * movementMultiplier;
             particleSystemContainer.position.y =
               1 + Math.sin(percentage * Math.PI);
             particleSystemContainer.position.z = 0;
             break;
 
           case MovementSimulations.CIRCLE:
-            particleSystemContainer.position.x = Math.cos(elapsed * 0.5) * 2;
+            particleSystemContainer.position.x =
+              Math.cos(elapsed * 0.5 * movementMultiplier) * 2;
             particleSystemContainer.position.y = 0;
-            particleSystemContainer.position.z = Math.sin(elapsed * 0.5) * 2;
+            particleSystemContainer.position.z =
+              Math.sin(elapsed * 0.5 * movementMultiplier) * 2;
             break;
 
           case MovementSimulations.CIRCLE_WITH_WAVE:
-            particleSystemContainer.position.x = Math.cos(elapsed * 0.5) * 2;
+            particleSystemContainer.position.x =
+              Math.cos(elapsed * 0.5 * movementMultiplier) * 2;
             particleSystemContainer.position.y =
-              Math.cos(elapsed) * Math.sin(elapsed) * 0.5;
-            particleSystemContainer.position.z = Math.sin(elapsed * 0.5) * 2;
+              Math.cos(elapsed * movementMultiplier) *
+              Math.sin(elapsed * movementMultiplier) *
+              0.5;
+            particleSystemContainer.position.z =
+              Math.sin(elapsed * 0.5 * movementMultiplier) * 2;
             break;
 
           case MovementSimulations.RANDOM_MOVEMENT:
@@ -146,15 +169,23 @@ export const createHelperEntries = ({
                 z: particleSystemContainer.position.z + Math.random() * 2 - 1,
               };
               randomMovement = {
-                speedX: (endPoint.x - particleSystemContainer.position.x) / 100,
-                speedZ: (endPoint.z - particleSystemContainer.position.z) / 100,
-                time: 300 + Math.random() * 200,
+                speedX: (endPoint.x - particleSystemContainer.position.x) / 200,
+                speedZ: (endPoint.z - particleSystemContainer.position.z) / 200,
+                time:
+                  300 +
+                  Math.random() *
+                    200 *
+                    (1 /
+                      particleSystemConfig._editorData.simulation
+                        .movementSpeed),
               };
             }
 
-            particleSystemContainer.position.x += randomMovement.speedX;
+            particleSystemContainer.position.x +=
+              randomMovement.speedX * movementMultiplier;
             particleSystemContainer.position.y = 0;
-            particleSystemContainer.position.z += randomMovement.speedZ;
+            particleSystemContainer.position.z +=
+              randomMovement.speedZ * movementMultiplier;
             break;
 
           default:
