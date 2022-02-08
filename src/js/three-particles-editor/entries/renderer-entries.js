@@ -27,6 +27,7 @@ export const createRendererEntries = ({
       TextureId.GRADIENT_POINT,
       TextureId.CIRCLE,
       TextureId.CLOUD,
+      TextureId.FLAME,
       TextureId.FLARE,
       TextureId.STAR,
       TextureId.STAR_TOON,

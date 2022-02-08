@@ -22,6 +22,7 @@ export const TextureId = {
   CONFETTI: "CONFETTI",
   CONFETTI_TOON: "CONFETTI_TOON",
   MAGIC_EXPLOSION: "MAGIC_EXPLOSION",
+  FLAME: "FLAME",
 };
 
 export const textureConfigs = [
@@ -52,6 +53,10 @@ export const textureConfigs = [
   {
     id: TextureId.CLOUD,
     url: "./assets/textures/cloud.webp",
+  },
+  {
+    id: TextureId.FLAME,
+    url: "./assets/textures/flame.webp",
   },
   {
     id: TextureId.FLARE,
