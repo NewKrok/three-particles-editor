@@ -67,7 +67,7 @@ const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 let scene, particleSystemContainer, particleSystem, clock;
 const configEntries = [];
 
-const reset = () => {
+export const reset = () => {
   patchObject(particleSystemConfig._editorData, defaultEditorData, {
     applyToFirstObject: true,
   });
@@ -77,6 +77,16 @@ const reset = () => {
   setTerrain();
   recreateParticleSystem();
   configEntries.forEach(({ onReset }) => onReset && onReset());
+};
+
+window.editor = {
+  reset,
+  loadFromClipboard: () =>
+    loadFromClipboard({
+      particleSystemConfig,
+      recreateParticleSystem,
+    }),
+  copyToClipboard: () => copyToClipboard(particleSystemConfig),
 };
 
 export const createParticleSystemEditor = (targetQuery) => {
@@ -144,23 +154,6 @@ const createPanel = () => {
     title: "Particle System Editor",
     container: document.querySelector(".right-panel"),
   });
-
-  panel.add({ reset }, "reset").name("Reset to default");
-  panel
-    .add(
-      { copyToClipboard: () => copyToClipboard(particleSystemConfig) },
-      "copyToClipboard"
-    )
-    .name("Copy config to clipboard");
-  panel
-    .add(
-      {
-        loadFromClipboard: () =>
-          loadFromClipboard({ particleSystemConfig, recreateParticleSystem }),
-      },
-      "loadFromClipboard"
-    )
-    .name("Load config from clipboard");
 
   configEntries.push(
     createHelperEntries({
@@ -269,5 +262,3 @@ const createPanel = () => {
   );
   recreateParticleSystem();
 };
-
-createParticleSystemEditor("#three-particles-editor");

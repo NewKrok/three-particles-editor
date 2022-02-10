@@ -1,0 +1,172 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  font-family: "verdana";
+  overflow: hidden;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.left-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 250px;
+  overflow-y: auto;
+  background: #1f1f1f;
+  height: 100%;
+  max-height: 100%;
+}
+
+.simple-button {
+  cursor: pointer;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  padding: 5px;
+  background: #424242;
+  border-radius: 3px;
+  margin: 5px;
+}
+
+.simple-button:hover {
+  background: #4f4f4f;
+  user-select: none;
+}
+
+.example {
+  width: calc(100% - 10px);
+  padding: 4px;
+  margin: 4px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #424242;
+  user-select: none;
+  cursor: pointer;
+}
+
+.example:hover {
+  background: #525252;
+}
+
+.example-image {
+  width: 100%;
+  object-fit: contain;
+}
+
+.example-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.right-panel {
+  font-weight: 600;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  overflow: hidden;
+  font-size: 11px;
+  width: 310px;
+}
+
+.lil-gui.root {
+  max-height: calc(100% - 285px);
+}
+
+.curve-editor {
+  background: #222;
+  border: 1px solid #333;
+  padding: 5px;
+  position: relative;
+}
+
+.curve-editor__title {
+  color: #fff;
+  margin-bottom: 5px;
+  user-select: none;
+}
+
+.curve-editor__content {
+  line-height: 0;
+  position: relative;
+}
+
+.curve-editor__canvas {
+  width: 300px;
+  height: 200px;
+}
+
+.draggable-points {
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.draggable-point {
+  cursor: pointer;
+  background: #ffffff55;
+  border-radius: 50%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  border: 1px solid #ffffff55;
+}
+
+.bezier-point {
+  position: absolute;
+  background: #ffff0055;
+  width: 20px;
+  height: 20px;
+  transform: translate(-10px, -10px);
+}
+
+.control-point {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: translate(5px, 5px);
+}
+
+.curve-editor__predefined-list {
+  display: flex;
+  max-width: 100%;
+  gap: 4px;
+  margin-top: 15px;
+}
+
+.curve-editor__predefined-entry {
+  cursor: pointer;
+  border: 1px solid #ffffff55;
+  flex: 1;
+  height: 43px;
+  background-color: #000;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.curve-editor__predefined-entry:hover {
+  border: 1px solid #ffffff;
+}
