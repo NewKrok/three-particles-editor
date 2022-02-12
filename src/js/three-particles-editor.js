@@ -27,7 +27,6 @@ import { Object3D } from "three";
 import { TextureId } from "./three-particles-editor/texture-config.js";
 import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
-import { createExamples } from "./three-particles-editor/examples/examples.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
 import { createNoiseEntries } from "./three-particles-editor/entries/noise-entries.js";
 import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries.js";
@@ -65,9 +64,10 @@ const particleSystemConfig = {
 const cycleData = { pauseStartTime: 0, totalPauseTime: 0 };
 
 let scene, particleSystemContainer, particleSystem, clock;
+let isPaused = false;
 const configEntries = [];
 
-export const reset = () => {
+export const createNew = () => {
   patchObject(particleSystemConfig._editorData, defaultEditorData, {
     applyToFirstObject: true,
   });
@@ -79,14 +79,18 @@ export const reset = () => {
   configEntries.forEach(({ onReset }) => onReset && onReset());
 };
 
-window.editor = {
-  reset,
-  loadFromClipboard: () =>
-    loadFromClipboard({
-      particleSystemConfig,
-      recreateParticleSystem,
-    }),
-  copyToClipboard: () => copyToClipboard(particleSystemConfig),
+const resumeTime = () => {
+  if (isPaused) {
+    isPaused = false;
+    cycleData.totalPauseTime += Date.now() - cycleData.pauseStartTime;
+  }
+};
+
+const pauseTime = () => {
+  if (!isPaused) {
+    isPaused = true;
+    cycleData.pauseStartTime = Date.now();
+  }
 };
 
 export const createParticleSystemEditor = (targetQuery) => {
@@ -97,42 +101,33 @@ export const createParticleSystemEditor = (targetQuery) => {
   scene.add(particleSystemContainer);
 
   initAssets(() => {
-    createExamples((config) => {
-      reset();
-      loadParticleSystem({
-        config,
-        particleSystemConfig,
-        recreateParticleSystem,
-      });
-    });
     createPanel();
     createCurveEditor();
     animate();
   });
 
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      cycleData.pauseStartTime = Date.now();
-    } else {
-      cycleData.totalPauseTime += Date.now() - cycleData.pauseStartTime;
-    }
+    if (document.hidden) pauseTime();
+    else if (!isPaused) resumeTime();
   });
 };
 
 const animate = () => {
-  const rawDelta = clock.getDelta();
-  cycleData.now = Date.now() - cycleData.totalPauseTime;
-  cycleData.delta = rawDelta > 0.1 ? 0.1 : rawDelta;
-  cycleData.elapsed = clock.getElapsedTime();
+  if (!isPaused) {
+    const rawDelta = clock.getDelta();
+    cycleData.now = Date.now() - cycleData.totalPauseTime;
+    cycleData.delta = rawDelta > 0.1 ? 0.1 : rawDelta;
+    cycleData.elapsed = clock.getElapsedTime();
 
-  configEntries.forEach(({ onUpdate }) => onUpdate && onUpdate(cycleData));
-  updateParticleSystems(cycleData);
+    configEntries.forEach(({ onUpdate }) => onUpdate && onUpdate(cycleData));
+    updateParticleSystems(cycleData);
+  }
   updateWorld();
-
   requestAnimationFrame(animate);
 };
 
 const recreateParticleSystem = () => {
+  resumeTime();
   if (particleSystem) {
     destroyParticleSystem(particleSystem);
     particleSystem = null;
@@ -261,4 +256,27 @@ const createPanel = () => {
     })
   );
   recreateParticleSystem();
+};
+
+window.editor = {
+  createNew,
+  load: (config) => {
+    createNew();
+    loadParticleSystem({
+      config,
+      particleSystemConfig,
+      recreateParticleSystem,
+    });
+  },
+  loadFromClipboard: () => {
+    createNew();
+    loadFromClipboard({
+      particleSystemConfig,
+      recreateParticleSystem,
+    });
+  },
+  copyToClipboard: () => copyToClipboard(particleSystemConfig),
+  reset: recreateParticleSystem,
+  play: resumeTime,
+  pause: pauseTime,
 };

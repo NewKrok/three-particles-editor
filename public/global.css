@@ -2,6 +2,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  user-select: none;
 }
 
 html,
@@ -21,17 +22,6 @@ canvas {
   height: 100%;
 }
 
-.left-panel {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 250px;
-  overflow-y: auto;
-  background: #1f1f1f;
-  height: 100%;
-  max-height: 100%;
-}
-
 .simple-button {
   cursor: pointer;
   color: #fff;
@@ -46,32 +36,6 @@ canvas {
 .simple-button:hover {
   background: #4f4f4f;
   user-select: none;
-}
-
-.example {
-  width: calc(100% - 10px);
-  padding: 4px;
-  margin: 4px;
-  border-radius: 3px;
-  overflow: hidden;
-  background: #424242;
-  user-select: none;
-  cursor: pointer;
-}
-
-.example:hover {
-  background: #525252;
-}
-
-.example-image {
-  width: 100%;
-  object-fit: contain;
-}
-
-.example-title {
-  font-size: 12px;
-  font-weight: bold;
-  color: #fff;
 }
 
 .right-panel {
@@ -90,7 +54,7 @@ canvas {
 }
 
 .lil-gui.root {
-  max-height: calc(100% - 285px);
+  max-height: calc(100% - 290px);
 }
 
 .curve-editor {

@@ -1,10 +1,13 @@
+<script>
+  import ControlPanel from "./control-panel/control-panel.svelte";
+  import Examples from "./examples/examples.svelte";
+</script>
+
 <div class="wrapper">
   <div id="three-particles-editor" />
   <div class="stats" />
-  <div class="left-panel">
-    <div id="show-hide-button" class="simple-button">Show / Hide examples</div>
-    <div id="example-list" />
-  </div>
+  <Examples />
+  <ControlPanel />
   <div class="right-panel">
     <div class="curve-editor">
       <div class="curve-editor__title">Bezier curve editor</div>
