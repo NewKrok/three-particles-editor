@@ -56,10 +56,10 @@
   <Content id="simple-content">You will loose your current config.</Content>
   <Actions>
     <Button>
-      <Label>No</Label>
+      <Icon class="material-icons">close</Icon><Label>No</Label>
     </Button>
     <Button on:click={createNew}>
-      <Label>Yes</Label>
+      <Icon class="material-icons">check</Icon><Label>Yes</Label>
     </Button>
   </Actions>
 </Dialog>

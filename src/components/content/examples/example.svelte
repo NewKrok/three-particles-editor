@@ -6,7 +6,7 @@
     Content as DialogContent,
     Actions,
   } from "@smui/dialog";
-  import Button, { Label } from "@smui/button";
+  import Button, { Icon, Label } from "@smui/button";
 
   let open = false;
 
@@ -45,17 +45,17 @@
   >
   <Actions>
     <Button>
-      <Label>No</Label>
+      <Icon class="material-icons">close</Icon><Label>No</Label>
     </Button>
     <Button on:click={load}>
-      <Label>Yes</Label>
+      <Icon class="material-icons">check</Icon><Label>Yes</Label>
     </Button>
   </Actions>
 </Dialog>
 
 <style lang="scss">
   .wrapper {
-    margin: 24px 16px;
+    margin: 16px;
     border: 1px solid var(--border);
     border-radius: 4px;
   }

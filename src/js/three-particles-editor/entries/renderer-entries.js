@@ -42,6 +42,8 @@ export const createRendererEntries = ({
       TextureId.CONFETTI,
       TextureId.CONFETTI_TOON,
       TextureId.MAGIC_EXPLOSION,
+      "test-1",
+      "test-2",
     ])
     .listen()
     .onChange((v) => {

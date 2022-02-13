@@ -1,12 +1,12 @@
 <script>
   import ControlPanel from "./control-panel/control-panel.svelte";
-  import Examples from "./examples/examples.svelte";
+  import LeftSide from "./left-side/left-side.svelte";
 </script>
 
 <div class="wrapper">
   <div id="three-particles-editor" />
   <div class="stats" />
-  <Examples />
+  <LeftSide />
   <ControlPanel />
   <div class="right-panel">
     <div class="curve-editor">
@@ -36,7 +36,7 @@
       top: 5px;
 
       :global(> div) {
-        left: 250px !important;
+        left: 310px !important;
         position: absolute !important;
       }
     }

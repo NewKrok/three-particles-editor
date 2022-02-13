@@ -27,6 +27,8 @@
     "@smui/textfield": "^6.0.0-beta.13",
     "@smui/paper": "^6.0.0-beta.13",
     "@smui/dialog": "^6.0.0-beta.13",
+    "@smui/tab": "^6.0.0-beta.13",
+    "@smui/tab-bar": "^6.0.0-beta.13",
     "smui-theme": "^6.0.0-beta.13",
     "eslint": "7.31.0",
     "prettier": "2.4.0",
