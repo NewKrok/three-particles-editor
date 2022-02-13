@@ -185,12 +185,6 @@ var app = (function () {
     function detach(node) {
         node.parentNode.removeChild(node);
     }
-    function destroy_each(iterations, detaching) {
-        for (let i = 0; i < iterations.length; i += 1) {
-            if (iterations[i])
-                iterations[i].d(detaching);
-        }
-    }
     function element(name) {
         return document.createElement(name);
     }
@@ -44066,83 +44060,102 @@ var app = (function () {
       {
         id: TextureId.POINT,
         url: "./assets/textures/point.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.GRADIENT_POINT,
         url: "./assets/textures/gradient-point.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.CIRCLE,
         url: "./assets/textures/circle.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.CLOUD,
         url: "./assets/textures/cloud.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.FLAME,
         url: "./assets/textures/flame.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.FLARE,
         url: "./assets/textures/flare.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.STAR,
         url: "./assets/textures/star.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.STAR_TOON,
         url: "./assets/textures/star-toon.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.PLUS,
         url: "./assets/textures/plus.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.PLUS_TOON,
         url: "./assets/textures/plus-toon.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.MOON,
         url: "./assets/textures/moon.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.RAINDROP,
         url: "./assets/textures/raindrop.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.LEAF_TOON,
         url: "./assets/textures/leaf-toon.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.SNOWFLAKE,
         url: "./assets/textures/snowflake.webp",
+        isParticleTexture: true,
       },
       {
         id: TextureId.NUMBERS,
         url: "./assets/textures/numbers.webp",
         tiles: new Vector2$1(5.0, 2.0),
+        isParticleTexture: true,
       },
       {
         id: TextureId.NUMBERS_TOON,
         url: "./assets/textures/numbers-toon.webp",
         tiles: new Vector2$1(5.0, 2.0),
+        isParticleTexture: true,
       },
       {
         id: TextureId.CONFETTI,
         url: "./assets/textures/confetti.webp",
         tiles: new Vector2$1(5.0, 2.0),
+        isParticleTexture: true,
       },
       {
         id: TextureId.CONFETTI_TOON,
         url: "./assets/textures/confetti-toon.webp",
         tiles: new Vector2$1(5.0, 2.0),
+        isParticleTexture: true,
       },
       {
         id: TextureId.MAGIC_EXPLOSION,
         url: "./assets/textures/magic-explosion.webp",
         tiles: new Vector2$1(5.0, 2.0),
+        isParticleTexture: true,
       },
     ];
 
@@ -88940,19 +88953,11 @@ var app = (function () {
 
       folder
         .add(propertyReference, "x", min, max, step)
-        .onChange((v) => {
-          resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].x =
-            v;
-          recreateParticleSystem();
-        })
+        .onChange(() => recreateParticleSystem())
         .listen();
       folder
         .add(propertyReference, "y", min, max, step)
-        .onChange((v) => {
-          resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].y =
-            v;
-          recreateParticleSystem();
-        })
+        .onChange(() => recreateParticleSystem())
         .listen();
 
       return folder;
@@ -89320,73 +89325,104 @@ var app = (function () {
 
       const setConfigByTexture = (textureId) => {
         lastUsedTextureId = textureId;
-        const { map, tiles } = getTexture(textureId);
-        particleSystemConfig.map = map;
-        particleSystemConfig._editorData.textureId = textureId;
-        particleSystemConfig.textureSheetAnimation.tiles.x = tiles?.x || 1;
-        particleSystemConfig.textureSheetAnimation.tiles.y = tiles?.y || 1;
+        const texture = getTexture(textureId);
+        if (texture) {
+          const { map, tiles } = texture;
+          particleSystemConfig.map = map;
+          particleSystemConfig._editorData.textureId = textureId;
+          particleSystemConfig.textureSheetAnimation.tiles.x =
+            tiles?.x || particleSystemConfig.textureSheetAnimation.tiles.x;
+          particleSystemConfig.textureSheetAnimation.tiles.y =
+            tiles?.y || particleSystemConfig.textureSheetAnimation.tiles.y;
+        }
       };
 
-      folder
-        .add(particleSystemConfig._editorData, "textureId", [
-          TextureId.POINT,
-          TextureId.GRADIENT_POINT,
-          TextureId.CIRCLE,
-          TextureId.CLOUD,
-          TextureId.FLAME,
-          TextureId.FLARE,
-          TextureId.STAR,
-          TextureId.STAR_TOON,
-          TextureId.PLUS,
-          TextureId.PLUS_TOON,
-          TextureId.MOON,
-          TextureId.RAINDROP,
-          TextureId.LEAF_TOON,
-          TextureId.SNOWFLAKE,
-          TextureId.NUMBERS,
-          TextureId.NUMBERS_TOON,
-          TextureId.CONFETTI,
-          TextureId.CONFETTI_TOON,
-          TextureId.MAGIC_EXPLOSION,
-          "test-1",
-          "test-2",
-        ])
-        .listen()
-        .onChange((v) => {
-          setConfigByTexture(v);
-          recreateParticleSystem();
-        });
-      setConfigByTexture(particleSystemConfig._editorData.textureId);
+      let controllers = [];
 
-      if (typeof particleSystemConfig.renderer.blending === "number")
-        particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
-          (entry) => blendingMap[entry] === particleSystemConfig.renderer.blending
+      const rebuild = () => {
+        controllers.forEach((controller) => controller.destroy());
+        controllers = [];
+
+        let customAssetList =
+          JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
+
+        controllers.push(
+          folder
+            .add(
+              particleSystemConfig._editorData,
+              "textureId",
+              customAssetList
+                .map(({ name }) => name)
+                .concat([
+                  TextureId.POINT,
+                  TextureId.GRADIENT_POINT,
+                  TextureId.CIRCLE,
+                  TextureId.CLOUD,
+                  TextureId.FLAME,
+                  TextureId.FLARE,
+                  TextureId.STAR,
+                  TextureId.STAR_TOON,
+                  TextureId.PLUS,
+                  TextureId.PLUS_TOON,
+                  TextureId.MOON,
+                  TextureId.RAINDROP,
+                  TextureId.LEAF_TOON,
+                  TextureId.SNOWFLAKE,
+                  TextureId.NUMBERS,
+                  TextureId.NUMBERS_TOON,
+                  TextureId.CONFETTI,
+                  TextureId.CONFETTI_TOON,
+                  TextureId.MAGIC_EXPLOSION,
+                ])
+            )
+            .listen()
+            .onChange((v) => {
+              setConfigByTexture(v);
+              recreateParticleSystem();
+            })
         );
-      folder
-        .add(particleSystemConfig.renderer, "blending", [
-          "THREE.NoBlending",
-          "THREE.NormalBlending",
-          "THREE.AdditiveBlending",
-          "THREE.SubtractiveBlending",
-          "THREE.MultiplyBlending",
-        ])
-        .listen()
-        .onChange(recreateParticleSystem);
+        setConfigByTexture(particleSystemConfig._editorData.textureId);
 
-      folder
-        .add(particleSystemConfig.renderer, "transparent")
-        .onChange(recreateParticleSystem)
-        .listen();
+        if (typeof particleSystemConfig.renderer.blending === "number")
+          particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
+            (entry) => blendingMap[entry] === particleSystemConfig.renderer.blending
+          );
+        controllers.push(
+          folder
+            .add(particleSystemConfig.renderer, "blending", [
+              "THREE.NoBlending",
+              "THREE.NormalBlending",
+              "THREE.AdditiveBlending",
+              "THREE.SubtractiveBlending",
+              "THREE.MultiplyBlending",
+            ])
+            .listen()
+            .onChange(recreateParticleSystem)
+        );
 
-      folder
-        .add(particleSystemConfig.renderer, "depthTest")
-        .onChange(recreateParticleSystem)
-        .listen();
+        controllers.push(
+          folder
+            .add(particleSystemConfig.renderer, "transparent")
+            .onChange(recreateParticleSystem)
+            .listen()
+        );
 
-      folder
-        .add(particleSystemConfig.renderer, "depthWrite")
-        .onChange(recreateParticleSystem)
-        .listen();
+        controllers.push(
+          folder
+            .add(particleSystemConfig.renderer, "depthTest")
+            .onChange(recreateParticleSystem)
+            .listen()
+        );
+
+        controllers.push(
+          folder
+            .add(particleSystemConfig.renderer, "depthWrite")
+            .onChange(recreateParticleSystem)
+            .listen()
+        );
+      };
+
+      rebuild();
 
       return {
         onParticleSystemChange: () => {
@@ -89397,6 +89433,7 @@ var app = (function () {
           }
         },
         onUpdate: () => {},
+        onAssetUpdate: rebuild,
       };
     };
 
@@ -89724,6 +89761,7 @@ var app = (function () {
     };
 
     let timeModeControllers = [];
+    let lastInitedTimeMode = null;
 
     const createTextureSheetAnimationEntries = ({
       parentFolder,
@@ -89760,16 +89798,28 @@ var app = (function () {
           TimeMode.LIFETIME,
           TimeMode.FPS,
         ])
-        .onChange((v) => {
-          particleSystemConfig.textureSheetAnimation.timeMode = v;
+        .onChange(() => {
           createEntriesByTimeMode({
             folder,
             particleSystemConfig,
             recreateParticleSystem,
           });
-        });
+        })
+        .listen();
 
-      return {};
+      return {
+        onParticleSystemChange: () => {
+          if (
+            lastInitedTimeMode !==
+            particleSystemConfig.textureSheetAnimation.timeMode
+          )
+            createEntriesByTimeMode({
+              folder,
+              particleSystemConfig,
+              recreateParticleSystem,
+            });
+        },
+      };
     };
 
     const destroyTimeModeControllers = () => {
@@ -89782,6 +89832,7 @@ var app = (function () {
       particleSystemConfig,
       recreateParticleSystem,
     }) => {
+      lastInitedTimeMode = particleSystemConfig.textureSheetAnimation.timeMode;
       destroyTimeModeControllers();
       switch (particleSystemConfig.textureSheetAnimation.timeMode) {
         case TimeMode.FPS:
@@ -89984,9 +90035,16 @@ var app = (function () {
       scene.add(particleSystemContainer);
 
       initAssets(() => {
-        createPanel();
-        createCurveEditor();
-        animate();
+        let customTextures =
+          JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
+        loadCustomAssets({
+          textures: customTextures.map(({ name, url }) => ({ id: name, url })),
+          onComplete: () => {
+            createPanel();
+            createCurveEditor();
+            animate();
+          },
+        });
       });
 
       document.addEventListener("visibilitychange", () => {
@@ -90162,6 +90220,11 @@ var app = (function () {
       reset: recreateParticleSystem,
       play: resumeTime,
       pause: pauseTime,
+      updateAssets: () =>
+        configEntries.forEach(
+          ({ onAssetUpdate }) => onAssetUpdate && onAssetUpdate()
+        ),
+      getCurrentParticleSystemConfig: () => particleSystemConfig,
     };
 
     function classMap(classObj) {
@@ -93250,7 +93313,7 @@ var app = (function () {
     const file$s = "node_modules\\@smui\\button\\dist\\Button.svelte";
 
     // (50:10) {#if touch}
-    function create_if_block$8(ctx) {
+    function create_if_block$9(ctx) {
     	let div;
 
     	const block = {
@@ -93269,7 +93332,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$8.name,
+    		id: create_if_block$9.name,
     		type: "if",
     		source: "(50:10) {#if touch}",
     		ctx
@@ -93286,7 +93349,7 @@ var app = (function () {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[27].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[29], null);
-    	let if_block = /*touch*/ ctx[6] && create_if_block$8(ctx);
+    	let if_block = /*touch*/ ctx[6] && create_if_block$9(ctx);
 
     	const block = {
     		c: function create() {
@@ -93328,7 +93391,7 @@ var app = (function () {
 
     			if (/*touch*/ ctx[6]) {
     				if (if_block) ; else {
-    					if_block = create_if_block$8(ctx);
+    					if_block = create_if_block$9(ctx);
     					if_block.c();
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
     				}
@@ -95433,7 +95496,7 @@ var app = (function () {
     const get_over_slot_context = ctx => ({});
 
     // (47:6) {#if fullscreen}
-    function create_if_block$7(ctx) {
+    function create_if_block$8(ctx) {
     	let div;
     	let mounted;
     	let dispose;
@@ -95462,7 +95525,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$7.name,
+    		id: create_if_block$8.name,
     		type: "if",
     		source: "(47:6) {#if fullscreen}",
     		ctx
@@ -95489,7 +95552,7 @@ var app = (function () {
     	let dispose;
     	const default_slot_template = /*#slots*/ ctx[27].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[26], null);
-    	let if_block = /*fullscreen*/ ctx[5] && create_if_block$7(ctx);
+    	let if_block = /*fullscreen*/ ctx[5] && create_if_block$8(ctx);
 
     	let div0_levels = [
     		{
@@ -95635,7 +95698,7 @@ var app = (function () {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
-    					if_block = create_if_block$7(ctx);
+    					if_block = create_if_block$8(ctx);
     					if_block.c();
     					if_block.m(div0, null);
     				}
@@ -97799,9 +97862,9 @@ var app = (function () {
     			create_component(button3.$$.fragment);
     			t3 = space();
     			create_component(dialog.$$.fragment);
-    			add_location(div0, file$q, 29, 2, 918);
+    			add_location(div0, file$q, 29, 2, 920);
     			attr_dev(div1, "class", "wrapper svelte-13hdh7z");
-    			add_location(div1, file$q, 28, 0, 893);
+    			add_location(div1, file$q, 28, 0, 895);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -97917,8 +97980,8 @@ var app = (function () {
     			themeLink.id = "theme";
     		}
 
-    		themeLink.href = `/build/static/smui${lightTheme ? "" : "-dark"}.css`;
-    		document.head.querySelector('link[href="/build/static/smui-dark.css"]')?.insertAdjacentElement("afterend", themeLink);
+    		themeLink.href = `./build/static/smui${lightTheme ? "" : "-dark"}.css`;
+    		document.head.querySelector('link[href="./build/static/smui-dark.css"]')?.insertAdjacentElement("afterend", themeLink);
     	};
 
     	let open = false;
@@ -99246,7 +99309,7 @@ var app = (function () {
     const file$l = "node_modules\\@smui\\icon-button\\dist\\IconButton.svelte";
 
     // (61:10) {#if touch}
-    function create_if_block$6(ctx) {
+    function create_if_block$7(ctx) {
     	let div;
 
     	const block = {
@@ -99265,7 +99328,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$6.name,
+    		id: create_if_block$7.name,
     		type: "if",
     		source: "(61:10) {#if touch}",
     		ctx
@@ -99282,7 +99345,7 @@ var app = (function () {
     	let current;
     	const default_slot_template = /*#slots*/ ctx[32].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[36], null);
-    	let if_block = /*touch*/ ctx[8] && create_if_block$6(ctx);
+    	let if_block = /*touch*/ ctx[8] && create_if_block$7(ctx);
 
     	const block = {
     		c: function create() {
@@ -99324,7 +99387,7 @@ var app = (function () {
 
     			if (/*touch*/ ctx[8]) {
     				if (if_block) ; else {
-    					if_block = create_if_block$6(ctx);
+    					if_block = create_if_block$7(ctx);
     					if_block.c();
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
     				}
@@ -101773,7 +101836,7 @@ var app = (function () {
     }
 
     // (57:2) {#if !indicatorSpanOnlyContent}
-    function create_if_block$5(ctx) {
+    function create_if_block$6(ctx) {
     	let tabindicator;
     	let current;
 
@@ -101837,7 +101900,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$5.name,
+    		id: create_if_block$6.name,
     		type: "if",
     		source: "(57:2) {#if !indicatorSpanOnlyContent}",
     		ctx
@@ -101936,7 +101999,7 @@ var app = (function () {
     		span0_data = assign(span0_data, span0_levels[i]);
     	}
 
-    	let if_block1 = !/*indicatorSpanOnlyContent*/ ctx[6] && create_if_block$5(ctx);
+    	let if_block1 = !/*indicatorSpanOnlyContent*/ ctx[6] && create_if_block$6(ctx);
 
     	const block = {
     		c: function create() {
@@ -102031,7 +102094,7 @@ var app = (function () {
     						transition_in(if_block1, 1);
     					}
     				} else {
-    					if_block1 = create_if_block$5(ctx);
+    					if_block1 = create_if_block$6(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
     					if_block1.m(t2.parentNode, t2);
@@ -105174,7 +105237,7 @@ var app = (function () {
     const file$f = "node_modules\\svrollbar\\src\\Svrollbar.svelte";
 
     // (233:0) {#if visible}
-    function create_if_block$4(ctx) {
+    function create_if_block$5(ctx) {
     	let div2;
     	let div0;
     	let div0_intro;
@@ -105268,7 +105331,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$4.name,
+    		id: create_if_block$5.name,
     		type: "if",
     		source: "(233:0) {#if visible}",
     		ctx
@@ -105280,7 +105343,7 @@ var app = (function () {
     function create_fragment$g(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = /*visible*/ ctx[7] && create_if_block$4(ctx);
+    	let if_block = /*visible*/ ctx[7] && create_if_block$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -105304,7 +105367,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block$4(ctx);
+    					if_block = create_if_block$5(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -107297,7 +107360,7 @@ var app = (function () {
     const file$d = "node_modules\\@smui\\floating-label\\dist\\FloatingLabel.svelte";
 
     // (19:0) {:else}
-    function create_else_block$1(ctx) {
+    function create_else_block$2(ctx) {
     	let label;
     	let label_class_value;
     	let label_style_value;
@@ -107415,7 +107478,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$1.name,
+    		id: create_else_block$2.name,
     		type: "else",
     		source: "(19:0) {:else}",
     		ctx
@@ -107425,7 +107488,7 @@ var app = (function () {
     }
 
     // (1:0) {#if wrapped}
-    function create_if_block$3(ctx) {
+    function create_if_block$4(ctx) {
     	let span;
     	let span_class_value;
     	let span_style_value;
@@ -107534,7 +107597,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$3.name,
+    		id: create_if_block$4.name,
     		type: "if",
     		source: "(1:0) {#if wrapped}",
     		ctx
@@ -107548,7 +107611,7 @@ var app = (function () {
     	let if_block;
     	let if_block_anchor;
     	let current;
-    	const if_block_creators = [create_if_block$3, create_else_block$1];
+    	const if_block_creators = [create_if_block$4, create_else_block$2];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -108344,7 +108407,7 @@ var app = (function () {
     const file$b = "node_modules\\@smui\\notched-outline\\dist\\NotchedOutline.svelte";
 
     // (17:2) {#if !noLabel}
-    function create_if_block$2(ctx) {
+    function create_if_block$3(ctx) {
     	let div;
     	let div_style_value;
     	let current;
@@ -108405,7 +108468,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$2.name,
+    		id: create_if_block$3.name,
     		type: "if",
     		source: "(17:2) {#if !noLabel}",
     		ctx
@@ -108425,7 +108488,7 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block = !/*noLabel*/ ctx[3] && create_if_block$2(ctx);
+    	let if_block = !/*noLabel*/ ctx[3] && create_if_block$3(ctx);
 
     	let div2_levels = [
     		{
@@ -108494,7 +108557,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block$2(ctx);
+    					if_block = create_if_block$3(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(div2, t1);
@@ -110095,7 +110158,7 @@ var app = (function () {
 
     	const default_slot_template = /*#slots*/ ctx[51].default;
     	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[90], null);
-    	const if_block_creators = [create_if_block_3, create_else_block];
+    	const if_block_creators = [create_if_block_3, create_else_block$1];
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
@@ -111166,7 +111229,7 @@ var app = (function () {
     }
 
     // (124:4) {:else}
-    function create_else_block(ctx) {
+    function create_else_block$1(ctx) {
     	let t0;
     	let t1;
     	let input_1;
@@ -111428,7 +111491,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block.name,
+    		id: create_else_block$1.name,
     		type: "else",
     		source: "(124:4) {:else}",
     		ctx
@@ -111890,7 +111953,7 @@ var app = (function () {
     }
 
     // (217:0) {#if $$slots.helper}
-    function create_if_block$1(ctx) {
+    function create_if_block$2(ctx) {
     	let helperline;
     	let current;
     	const helperline_spread_levels = [prefixFilter(/*$$restProps*/ ctx[41], 'helperLine$')];
@@ -111946,7 +112009,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block$2.name,
     		type: "if",
     		source: "(217:0) {#if $$slots.helper}",
     		ctx
@@ -112029,7 +112092,7 @@ var app = (function () {
 
     	current_block_type_index = select_block_type(ctx);
     	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    	let if_block1 = /*$$slots*/ ctx[42].helper && create_if_block$1(ctx);
+    	let if_block1 = /*$$slots*/ ctx[42].helper && create_if_block$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -112059,7 +112122,7 @@ var app = (function () {
     						transition_in(if_block1, 1);
     					}
     				} else {
-    					if_block1 = create_if_block$1(ctx);
+    					if_block1 = create_if_block$2(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
     					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
@@ -114345,7 +114408,6 @@ var app = (function () {
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[4] = list[i];
-    	child_ctx[6] = i;
     	return child_ctx;
     }
 
@@ -114469,8 +114531,9 @@ var app = (function () {
     	return block;
     }
 
-    // (34:2) {#each list as example, i}
-    function create_each_block$1(ctx) {
+    // (34:2) {#each list as example (example.name)}
+    function create_each_block$1(key_1, ctx) {
+    	let first;
     	let example;
     	let current;
     	const example_spread_levels = [/*example*/ ctx[4]];
@@ -114483,14 +114546,21 @@ var app = (function () {
     	example = new Example({ props: example_props, $$inline: true });
 
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
+    			first = empty();
     			create_component(example.$$.fragment);
+    			this.first = first;
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, first, anchor);
     			mount_component(example, target, anchor);
     			current = true;
     		},
-    		p: function update(ctx, dirty) {
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
     			const example_changes = (dirty & /*list*/ 1)
     			? get_spread_update(example_spread_levels, [get_spread_object(/*example*/ ctx[4])])
     			: {};
@@ -114507,6 +114577,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(first);
     			destroy_component(example, detaching);
     		}
     	};
@@ -114515,7 +114586,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(34:2) {#each list as example, i}",
+    		source: "(34:2) {#each list as example (example.name)}",
     		ctx
     	});
 
@@ -114524,19 +114595,20 @@ var app = (function () {
 
     // (33:0) <Svroller width="100%" height="calc(100% - 70px)">
     function create_default_slot$4(ctx) {
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
     	let each_value = /*list*/ ctx[0];
     	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	const get_key = ctx => /*example*/ ctx[4].name;
+    	validate_each_keys(ctx, each_value, get_each_context$1, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    		let child_ctx = get_each_context$1(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block$1(key, child_ctx));
     	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
 
     	const block = {
     		c: function create() {
@@ -114558,28 +114630,9 @@ var app = (function () {
     			if (dirty & /*list*/ 1) {
     				each_value = /*list*/ ctx[0];
     				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$1(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block$1(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
     				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
+    				validate_each_keys(ctx, each_value, get_each_context$1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block$1, each_1_anchor, get_each_context$1);
     				check_outros();
     			}
     		},
@@ -114593,8 +114646,6 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
     			}
@@ -114602,7 +114653,10 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d(detaching);
+    			}
+
     			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
@@ -115089,21 +115143,43 @@ var app = (function () {
     /* src\components\content\library\library-item.svelte generated by Svelte v3.46.4 */
     const file$3 = "src\\components\\content\\library\\library-item.svelte";
 
-    // (22:4) <Media        class="card-media-square"        aspectRatio="square"        style={`background-image: url(${url})`}      >
+    // (25:4) <Media class="card-media-square" aspectRatio="square">
     function create_default_slot_14(ctx) {
-    	let div;
+    	let div0;
+    	let t0;
+    	let div1;
+    	let t1;
+    	let div2;
 
     	const block = {
     		c: function create() {
-    			div = element("div");
-    			attr_dev(div, "class", "circle-preview svelte-azingx");
-    			add_location(div, file$3, 26, 6, 633);
+    			div0 = element("div");
+    			t0 = space();
+    			div1 = element("div");
+    			t1 = space();
+    			div2 = element("div");
+    			attr_dev(div0, "class", "transparent-background svelte-1384yem");
+    			add_location(div0, file$3, 25, 6, 666);
+    			attr_dev(div1, "class", "media-background svelte-1384yem");
+    			attr_dev(div1, "style", `background-image: url(${/*normalizedUrl*/ ctx[5]})`);
+    			add_location(div1, file$3, 26, 6, 712);
+    			attr_dev(div2, "class", "circle-preview svelte-1384yem");
+    			add_location(div2, file$3, 30, 6, 827);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
+    			insert_dev(target, div0, anchor);
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, div1, anchor);
+    			insert_dev(target, t1, anchor);
+    			insert_dev(target, div2, anchor);
     		},
+    		p: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div0);
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(div1);
+    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(div2);
     		}
     	};
 
@@ -115111,98 +115187,15 @@ var app = (function () {
     		block,
     		id: create_default_slot_14.name,
     		type: "slot",
-    		source: "(22:4) <Media        class=\\\"card-media-square\\\"        aspectRatio=\\\"square\\\"        style={`background-image: url(${url})`}      >",
+    		source: "(25:4) <Media class=\\\"card-media-square\\\" aspectRatio=\\\"square\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (32:8) <Icon class="material-icons">
-    function create_default_slot_13(ctx) {
-    	let t;
-
-    	const block = {
-    		c: function create() {
-    			t = text("delete");
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, t, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(t);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_default_slot_13.name,
-    		type: "slot",
-    		source: "(32:8) <Icon class=\\\"material-icons\\\">",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (31:6) <PrimaryAction on:click={removeRequest}>
-    function create_default_slot_12(ctx) {
-    	let icon;
-    	let current;
-
-    	icon = new Icon({
-    			props: {
-    				class: "material-icons",
-    				$$slots: { default: [create_default_slot_13] },
-    				$$scope: { ctx }
-    			},
-    			$$inline: true
-    		});
-
-    	const block = {
-    		c: function create() {
-    			create_component(icon.$$.fragment);
-    		},
-    		m: function mount(target, anchor) {
-    			mount_component(icon, target, anchor);
-    			current = true;
-    		},
-    		p: function update(ctx, dirty) {
-    			const icon_changes = {};
-
-    			if (dirty & /*$$scope*/ 1024) {
-    				icon_changes.$$scope = { dirty, ctx };
-    			}
-
-    			icon.$set(icon_changes);
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(icon.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(icon.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			destroy_component(icon, detaching);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_default_slot_12.name,
-    		type: "slot",
-    		source: "(31:6) <PrimaryAction on:click={removeRequest}>",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (29:4) <Content class="mdc-typography--body2">
-    function create_default_slot_11(ctx) {
+    // (36:6) {:else}
+    function create_else_block(ctx) {
     	let textfield;
     	let updating_value;
     	let t;
@@ -115210,7 +115203,7 @@ var app = (function () {
     	let current;
 
     	function textfield_value_binding(value) {
-    		/*textfield_value_binding*/ ctx[7](value);
+    		/*textfield_value_binding*/ ctx[9](value);
     	}
 
     	let textfield_props = {};
@@ -115230,7 +115223,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	primaryaction.$on("click", /*removeRequest*/ ctx[5]);
+    	primaryaction.$on("click", /*removeRequest*/ ctx[6]);
 
     	const block = {
     		c: function create() {
@@ -115256,7 +115249,7 @@ var app = (function () {
     			textfield.$set(textfield_changes);
     			const primaryaction_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				primaryaction_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115282,16 +115275,216 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_11.name,
-    		type: "slot",
-    		source: "(29:4) <Content class=\\\"mdc-typography--body2\\\">",
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(36:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (21:2) <Card>
+    // (34:6) {#if isDefault}
+    function create_if_block$1(ctx) {
+    	let div;
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			t = text(/*name*/ ctx[0]);
+    			attr_dev(div, "class", "default-name svelte-1384yem");
+    			add_location(div, file$3, 34, 8, 949);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*name*/ 1) set_data_dev(t, /*name*/ ctx[0]);
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(34:6) {#if isDefault}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (39:10) <Icon class="material-icons">
+    function create_default_slot_13(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("delete");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_13.name,
+    		type: "slot",
+    		source: "(39:10) <Icon class=\\\"material-icons\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (38:8) <PrimaryAction on:click={removeRequest}>
+    function create_default_slot_12(ctx) {
+    	let icon;
+    	let current;
+
+    	icon = new Icon({
+    			props: {
+    				class: "material-icons",
+    				$$slots: { default: [create_default_slot_13] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(icon.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(icon, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const icon_changes = {};
+
+    			if (dirty & /*$$scope*/ 4096) {
+    				icon_changes.$$scope = { dirty, ctx };
+    			}
+
+    			icon.$set(icon_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(icon.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(icon.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(icon, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_12.name,
+    		type: "slot",
+    		source: "(38:8) <PrimaryAction on:click={removeRequest}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (33:4) <Content class="mdc-typography--body2">
+    function create_default_slot_11(ctx) {
+    	let current_block_type_index;
+    	let if_block;
+    	let if_block_anchor;
+    	let current;
+    	const if_block_creators = [create_if_block$1, create_else_block];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*isDefault*/ ctx[3]) return 0;
+    		return 1;
+    	}
+
+    	current_block_type_index = select_block_type(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if_blocks[current_block_type_index].m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
+
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				} else {
+    					if_block.p(ctx, dirty);
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if_blocks[current_block_type_index].d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_11.name,
+    		type: "slot",
+    		source: "(33:4) <Content class=\\\"mdc-typography--body2\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (24:2) <Card>
     function create_default_slot_10(ctx) {
     	let media;
     	let t;
@@ -115302,7 +115495,6 @@ var app = (function () {
     			props: {
     				class: "card-media-square",
     				aspectRatio: "square",
-    				style: `background-image: url(${/*url*/ ctx[2]})`,
     				$$slots: { default: [create_default_slot_14] },
     				$$scope: { ctx }
     			},
@@ -115332,16 +115524,15 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const media_changes = {};
-    			if (dirty & /*url*/ 4) media_changes.style = `background-image: url(${/*url*/ ctx[2]})`;
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				media_changes.$$scope = { dirty, ctx };
     			}
 
     			media.$set(media_changes);
     			const content_changes = {};
 
-    			if (dirty & /*$$scope, name*/ 1025) {
+    			if (dirty & /*$$scope, name, isDefault*/ 4105) {
     				content_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115369,14 +115560,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_10.name,
     		type: "slot",
-    		source: "(21:2) <Card>",
+    		source: "(24:2) <Card>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (43:2) <Title id="simple-title">
+    // (51:2) <Title id="simple-title">
     function create_default_slot_9(ctx) {
     	let t0;
     	let t1;
@@ -115403,14 +115594,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_9.name,
     		type: "slot",
-    		source: "(43:2) <Title id=\\\"simple-title\\\">",
+    		source: "(51:2) <Title id=\\\"simple-title\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (44:2) <DialogContent id="simple-content"      >
+    // (52:2) <DialogContent id="simple-content"      >
     function create_default_slot_8(ctx) {
     	let t;
 
@@ -115430,14 +115621,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_8.name,
     		type: "slot",
-    		source: "(44:2) <DialogContent id=\\\"simple-content\\\"      >",
+    		source: "(52:2) <DialogContent id=\\\"simple-content\\\"      >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:6) <Icon class="material-icons">
+    // (57:6) <Icon class="material-icons">
     function create_default_slot_7(ctx) {
     	let t;
 
@@ -115457,14 +115648,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_7.name,
     		type: "slot",
-    		source: "(49:6) <Icon class=\\\"material-icons\\\">",
+    		source: "(57:6) <Icon class=\\\"material-icons\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:47) <Label>
+    // (57:47) <Label>
     function create_default_slot_6(ctx) {
     	let t;
 
@@ -115484,14 +115675,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_6.name,
     		type: "slot",
-    		source: "(49:47) <Label>",
+    		source: "(57:47) <Label>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (48:4) <Button>
+    // (56:4) <Button>
     function create_default_slot_5(ctx) {
     	let icon;
     	let label;
@@ -115527,14 +115718,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const icon_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				icon_changes.$$scope = { dirty, ctx };
     			}
 
     			icon.$set(icon_changes);
     			const label_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				label_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115561,14 +115752,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_5.name,
     		type: "slot",
-    		source: "(48:4) <Button>",
+    		source: "(56:4) <Button>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:6) <Icon class="material-icons">
+    // (60:6) <Icon class="material-icons">
     function create_default_slot_4(ctx) {
     	let t;
 
@@ -115588,14 +115779,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(52:6) <Icon class=\\\"material-icons\\\">",
+    		source: "(60:6) <Icon class=\\\"material-icons\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:47) <Label>
+    // (60:47) <Label>
     function create_default_slot_3$1(ctx) {
     	let t;
 
@@ -115615,14 +115806,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$1.name,
     		type: "slot",
-    		source: "(52:47) <Label>",
+    		source: "(60:47) <Label>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:4) <Button on:click={() => remove(id)}>
+    // (59:4) <Button on:click={() => remove(id)}>
     function create_default_slot_2$2(ctx) {
     	let icon;
     	let label;
@@ -115658,14 +115849,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const icon_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				icon_changes.$$scope = { dirty, ctx };
     			}
 
     			icon.$set(icon_changes);
     			const label_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				label_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115692,14 +115883,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$2.name,
     		type: "slot",
-    		source: "(51:4) <Button on:click={() => remove(id)}>",
+    		source: "(59:4) <Button on:click={() => remove(id)}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:2) <Actions>
+    // (55:2) <Actions>
     function create_default_slot_1$2(ctx) {
     	let button0;
     	let t;
@@ -115722,7 +115913,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	button1.$on("click", /*click_handler*/ ctx[8]);
+    	button1.$on("click", /*click_handler*/ ctx[10]);
 
     	const block = {
     		c: function create() {
@@ -115739,14 +115930,14 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const button0_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				button0_changes.$$scope = { dirty, ctx };
     			}
 
     			button0.$set(button0_changes);
     			const button1_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				button1_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115774,14 +115965,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$2.name,
     		type: "slot",
-    		source: "(47:2) <Actions>",
+    		source: "(55:2) <Actions>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (38:0) <Dialog    bind:open    aria-labelledby="simple-title"    aria-describedby="simple-content"  >
+    // (46:0) <Dialog    bind:open    aria-labelledby="simple-title"    aria-describedby="simple-content"  >
     function create_default_slot$2(ctx) {
     	let title;
     	let t0;
@@ -115835,21 +116026,21 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const title_changes = {};
 
-    			if (dirty & /*$$scope, name*/ 1025) {
+    			if (dirty & /*$$scope, name*/ 4097) {
     				title_changes.$$scope = { dirty, ctx };
     			}
 
     			title.$set(title_changes);
     			const dialogcontent_changes = {};
 
-    			if (dirty & /*$$scope*/ 1024) {
+    			if (dirty & /*$$scope*/ 4096) {
     				dialogcontent_changes.$$scope = { dirty, ctx };
     			}
 
     			dialogcontent.$set(dialogcontent_changes);
     			const actions_changes = {};
 
-    			if (dirty & /*$$scope, remove, id*/ 1034) {
+    			if (dirty & /*$$scope, remove, id*/ 4102) {
     				actions_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115881,7 +116072,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$2.name,
     		type: "slot",
-    		source: "(38:0) <Dialog    bind:open    aria-labelledby=\\\"simple-title\\\"    aria-describedby=\\\"simple-content\\\"  >",
+    		source: "(46:0) <Dialog    bind:open    aria-labelledby=\\\"simple-title\\\"    aria-describedby=\\\"simple-content\\\"  >",
     		ctx
     	});
 
@@ -115905,7 +116096,7 @@ var app = (function () {
     		});
 
     	function dialog_open_binding(value) {
-    		/*dialog_open_binding*/ ctx[9](value);
+    		/*dialog_open_binding*/ ctx[11](value);
     	}
 
     	let dialog_props = {
@@ -115928,8 +116119,8 @@ var app = (function () {
     			create_component(card.$$.fragment);
     			t = space();
     			create_component(dialog.$$.fragment);
-    			attr_dev(div, "class", "wrapper svelte-azingx");
-    			add_location(div, file$3, 19, 0, 467);
+    			attr_dev(div, "class", "wrapper svelte-1384yem");
+    			add_location(div, file$3, 22, 0, 567);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -115944,14 +116135,14 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const card_changes = {};
 
-    			if (dirty & /*$$scope, name, url*/ 1029) {
+    			if (dirty & /*$$scope, name, isDefault*/ 4105) {
     				card_changes.$$scope = { dirty, ctx };
     			}
 
     			card.$set(card_changes);
     			const dialog_changes = {};
 
-    			if (dirty & /*$$scope, remove, id, name*/ 1035) {
+    			if (dirty & /*$$scope, remove, id, name*/ 4103) {
     				dialog_changes.$$scope = { dirty, ctx };
     			}
 
@@ -115997,9 +116188,11 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Library_item', slots, []);
     	let { id, name, url, rename, remove } = $$props;
+    	let { isDefault = null } = $$props;
+    	const normalizedUrl = typeof url === "function" ? url() : url;
     	let open = false;
     	const removeRequest = () => $$invalidate(4, open = true);
-    	const writable_props = ['id', 'name', 'url', 'rename', 'remove'];
+    	const writable_props = ['id', 'name', 'url', 'rename', 'remove', 'isDefault'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Library_item> was created with unknown prop '${key}'`);
@@ -116020,9 +116213,10 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ('id' in $$props) $$invalidate(1, id = $$props.id);
     		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    		if ('url' in $$props) $$invalidate(2, url = $$props.url);
-    		if ('rename' in $$props) $$invalidate(6, rename = $$props.rename);
-    		if ('remove' in $$props) $$invalidate(3, remove = $$props.remove);
+    		if ('url' in $$props) $$invalidate(7, url = $$props.url);
+    		if ('rename' in $$props) $$invalidate(8, rename = $$props.rename);
+    		if ('remove' in $$props) $$invalidate(2, remove = $$props.remove);
+    		if ('isDefault' in $$props) $$invalidate(3, isDefault = $$props.isDefault);
     	};
 
     	$$self.$capture_state = () => ({
@@ -116043,6 +116237,8 @@ var app = (function () {
     		url,
     		rename,
     		remove,
+    		isDefault,
+    		normalizedUrl,
     		open,
     		removeRequest
     	});
@@ -116050,9 +116246,10 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('id' in $$props) $$invalidate(1, id = $$props.id);
     		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    		if ('url' in $$props) $$invalidate(2, url = $$props.url);
-    		if ('rename' in $$props) $$invalidate(6, rename = $$props.rename);
-    		if ('remove' in $$props) $$invalidate(3, remove = $$props.remove);
+    		if ('url' in $$props) $$invalidate(7, url = $$props.url);
+    		if ('rename' in $$props) $$invalidate(8, rename = $$props.rename);
+    		if ('remove' in $$props) $$invalidate(2, remove = $$props.remove);
+    		if ('isDefault' in $$props) $$invalidate(3, isDefault = $$props.isDefault);
     		if ('open' in $$props) $$invalidate(4, open = $$props.open);
     	};
 
@@ -116061,7 +116258,7 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*name, rename, id*/ 67) {
+    		if ($$self.$$.dirty & /*name, rename, id*/ 259) {
     			if (name || name === "") rename({ id, name });
     		}
     	};
@@ -116069,10 +116266,12 @@ var app = (function () {
     	return [
     		name,
     		id,
-    		url,
     		remove,
+    		isDefault,
     		open,
+    		normalizedUrl,
     		removeRequest,
+    		url,
     		rename,
     		textfield_value_binding,
     		click_handler,
@@ -116087,9 +116286,10 @@ var app = (function () {
     		init(this, options, instance$4, create_fragment$4, safe_not_equal, {
     			id: 1,
     			name: 0,
-    			url: 2,
-    			rename: 6,
-    			remove: 3
+    			url: 7,
+    			rename: 8,
+    			remove: 2,
+    			isDefault: 3
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -116110,15 +116310,15 @@ var app = (function () {
     			console.warn("<Library_item> was created without expected prop 'name'");
     		}
 
-    		if (/*url*/ ctx[2] === undefined && !('url' in props)) {
+    		if (/*url*/ ctx[7] === undefined && !('url' in props)) {
     			console.warn("<Library_item> was created without expected prop 'url'");
     		}
 
-    		if (/*rename*/ ctx[6] === undefined && !('rename' in props)) {
+    		if (/*rename*/ ctx[8] === undefined && !('rename' in props)) {
     			console.warn("<Library_item> was created without expected prop 'rename'");
     		}
 
-    		if (/*remove*/ ctx[3] === undefined && !('remove' in props)) {
+    		if (/*remove*/ ctx[2] === undefined && !('remove' in props)) {
     			console.warn("<Library_item> was created without expected prop 'remove'");
     		}
     	}
@@ -116162,21 +116362,29 @@ var app = (function () {
     	set remove(value) {
     		throw new Error("<Library_item>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get isDefault() {
+    		throw new Error("<Library_item>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set isDefault(value) {
+    		throw new Error("<Library_item>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src\components\content\library\library.svelte generated by Svelte v3.46.4 */
 
-    const { console: console_1 } = globals;
+    const { Object: Object_1 } = globals;
+
     const file$2 = "src\\components\\content\\library\\library.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[9] = list[i];
-    	child_ctx[11] = i;
+    	child_ctx[10] = list[i];
     	return child_ctx;
     }
 
-    // (60:4) <Icon class="material-icons">
+    // (91:4) <Icon class="material-icons">
     function create_default_slot_2$1(ctx) {
     	let t;
 
@@ -116196,14 +116404,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$1.name,
     		type: "slot",
-    		source: "(60:4) <Icon class=\\\"material-icons\\\">",
+    		source: "(91:4) <Icon class=\\\"material-icons\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:2) <Paper class="solo-paper" elevation={6}>
+    // (90:2) <Paper class="solo-paper" elevation={6}>
     function create_default_slot_1$1(ctx) {
     	let icon;
     	let t;
@@ -116252,7 +116460,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const icon_changes = {};
 
-    			if (dirty & /*$$scope*/ 4096) {
+    			if (dirty & /*$$scope*/ 8192) {
     				icon_changes.$$scope = { dirty, ctx };
     			}
 
@@ -116289,18 +116497,19 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$1.name,
     		type: "slot",
-    		source: "(59:2) <Paper class=\\\"solo-paper\\\" elevation={6}>",
+    		source: "(90:2) <Paper class=\\\"solo-paper\\\" elevation={6}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (71:2) {#each list as item, i}
-    function create_each_block(ctx) {
+    // (102:2) {#each list as item (item.id)}
+    function create_each_block(key_1, ctx) {
+    	let first;
     	let libraryitem;
     	let current;
-    	const libraryitem_spread_levels = [/*item*/ ctx[9], { remove: /*remove*/ ctx[4] }, { rename: /*rename*/ ctx[5] }];
+    	const libraryitem_spread_levels = [/*item*/ ctx[10], { remove: /*remove*/ ctx[4] }, { rename: /*rename*/ ctx[5] }];
     	let libraryitem_props = {};
 
     	for (let i = 0; i < libraryitem_spread_levels.length; i += 1) {
@@ -116310,17 +116519,24 @@ var app = (function () {
     	libraryitem = new Library_item({ props: libraryitem_props, $$inline: true });
 
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
+    			first = empty();
     			create_component(libraryitem.$$.fragment);
+    			this.first = first;
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, first, anchor);
     			mount_component(libraryitem, target, anchor);
     			current = true;
     		},
-    		p: function update(ctx, dirty) {
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
     			const libraryitem_changes = (dirty & /*list, remove, rename*/ 49)
     			? get_spread_update(libraryitem_spread_levels, [
-    					dirty & /*list*/ 1 && get_spread_object(/*item*/ ctx[9]),
+    					dirty & /*list*/ 1 && get_spread_object(/*item*/ ctx[10]),
     					dirty & /*remove*/ 16 && { remove: /*remove*/ ctx[4] },
     					dirty & /*rename*/ 32 && { rename: /*rename*/ ctx[5] }
     				])
@@ -116338,6 +116554,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(first);
     			destroy_component(libraryitem, detaching);
     		}
     	};
@@ -116346,28 +116563,29 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(71:2) {#each list as item, i}",
+    		source: "(102:2) {#each list as item (item.id)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (70:0) <Svroller width="100%" height="calc(100% - 70px)">
+    // (101:0) <Svroller width="100%" height="calc(100% - 95px)">
     function create_default_slot$1(ctx) {
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
     	let each_value = /*list*/ ctx[0];
     	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	const get_key = ctx => /*item*/ ctx[10].id;
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
     	}
-
-    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
-    		each_blocks[i] = null;
-    	});
 
     	const block = {
     		c: function create() {
@@ -116389,28 +116607,9 @@ var app = (function () {
     			if (dirty & /*list, remove, rename*/ 49) {
     				each_value = /*list*/ ctx[0];
     				validate_each_argument(each_value);
-    				let i;
-
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context(ctx, each_value, i);
-
-    					if (each_blocks[i]) {
-    						each_blocks[i].p(child_ctx, dirty);
-    						transition_in(each_blocks[i], 1);
-    					} else {
-    						each_blocks[i] = create_each_block(child_ctx);
-    						each_blocks[i].c();
-    						transition_in(each_blocks[i], 1);
-    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-    					}
-    				}
-
     				group_outros();
-
-    				for (i = each_value.length; i < each_blocks.length; i += 1) {
-    					out(i);
-    				}
-
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
     				check_outros();
     			}
     		},
@@ -116424,8 +116623,6 @@ var app = (function () {
     			current = true;
     		},
     		o: function outro(local) {
-    			each_blocks = each_blocks.filter(Boolean);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
     			}
@@ -116433,7 +116630,10 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			destroy_each(each_blocks, detaching);
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d(detaching);
+    			}
+
     			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
@@ -116442,7 +116642,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(70:0) <Svroller width=\\\"100%\\\" height=\\\"calc(100% - 70px)\\\">",
+    		source: "(101:0) <Svroller width=\\\"100%\\\" height=\\\"calc(100% - 95px)\\\">",
     		ctx
     	});
 
@@ -116476,7 +116676,7 @@ var app = (function () {
     	svroller = new Svroller({
     			props: {
     				width: "100%",
-    				height: "calc(100% - 70px)",
+    				height: "calc(100% - 95px)",
     				$$slots: { default: [create_default_slot$1] },
     				$$scope: { ctx }
     			},
@@ -116491,8 +116691,8 @@ var app = (function () {
     			create_component(fileuploader.$$.fragment);
     			t1 = space();
     			create_component(svroller.$$.fragment);
-    			attr_dev(div, "class", "svelte-jo7wq7");
-    			add_location(div, file$2, 57, 0, 1500);
+    			attr_dev(div, "class", "head svelte-1qxzonn");
+    			add_location(div, file$2, 88, 0, 2563);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -116509,14 +116709,14 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const paper_changes = {};
 
-    			if (dirty & /*$$scope, filter*/ 4098) {
+    			if (dirty & /*$$scope, filter*/ 8194) {
     				paper_changes.$$scope = { dirty, ctx };
     			}
 
     			paper.$set(paper_changes);
     			const svroller_changes = {};
 
-    			if (dirty & /*$$scope, list*/ 4097) {
+    			if (dirty & /*$$scope, list*/ 8193) {
     				svroller_changes.$$scope = { dirty, ctx };
     			}
 
@@ -116558,41 +116758,55 @@ var app = (function () {
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Library', slots, []);
+
+    	const defaultList = Object.keys(TextureId).filter(key => textureConfigs.find(({ id }) => id === TextureId[key]).isParticleTexture).map((key, index) => ({
+    		id: index,
+    		name: key,
+    		url: () => getTexture(TextureId[key]).url,
+    		isDefault: true
+    	}));
+
     	let rawList = JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
-    	let list = rawList;
+    	let list = rawList.concat(defaultList);
     	let filter = "";
 
-    	loadCustomAssets({
-    		textures: list.map(({ name, url }) => ({ id: name, url })),
-    		onComplete: () => console.log("DONE")
-    	});
-
-    	const save = () => localStorage.setItem("particle-system-editor/library", JSON.stringify(rawList));
+    	const save = () => {
+    		localStorage.setItem("particle-system-editor/library", JSON.stringify(rawList));
+    		window.editor.updateAssets();
+    	};
 
     	const handleKeyUp = () => {
-    		$$invalidate(0, list = rawList.filter(({ name }) => name.toLowerCase().includes(filter.toLowerCase())));
+    		$$invalidate(0, list = rawList.filter(({ name }) => name.toLowerCase().includes(filter.toLowerCase())).concat(defaultList));
     	};
 
     	const add = url => {
-    		const randomId = Math.floor(Math.random() * 10000);
+    		const randomId = Math.floor(Math.random() * 100000000);
+    		const randomName = `CustomTexture-${Math.floor(Math.random() * 1000)}`;
+    		const entry = { url, name: randomName, id: randomId };
+    		rawList.push(entry);
+    		$$invalidate(0, list = rawList.concat(defaultList));
 
-    		rawList.push({
-    			url,
-    			name: `CustomTexture-${randomId}`,
-    			id: `CustomTexture-${randomId}`
+    		loadCustomAssets({
+    			textures: [{ ...entry, id: entry.name }],
+    			onComplete: save
     		});
-
-    		$$invalidate(0, list = rawList);
-    		save();
     	};
 
     	const remove = id => {
     		rawList = rawList.filter(({ id: currentId }) => currentId !== id);
-    		$$invalidate(0, list = rawList);
+    		$$invalidate(0, list = rawList.concat(defaultList));
     		save();
     	};
 
     	const rename = ({ id, name }) => {
+    		const currentEntry = rawList.find(entry => entry.id === id);
+
+    		if (currentEntry) {
+    			const particleSystemConfig = window.editor.getCurrentParticleSystemConfig();
+    			if (particleSystemConfig._editorData.textureId === currentEntry.name) particleSystemConfig._editorData.textureId = name;
+    			textureConfigs.forEach(entry => entry.id = entry.id === currentEntry.name ? name : entry.id);
+    		}
+
     		rawList = rawList.map(entry => ({
     			...entry,
     			name: entry.id === id ? name : entry.name
@@ -116603,8 +116817,8 @@ var app = (function () {
 
     	const writable_props = [];
 
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<Library> was created with unknown prop '${key}'`);
+    	Object_1.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Library> was created with unknown prop '${key}'`);
     	});
 
     	function input_value_binding(value) {
@@ -116613,6 +116827,7 @@ var app = (function () {
     	}
 
     	$$self.$capture_state = () => ({
+    		getTexture,
     		loadCustomAssets,
     		FileUploader: File_uploader,
     		Svroller,
@@ -116620,6 +116835,9 @@ var app = (function () {
     		Paper,
     		Icon,
     		LibraryItem: Library_item,
+    		textureConfigs,
+    		TextureId,
+    		defaultList,
     		rawList,
     		list,
     		filter,

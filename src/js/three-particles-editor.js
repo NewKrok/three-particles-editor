@@ -21,6 +21,10 @@ import {
   setTerrain,
   updateWorld,
 } from "./three-particles-editor/world.js";
+import {
+  initAssets,
+  loadCustomAssets,
+} from "./three-particles-editor/assets.js";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
 import { Object3D } from "three";
@@ -37,7 +41,6 @@ import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/
 import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
 import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
 import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries.js";
-import { initAssets } from "./three-particles-editor/assets.js";
 import { patchObject } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-utils";
 
 const defaultEditorData = {
@@ -101,9 +104,16 @@ export const createParticleSystemEditor = (targetQuery) => {
   scene.add(particleSystemContainer);
 
   initAssets(() => {
-    createPanel();
-    createCurveEditor();
-    animate();
+    let customTextures =
+      JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
+    loadCustomAssets({
+      textures: customTextures.map(({ name, url }) => ({ id: name, url })),
+      onComplete: () => {
+        createPanel();
+        createCurveEditor();
+        animate();
+      },
+    });
   });
 
   document.addEventListener("visibilitychange", () => {
@@ -279,4 +289,9 @@ window.editor = {
   reset: recreateParticleSystem,
   play: resumeTime,
   pause: pauseTime,
+  updateAssets: () =>
+    configEntries.forEach(
+      ({ onAssetUpdate }) => onAssetUpdate && onAssetUpdate()
+    ),
+  getCurrentParticleSystemConfig: () => particleSystemConfig,
 };

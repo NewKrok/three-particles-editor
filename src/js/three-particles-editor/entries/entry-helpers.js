@@ -84,21 +84,13 @@ export const createVector2FolderEntry = ({
     rootPropertyName
   )[propertyName];
 
-  const x = folder
+  folder
     .add(propertyReference, "x", min, max, step)
-    .onChange((v) => {
-      resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].x =
-        v;
-      recreateParticleSystem();
-    })
+    .onChange(() => recreateParticleSystem())
     .listen();
-  const y = folder
+  folder
     .add(propertyReference, "y", min, max, step)
-    .onChange((v) => {
-      resolveProperty(particleSystemConfig, rootPropertyName)[propertyName].y =
-        v;
-      recreateParticleSystem();
-    })
+    .onChange(() => recreateParticleSystem())
     .listen();
 
   return folder;

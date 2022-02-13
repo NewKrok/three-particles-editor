@@ -31,7 +31,7 @@
   </Paper>
 </div>
 <Svroller width="100%" height="calc(100% - 70px)">
-  {#each list as example, i}
+  {#each list as example (example.name)}
     <Example {...example} />
   {/each}
 </Svroller>

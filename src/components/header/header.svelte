@@ -14,9 +14,9 @@
       themeLink.rel = "stylesheet";
       themeLink.id = "theme";
     }
-    themeLink.href = `/build/static/smui${lightTheme ? "" : "-dark"}.css`;
+    themeLink.href = `./build/static/smui${lightTheme ? "" : "-dark"}.css`;
     document.head
-      .querySelector('link[href="/build/static/smui-dark.css"]')
+      .querySelector('link[href="./build/static/smui-dark.css"]')
       ?.insertAdjacentElement("afterend", themeLink);
   };
 

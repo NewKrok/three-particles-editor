@@ -6,6 +6,7 @@ import {
 import { TimeMode } from "@newkrok/three-particles/src/js/effects/three-particles";
 
 let timeModeControllers = [];
+let lastInitedTimeMode = null;
 
 export const createTextureSheetAnimationEntries = ({
   parentFolder,
@@ -42,16 +43,28 @@ export const createTextureSheetAnimationEntries = ({
       TimeMode.LIFETIME,
       TimeMode.FPS,
     ])
-    .onChange((v) => {
-      particleSystemConfig.textureSheetAnimation.timeMode = v;
+    .onChange(() => {
       createEntriesByTimeMode({
         folder,
         particleSystemConfig,
         recreateParticleSystem,
       });
-    });
+    })
+    .listen();
 
-  return {};
+  return {
+    onParticleSystemChange: () => {
+      if (
+        lastInitedTimeMode !==
+        particleSystemConfig.textureSheetAnimation.timeMode
+      )
+        createEntriesByTimeMode({
+          folder,
+          particleSystemConfig,
+          recreateParticleSystem,
+        });
+    },
+  };
 };
 
 const destroyTimeModeControllers = () => {
@@ -64,6 +77,7 @@ const createEntriesByTimeMode = ({
   particleSystemConfig,
   recreateParticleSystem,
 }) => {
+  lastInitedTimeMode = particleSystemConfig.textureSheetAnimation.timeMode;
   destroyTimeModeControllers();
   switch (particleSystemConfig.textureSheetAnimation.timeMode) {
     case TimeMode.FPS:
