@@ -85,10 +85,7 @@ const createEntriesByTimeMode = ({
         folder
           .add(particleSystemConfig.textureSheetAnimation, "fps", 0, 60, 1)
           .listen()
-          .onChange((v) => {
-            particleSystemConfig.textureSheetAnimation.fps = v;
-            recreateParticleSystem();
-          })
+          .onChange(recreateParticleSystem)
       );
       break;
   }

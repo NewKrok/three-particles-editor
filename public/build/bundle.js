@@ -87376,6 +87376,9 @@ var app = (function () {
   uniform float fps;
   uniform bool useFPSForFrameIndex;
   uniform vec2 tiles;
+  uniform bool discardBackgroundColor;
+  uniform vec3 backgroundColor;
+  uniform float backgroundColorTolerance;
 
   varying vec4 vColor;
   varying float vLifetime;
@@ -87428,6 +87431,8 @@ var app = (function () {
     vec4 rotatedTexture = texture2D(map, uvPoint);
 
     gl_FragColor = gl_FragColor * rotatedTexture;
+
+    if (discardBackgroundColor && abs(length(rotatedTexture.rgb - backgroundColor.rgb)) < backgroundColorTolerance ) discard;
   }
 `;
 
@@ -87694,6 +87699,9 @@ var app = (function () {
       map: null,
       renderer: {
         blending: NormalBlending$1,
+        discardBackgroundColor: false,
+        backgroundColorTolerance: 1.0,
+        backgroundColor: { r: 1.0, g: 1.0, b: 1.0 },
         transparent: true,
         depthTest: true,
         depthWrite: false,
@@ -87976,6 +87984,15 @@ var app = (function () {
           },
           useFPSForFrameIndex: {
             value: textureSheetAnimation.timeMode === TimeMode.FPS,
+          },
+          backgroundColor: {
+            value: renderer.backgroundColor,
+          },
+          discardBackgroundColor: {
+            value: renderer.discardBackgroundColor,
+          },
+          backgroundColorTolerance: {
+            value: renderer.backgroundColorTolerance,
           },
         },
         vertexShader: ParticleSystemVertexShader,
@@ -89383,6 +89400,33 @@ var app = (function () {
         );
         setConfigByTexture(particleSystemConfig._editorData.textureId);
 
+        controllers.push(
+          folder
+            .add(particleSystemConfig.renderer, "discardBackgroundColor")
+            .onChange(recreateParticleSystem)
+            .listen()
+        );
+
+        controllers.push(
+          folder
+            .add(
+              particleSystemConfig.renderer,
+              "backgroundColorTolerance",
+              0.0,
+              2.0,
+              0.001
+            )
+            .onChange(recreateParticleSystem)
+            .listen()
+        );
+
+        controllers.push(
+          folder
+            .addColor(particleSystemConfig.renderer, "backgroundColor")
+            .onChange(recreateParticleSystem)
+            .listen()
+        );
+
         if (typeof particleSystemConfig.renderer.blending === "number")
           particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
             (entry) => blendingMap[entry] === particleSystemConfig.renderer.blending
@@ -89840,10 +89884,7 @@ var app = (function () {
             folder
               .add(particleSystemConfig.textureSheetAnimation, "fps", 0, 60, 1)
               .listen()
-              .onChange((v) => {
-                particleSystemConfig.textureSheetAnimation.fps = v;
-                recreateParticleSystem();
-              })
+              .onChange(recreateParticleSystem)
           );
           break;
       }

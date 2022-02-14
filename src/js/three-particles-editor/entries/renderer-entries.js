@@ -73,6 +73,33 @@ export const createRendererEntries = ({
     );
     setConfigByTexture(particleSystemConfig._editorData.textureId);
 
+    controllers.push(
+      folder
+        .add(particleSystemConfig.renderer, "discardBackgroundColor")
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
+    controllers.push(
+      folder
+        .add(
+          particleSystemConfig.renderer,
+          "backgroundColorTolerance",
+          0.0,
+          2.0,
+          0.001
+        )
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
+    controllers.push(
+      folder
+        .addColor(particleSystemConfig.renderer, "backgroundColor")
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
     if (typeof particleSystemConfig.renderer.blending === "number")
       particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
         (entry) => blendingMap[entry] === particleSystemConfig.renderer.blending
