@@ -20,6 +20,11 @@ const loadTextures = ({ textureConfigs, onComplete }) => {
 };
 
 export const loadCustomAssets = ({ textures, onComplete }) => {
+  if (textures.length === 0) {
+    onComplete();
+    return;
+  }
+
   textures.forEach(({ id, url }) => textureConfigs.push({ id, url }));
   loadTextures({
     textureConfigs: [...textures],

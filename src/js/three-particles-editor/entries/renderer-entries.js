@@ -43,27 +43,32 @@ export const createRendererEntries = ({
           "textureId",
           customAssetList
             .map(({ name }) => name)
-            .concat([
-              TextureId.POINT,
-              TextureId.GRADIENT_POINT,
-              TextureId.CIRCLE,
-              TextureId.CLOUD,
-              TextureId.FLAME,
-              TextureId.FLARE,
-              TextureId.STAR,
-              TextureId.STAR_TOON,
-              TextureId.PLUS,
-              TextureId.PLUS_TOON,
-              TextureId.MOON,
-              TextureId.RAINDROP,
-              TextureId.LEAF_TOON,
-              TextureId.SNOWFLAKE,
-              TextureId.NUMBERS,
-              TextureId.NUMBERS_TOON,
-              TextureId.CONFETTI,
-              TextureId.CONFETTI_TOON,
-              TextureId.MAGIC_EXPLOSION,
-            ])
+            .concat(
+              [
+                TextureId.POINT,
+                TextureId.GRADIENT_POINT,
+                TextureId.CIRCLE,
+                TextureId.CLOUD,
+                TextureId.FLAME,
+                TextureId.FLARE,
+                TextureId.STAR,
+                TextureId.STAR_TOON,
+                TextureId.PLUS,
+                TextureId.PLUS_TOON,
+                TextureId.MOON,
+                TextureId.RAINDROP,
+                TextureId.LEAF_TOON,
+                TextureId.SNOWFLAKE,
+                TextureId.NUMBERS,
+                TextureId.NUMBERS_TOON,
+                TextureId.CONFETTI,
+                TextureId.CONFETTI_TOON,
+                TextureId.MAGIC_EXPLOSION,
+                TextureId.FEATHER,
+                TextureId.SKULL,
+                TextureId.HEART,
+              ].sort()
+            )
         )
         .listen()
         .onChange((v) => {

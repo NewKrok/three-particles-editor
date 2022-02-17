@@ -24,7 +24,8 @@
       name: key,
       url: () => getTexture(TextureId[key]).url,
       isDefault: true,
-    }));
+    }))
+    .sort((a, b) => (a.name < b.name ? -1 : 1));
   let rawList =
     JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
   let list = rawList.concat(defaultList);
@@ -52,7 +53,7 @@
       name: randomName,
       id: randomId,
     };
-    rawList.push(entry);
+    rawList.unshift(entry);
     list = rawList.concat(defaultList);
     loadCustomAssets({
       textures: [{ ...entry, id: entry.name }],

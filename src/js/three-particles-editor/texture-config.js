@@ -23,6 +23,9 @@ export const TextureId = {
   CONFETTI_TOON: "CONFETTI_TOON",
   MAGIC_EXPLOSION: "MAGIC_EXPLOSION",
   FLAME: "FLAME",
+  FEATHER: "FEATHER",
+  SKULL: "SKULL",
+  HEART: "HEART",
 };
 
 export const textureConfigs = [
@@ -136,6 +139,21 @@ export const textureConfigs = [
     id: TextureId.MAGIC_EXPLOSION,
     url: "./assets/textures/magic-explosion.webp",
     tiles: new THREE.Vector2(5.0, 2.0),
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.FEATHER,
+    url: "./assets/textures/feather.webp",
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.SKULL,
+    url: "./assets/textures/skull.webp",
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.HEART,
+    url: "./assets/textures/heart.webp",
     isParticleTexture: true,
   },
 ];
