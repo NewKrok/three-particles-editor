@@ -67,6 +67,8 @@ export const createRendererEntries = ({
                 TextureId.FEATHER,
                 TextureId.SKULL,
                 TextureId.HEART,
+                TextureId.ROCKS,
+                TextureId.SQUARE,
               ].sort()
             )
         )

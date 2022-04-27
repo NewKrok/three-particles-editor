@@ -26,6 +26,8 @@ export const TextureId = {
   FEATHER: "FEATHER",
   SKULL: "SKULL",
   HEART: "HEART",
+  ROCKS: "ROCKS",
+  SQUARE: "SQUARE",
 };
 
 export const textureConfigs = [
@@ -154,6 +156,17 @@ export const textureConfigs = [
   {
     id: TextureId.HEART,
     url: "./assets/textures/heart.webp",
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.SQUARE,
+    url: "./assets/textures/square.webp",
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.ROCKS,
+    url: "./assets/textures/rocks.webp",
+    tiles: new THREE.Vector2(5.0, 2.0),
     isParticleTexture: true,
   },
 ];

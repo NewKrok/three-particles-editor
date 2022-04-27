@@ -2,6 +2,7 @@ import * as THREE from "three";
 
 import {
   MovementSimulations,
+  RotationSimulations,
   WIREFRAME,
   createHelperEntries,
 } from "./three-particles-editor/entries/helper-entries.js";
@@ -41,13 +42,15 @@ import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/
 import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
 import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
 import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries.js";
-import { patchObject } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-utils";
+import { patchObject } from "@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js";
 
 const defaultEditorData = {
   textureId: TextureId.POINT,
   simulation: {
     movements: MovementSimulations.DISABLED,
     movementSpeed: 1,
+    rotation: RotationSimulations.DISABLED,
+    rotationSpeed: 1,
   },
   showLocalAxes: false,
   showWorldAxes: false,

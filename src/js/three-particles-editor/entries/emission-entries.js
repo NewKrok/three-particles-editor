@@ -7,12 +7,12 @@ export const createEmissionEntries = ({
   folder.close();
 
   folder
-    .add(particleSystemConfig.emission, "rateOverTime", 0.0, 100, 1.0)
+    .add(particleSystemConfig.emission, "rateOverTime", 0.0, 500, 1.0)
     .onChange(recreateParticleSystem)
     .listen();
 
   folder
-    .add(particleSystemConfig.emission, "rateOverDistance", 0.0, 100, 1.0)
+    .add(particleSystemConfig.emission, "rateOverDistance", 0.0, 500, 1.0)
     .onChange(recreateParticleSystem)
     .listen();
 

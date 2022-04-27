@@ -20,6 +20,14 @@ export const MovementSimulations = {
   RANDOM_MOVEMENT: "RANDOM_MOVEMENT",
 };
 
+export const RotationSimulations = {
+  DISABLED: "DISABLED",
+  X: "X",
+  Y: "Y",
+  Z: "Z",
+  MIXED: "MIXED",
+};
+
 export const createHelperEntries = ({
   parentFolder,
   particleSystemConfig,
@@ -70,6 +78,33 @@ export const createHelperEntries = ({
       0.1
     )
     .name("Movement speed")
+    .listen();
+
+  folder
+    .add(particleSystemConfig._editorData.simulation, "rotation", [
+      RotationSimulations.DISABLED,
+      RotationSimulations.X,
+      RotationSimulations.Y,
+      RotationSimulations.Z,
+      RotationSimulations.MIXED,
+    ])
+    .listen()
+    .name("Simulate rotation")
+    .onChange((v) => {
+      particleSystemContainer.rotation.x = 0;
+      particleSystemContainer.rotation.y = 0;
+      particleSystemContainer.rotation.z = 0;
+    });
+
+  folder
+    .add(
+      particleSystemConfig._editorData.simulation,
+      "rotationSpeed",
+      0.1,
+      10,
+      0.1
+    )
+    .name("Rotation speed")
     .listen();
 
   const updateLocalAxesHelper = () => {
@@ -191,6 +226,27 @@ export const createHelperEntries = ({
           default:
             break;
         }
+        let rotationMultiplier =
+          particleSystemConfig._editorData.simulation.rotationSpeed;
+        switch (particleSystemConfig._editorData.simulation.rotation) {
+          case RotationSimulations.X:
+            particleSystemContainer.rotation.x = rotationMultiplier * elapsed;
+            break;
+          case RotationSimulations.Y:
+            particleSystemContainer.rotation.y = rotationMultiplier * elapsed;
+            break;
+          case RotationSimulations.Z:
+            particleSystemContainer.rotation.z = rotationMultiplier * elapsed;
+            break;
+          case RotationSimulations.MIXED:
+            particleSystemContainer.rotation.x =
+              rotationMultiplier * Math.cos(elapsed);
+            particleSystemContainer.rotation.y =
+              rotationMultiplier * Math.sin(elapsed);
+            particleSystemContainer.rotation.z =
+              rotationMultiplier * Math.sin(elapsed) * Math.sin(elapsed);
+            break;
+        }
       }
     },
     onReset: () => {
@@ -198,6 +254,9 @@ export const createHelperEntries = ({
       particleSystemContainer.position.x = 0;
       particleSystemContainer.position.y = 0;
       particleSystemContainer.position.z = 0;
+      particleSystemContainer.rotation.x = 0;
+      particleSystemContainer.rotation.y = 0;
+      particleSystemContainer.rotation.z = 0;
     },
   };
 };

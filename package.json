@@ -5,7 +5,7 @@
   "homepage": "https://github.com/NewKrok/three-particles-editor",
   "dependencies": {
     "@material/theme": "^13.0.0",
-    "@newkrok/three-particles": "0.7.0",
+    "@newkrok/three-particles": "0.7.1",
     "node-sass": "^7.0.1",
     "sirv-cli": "^2.0.0",
     "svelte-preprocess": "^4.10.3",
