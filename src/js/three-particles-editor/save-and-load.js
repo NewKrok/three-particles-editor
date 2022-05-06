@@ -19,8 +19,7 @@ const getObjectDiff = (
         const objectDiff = getObjectDiff(objectA[key], objectB[key], config);
         if (Object.keys(objectDiff).length > 0) result[key] = objectDiff;
       } else {
-        const mergedValue =
-          objectB[key] === 0 ? 0 : objectB[key] || objectA[key];
+        const mergedValue = objectB[key] ?? objectA[key];
         if (mergedValue !== objectA[key]) result[key] = mergedValue;
       }
     }

@@ -90,7 +90,7 @@ export const createGeneralEntries = ({
   });
 
   folder
-    .add(particleSystemConfig, "gravity", -0.2, 0.2, 0.001)
+    .add(particleSystemConfig, "gravity", -20, 20, 0.01)
     .onChange(recreateParticleSystem)
     .listen();
 

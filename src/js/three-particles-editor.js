@@ -54,6 +54,7 @@ const defaultEditorData = {
   },
   showLocalAxes: false,
   showWorldAxes: false,
+  frustumCulled: true,
   terrain: {
     textureId: WIREFRAME,
   },

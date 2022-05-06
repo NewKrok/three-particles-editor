@@ -44,7 +44,7 @@ export const createVelocityOverLifeTimeEntries = ({
     max: 30.0,
     step: 0.001,
   });
-  /*
+
   const orbitalVelocityFolder = folder.addFolder("Orbital velocity");
   createMinMaxFloatFolderEntry({
     particleSystemConfig,
@@ -52,9 +52,9 @@ export const createVelocityOverLifeTimeEntries = ({
     parentFolder: orbitalVelocityFolder,
     rootPropertyName: "velocityOverLifetime.orbital",
     propertyName: "x",
-    min: -30.0,
-    max: 30.0,
-    step: 0.001,
+    min: -45.0,
+    max: 45.0,
+    step: 0.01,
   });
   createMinMaxFloatFolderEntry({
     particleSystemConfig,
@@ -62,9 +62,9 @@ export const createVelocityOverLifeTimeEntries = ({
     parentFolder: orbitalVelocityFolder,
     rootPropertyName: "velocityOverLifetime.orbital",
     propertyName: "y",
-    min: -30.0,
-    max: 30.0,
-    step: 0.001,
+    min: -45.0,
+    max: 45.0,
+    step: 0.01,
   });
   createMinMaxFloatFolderEntry({
     particleSystemConfig,
@@ -72,10 +72,10 @@ export const createVelocityOverLifeTimeEntries = ({
     parentFolder: orbitalVelocityFolder,
     rootPropertyName: "velocityOverLifetime.orbital",
     propertyName: "z",
-    min: -30.0,
-    max: 30.0,
-    step: 0.001,
+    min: -45.0,
+    max: 45.0,
+    step: 0.01,
   });
-*/
+
   return {};
 };

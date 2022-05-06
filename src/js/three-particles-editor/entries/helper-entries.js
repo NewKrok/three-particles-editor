@@ -6,8 +6,10 @@ import { setTerrain } from "../world";
 const worldAxesHelper = new THREE.AxesHelper(5);
 const localAxesHelper = new THREE.AxesHelper(1);
 
-let _particleSystem = null;
 let randomMovement = { delay: 0, speedX: 0, speedZ: 0 };
+let currentPosition = new THREE.Vector3();
+let movementVector = new THREE.Vector3();
+let _particleSystem;
 
 export const WIREFRAME = "WIREFRAME";
 
@@ -22,6 +24,7 @@ export const MovementSimulations = {
 
 export const RotationSimulations = {
   DISABLED: "DISABLED",
+  FOLLOW_THE_MOVEMENT: "FOLLOW_THE_MOVEMENT",
   X: "X",
   Y: "Y",
   Z: "Z",
@@ -49,6 +52,7 @@ export const createHelperEntries = ({
     .listen()
     .name("Simulate movements")
     .onChange((v) => {
+      movementVector.set(0, 0, 0);
       if (v === MovementSimulations.DISABLED) {
         particleSystemContainer.position.x = 0;
         particleSystemContainer.position.y = 0;
@@ -83,6 +87,7 @@ export const createHelperEntries = ({
   folder
     .add(particleSystemConfig._editorData.simulation, "rotation", [
       RotationSimulations.DISABLED,
+      RotationSimulations.FOLLOW_THE_MOVEMENT,
       RotationSimulations.X,
       RotationSimulations.Y,
       RotationSimulations.Z,
@@ -100,7 +105,7 @@ export const createHelperEntries = ({
     .add(
       particleSystemConfig._editorData.simulation,
       "rotationSpeed",
-      0.1,
+      -10,
       10,
       0.1
     )
@@ -108,11 +113,11 @@ export const createHelperEntries = ({
     .listen();
 
   const updateLocalAxesHelper = () => {
-    if (_particleSystem)
+    if (particleSystemContainer)
       if (particleSystemConfig._editorData.showLocalAxes) {
-        _particleSystem.add(localAxesHelper);
+        particleSystemContainer.add(localAxesHelper);
       } else {
-        _particleSystem.remove(localAxesHelper);
+        particleSystemContainer.remove(localAxesHelper);
       }
   };
   folder
@@ -135,6 +140,14 @@ export const createHelperEntries = ({
     .listen();
 
   folder
+    .add(particleSystemConfig._editorData, "frustumCulled")
+    .name("Frustum Culling")
+    .onChange((v) => {
+      if (_particleSystem) _particleSystem.frustumCulled = v;
+    })
+    .listen();
+
+  folder
     .add(particleSystemConfig._editorData.terrain, "textureId", [
       WIREFRAME,
       TextureId.TERRAIN_CHESS_BOARD,
@@ -147,12 +160,15 @@ export const createHelperEntries = ({
 
   return {
     onParticleSystemChange: (particleSystem) => {
-      _particleSystem = particleSystem;
       updateLocalAxesHelper();
       updateWorldAxesHelper();
+      _particleSystem = particleSystem;
+      _particleSystem.frustumCulled =
+        particleSystemConfig._editorData.frustumCulled;
     },
     onUpdate: ({ elapsed }) => {
       if (particleSystemContainer) {
+        currentPosition.clone(particleSystemContainer.position);
         let movementMultiplier =
           particleSystemConfig._editorData.simulation.movementSpeed;
         let percentage, speed;
@@ -226,9 +242,17 @@ export const createHelperEntries = ({
           default:
             break;
         }
+        movementVector
+          .copy(currentPosition)
+          .sub(particleSystemContainer.position);
         let rotationMultiplier =
           particleSystemConfig._editorData.simulation.rotationSpeed;
         switch (particleSystemConfig._editorData.simulation.rotation) {
+          case RotationSimulations.FOLLOW_THE_MOVEMENT:
+            const angle =
+              Math.PI * 2 - Math.atan2(movementVector.z, movementVector.x);
+            particleSystemContainer.rotation.y = angle;
+            break;
           case RotationSimulations.X:
             particleSystemContainer.rotation.x = rotationMultiplier * elapsed;
             break;
