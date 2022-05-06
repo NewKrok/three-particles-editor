@@ -15,9 +15,7 @@ https://newkrok.com/three-particles-editor/index.html
 - First preview: https://youtu.be/dtN_bndvoGU
 
 # Screenshots
-
-<img src="https://user-images.githubusercontent.com/13141660/152899412-0baf3391-6142-4ead-a43c-7b24514a35a8.png" width="320px"></img>
-<img src="https://user-images.githubusercontent.com/13141660/150704162-8ce82a25-5d9e-4ccb-a798-2e07c13ea638.png" width="320px"></img>
-<img src="https://user-images.githubusercontent.com/13141660/150704176-36f12c41-097b-4629-b9de-ec29f7730506.png" width="320px"></img>
-<img src="https://user-images.githubusercontent.com/13141660/150704196-1d262cc4-e1d2-45a9-ab7f-f197a2d96f22.png" width="320px"></img>
-<img src="https://user-images.githubusercontent.com/13141660/150704227-71a359d3-82f3-4aaf-a21c-2cf7750d6144.png" width="320px"></img>
+<img src="https://user-images.githubusercontent.com/13141660/167223378-e3002af9-2800-49b3-a955-9cb5fb54b103.png" width="320px"></img>
+<img src="https://user-images.githubusercontent.com/13141660/167223438-493cf422-c327-43d3-a622-dacc20ddc07e.png" width="320px"></img>
+<img src="https://user-images.githubusercontent.com/13141660/167223497-c4880d7c-eec2-4c41-b83e-82cc571e64c3.png" width="320px"></img>
+<img src="https://user-images.githubusercontent.com/13141660/167223587-a5bd6e40-ef4f-434f-a952-aad56041def7.png" width="320px"></img>
