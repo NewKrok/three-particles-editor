@@ -27,7 +27,7 @@ import {
   loadCustomAssets,
 } from "./three-particles-editor/assets.js";
 
-import { GUI } from "three/examples/jsm/libs/lil-gui.module.min";
+import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { Object3D } from "three";
 import { TextureId } from "./three-particles-editor/texture-config.js";
 import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
