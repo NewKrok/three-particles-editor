@@ -1,3 +1,12 @@
+const SMOKE_2 =
+  '{"duration":0.36,"startLifetime":{"min":0.94,"max":5.88},"startSpeed":{"min":0,"max":0},"startSize":{"min":34.19,"max":42.42},"startRotation":{"min":-360,"max":360},"simulationSpace":"WORLD","maxParticles":150,"emission":{"rateOverTime":0,"rateOverDistance":8},"shape":{"shape":"CONE","cone":{"angle":16.8097,"radius":0.1},"rectangle":{"scale":{"x":0.5,"y":1.8}}},"renderer":{"blending":"THREE.AdditiveBlending"},"sizeOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0.245,"percentage":0},{"x":0.1666,"y":0.4116},{"x":0.3766,"y":0.2182},{"x":0.5433,"y":0.385,"percentage":0.5433},{"x":0.7099,"y":0.5516},{"x":0.8333,"y":0.8333},{"x":1,"y":1,"percentage":1}]},"opacityOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":1,"percentage":0},{"x":0.1666,"y":0.8333},{"x":0.3333,"y":0.6666},{"x":0.5,"y":0.5,"percentage":0.5},{"x":0.6666,"y":0.3332},{"x":0.8333,"y":0.1665},{"x":1,"y":0,"percentage":1}]},"rotationOverLifetime":{"isActive":true,"min":-17,"max":11.7},"noise":{"isActive":true,"strength":0.3,"positionAmount":0.103},"_editorData":{"textureId":"CLOUD","simulation":{"movements":"INFINITE_SYMBOL","movementSpeed":3.9,"rotation":"FOLLOW_THE_MOVEMENT","rotationSpeed":0},"showLocalAxes":true,"showWorldAxes":false,"frustumCulled":true,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1}}}';
+
+const COLLECT_ITEM =
+  '{"transform":{"rotation":{"x":-90}},"duration":0.2,"looping":false,"startLifetime":{"min":0.3,"max":0.8},"startSpeed":{"min":0.5},"startSize":{"min":0.1,"max":1.5},"startColor":{"min":{"r":0.596078431372549,"g":0.08235294117647059,"b":0.9372549019607843},"max":{"g":0,"b":0.8666666666666667}},"maxParticles":30,"emission":{"rateOverTime":200},"shape":{"sphere":{"radius":0.4},"cone":{"angle":17.5967,"radius":0.1}},"renderer":{"blending":"THREE.NormalBlending"},"velocityOverLifetime":{"isActive":true,"orbital":{"y":{"max":5}}},"sizeOverLifetime":{"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":0.3333,"y":0},{"x":0.1666,"y":1},{"x":0.5,"y":1,"percentage":0.5},{"x":0.8333,"y":1},{"x":0.6666,"y":0},{"x":1,"y":0,"percentage":1}]},"opacityOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":0,"y":1},{"x":0,"y":1},{"x":0.5,"y":1,"percentage":0.5},{"x":1,"y":1},{"x":1,"y":1},{"x":1,"y":0,"percentage":1}]},"_editorData":{"textureId":"POINT","simulation":{"movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1},"showLocalAxes":false,"showWorldAxes":false,"frustumCulled":true,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1}}}';
+
+const ITEM_APPEAR =
+  '{"transform":{"rotation":{"x":-90}},"duration":0.4,"looping":false,"startLifetime":{"min":0.2,"max":0.6},"startSpeed":{"min":0.8,"max":1.5},"startSize":{"min":0.1,"max":2},"startColor":{"min":{"r":0.596078431372549,"g":0.08235294117647059,"b":0.9372549019607843},"max":{"g":0,"b":0.8666666666666667}},"gravity":-2,"maxParticles":30,"emission":{"rateOverTime":100},"shape":{"sphere":{"radius":0.05,"radiusThickness":0.5},"cone":{"angle":17.5967,"radius":0.1}},"renderer":{"blending":"THREE.NormalBlending"},"velocityOverLifetime":{"isActive":true,"orbital":{"x":{"min":-25,"max":25},"y":{"min":-25,"max":25},"z":{"min":-5,"max":5}}},"sizeOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":0.3333,"y":0},{"x":0.1666,"y":1},{"x":0.5,"y":1,"percentage":0.5},{"x":0.8333,"y":1},{"x":0.6666,"y":0},{"x":1,"y":0,"percentage":1}]},"opacityOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":0,"y":1},{"x":0,"y":1},{"x":0.5,"y":1,"percentage":0.5},{"x":1,"y":1},{"x":1,"y":1},{"x":1,"y":0,"percentage":1}]},"_editorData":{"textureId":"POINT","simulation":{"movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1},"showLocalAxes":false,"showWorldAxes":false,"frustumCulled":true,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1}}}';
+
 const TELEPORT =
   '{"transform":{"rotation":{"x":-90}},"duration":1,"looping":false,"startLifetime":{"min":0.8,"max":0.8},"startSpeed":{"min":0,"max":0},"startSize":{"max":2},"startColor":{"min":{"r":0.47843137254901963,"g":0.5647058823529412},"max":{"r":0.43137254901960786,"g":0.7137254901960784,"b":0.8862745098039215}},"gravity":-10,"maxParticles":50,"emission":{"rateOverTime":80},"shape":{"shape":"CIRCLE","circle":{"radiusThickness":0}},"velocityOverLifetime":{"isActive":true,"orbital":{"x":{"min":-1,"max":1},"y":{"min":-5,"max":2}}},"sizeOverLifetime":{"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":1,"y":1,"percentage":1}]},"opacityOverLifetime":{"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":1,"y":1,"percentage":1}]},"_editorData":{"textureId":"GRADIENT_POINT","simulation":{"movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1},"showLocalAxes":false,"showWorldAxes":false,"frustumCulled":true,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1}}}';
 
@@ -56,6 +65,21 @@ const SMOKE =
   '{"transform":{"rotation":{"x":-90}},"startLifetime":{"min":4.23,"max":7.25},"startSpeed":{"min":0.31,"max":0.58},"startSize":{"min":28.71,"max":36.02},"startRotation":{"min":-360,"max":360},"startOpacity":{"min":0.141,"max":0.296},"shape":{"shape":"CONE","sphere":{"radius":0.4687},"cone":{"angle":0,"radius":0.3813}},"renderer":{"blending":"THREE.NormalBlending"},"sizeOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0.625,"percentage":0},{"x":0.2666,"y":0.845},{"x":0.3596,"y":0.4551},{"x":0.5066,"y":0.49,"percentage":0.5066},{"x":0.6966,"y":0.5349},{"x":0.6366,"y":0.99},{"x":1,"y":1,"percentage":1}]},"opacityOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0.0799,"percentage":0},{"x":0.0666,"y":0.85},{"x":0.1674,"y":1.0337},{"x":0.5,"y":1,"percentage":0.5},{"x":0.9933,"y":0.95},{"x":0.9966,"y":0.96},{"x":1,"y":0,"percentage":1}]},"rotationOverLifetime":{"isActive":true,"min":-22.4,"max":24.3},"noise":{"isActive":true,"useRandomOffset":true,"strength":0.09,"positionAmount":0.191,"rotationAmount":1.677},"_editorData":{"textureId":"CLOUD","simulation":{"movements":"DISABLED"},"showLocalAxes":false,"showWorldAxes":false,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED"}}}';
 
 export const particleExamples = [
+  {
+    name: "Smoke 2",
+    preview: "./assets/examples/effects/smoke-2.webp",
+    config: SMOKE_2,
+  },
+  {
+    name: "Collect Item",
+    preview: "./assets/examples/effects/collect-item.webp",
+    config: COLLECT_ITEM,
+  },
+  {
+    name: "Item appear",
+    preview: "./assets/examples/effects/item-appear.webp",
+    config: ITEM_APPEAR,
+  },
   {
     name: "Teleport",
     preview: "./assets/examples/effects/teleport.webp",
