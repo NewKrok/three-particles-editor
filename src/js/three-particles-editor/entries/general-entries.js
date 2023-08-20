@@ -3,7 +3,7 @@ import {
   createMinMaxFloatFolderEntry,
 } from "./entry-helpers";
 
-import { SimulationSpace } from "@newkrok/three-particles/src/js/effects/three-particles";
+import { SimulationSpace } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-enums.js";
 
 export const createGeneralEntries = ({
   parentFolder,

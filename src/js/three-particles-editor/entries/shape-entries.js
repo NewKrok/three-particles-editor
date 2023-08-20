@@ -1,7 +1,4 @@
-import {
-  EmitFrom,
-  Shape,
-} from "@newkrok/three-particles/src/js/effects/three-particles";
+import { EmitFrom, Shape } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-enums.js";
 import {
   createVector2FolderEntry,
   createVector3FolderEntry,

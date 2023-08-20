@@ -13,7 +13,6 @@ import {
 } from "./three-particles-editor/save-and-load.js";
 import {
   createParticleSystem,
-  destroyParticleSystem,
   getDefaultParticleSystemConfig,
   updateParticleSystems,
 } from "@newkrok/three-particles/src/js/effects/three-particles.js";
@@ -143,14 +142,14 @@ const animate = () => {
 const recreateParticleSystem = () => {
   resumeTime();
   if (particleSystem) {
-    destroyParticleSystem(particleSystem);
+    particleSystem.dispose();
     particleSystem = null;
     cycleData.totalPauseTime = 0;
   }
 
   particleSystem = createParticleSystem(particleSystemConfig);
 
-  particleSystemContainer.add(particleSystem);
+  particleSystemContainer.add(particleSystem.instance);
   configEntries.forEach(
     ({ onParticleSystemChange }) =>
       onParticleSystemChange && onParticleSystemChange(particleSystem)
