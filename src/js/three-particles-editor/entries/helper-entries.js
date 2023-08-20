@@ -19,6 +19,7 @@ export const MovementSimulations = {
   PROJECTILE_ARC: "PROJECTILE_ARC",
   CIRCLE: "CIRCLE",
   CIRCLE_WITH_WAVE: "CIRCLE_WITH_WAVE",
+  INFINITE_SYMBOL: "INFINITE_SYMBOL",
   RANDOM_MOVEMENT: "RANDOM_MOVEMENT",
 };
 
@@ -47,6 +48,7 @@ export const createHelperEntries = ({
       MovementSimulations.PROJECTILE_ARC,
       MovementSimulations.CIRCLE,
       MovementSimulations.CIRCLE_WITH_WAVE,
+      MovementSimulations.INFINITE_SYMBOL,
       MovementSimulations.RANDOM_MOVEMENT,
     ])
     .listen()
@@ -211,6 +213,14 @@ export const createHelperEntries = ({
               0.5;
             particleSystemContainer.position.z =
               Math.sin(elapsed * 0.5 * movementMultiplier) * 2;
+            break;
+
+            case MovementSimulations.INFINITE_SYMBOL:
+            particleSystemContainer.position.x =
+              Math.cos(elapsed * 0.5 * movementMultiplier) * 4;
+            particleSystemContainer.position.y = 0;
+            particleSystemContainer.position.z =
+              Math.sin(elapsed * 1 * movementMultiplier) * 2;
             break;
 
           case MovementSimulations.RANDOM_MOVEMENT:
