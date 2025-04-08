@@ -3,9 +3,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-css-only";
 import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
-import { scss } from "svelte-preprocess";
 import svelte from "rollup-plugin-svelte";
-import { terser } from "rollup-plugin-terser";
+import { terser } from "@rollup/plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -41,6 +40,10 @@ export default {
     format: "iife",
     name: "app",
     file: "public/build/bundle.js",
+    globals: {
+      '@smui/common/internal': 'smuiInternal',
+      '@smui/common/classadder': 'smuiClassadder'
+    }
   },
   plugins: [
     svelte({
@@ -48,12 +51,11 @@ export default {
         // enable run-time checks when not in production
         dev: !production,
       },
-      preprocess: autoPreprocess(),
-      preprocess: [
-        scss({
+      preprocess: autoPreprocess({
+        scss: {
           /** options */
-        }),
-      ],
+        }
+      }),
     }),
     // we'll extract any component CSS out into
     // a separate file - better for performance
@@ -67,6 +69,7 @@ export default {
     resolve({
       browser: true,
       dedupe: ["svelte"],
+      exportConditions: ['svelte'],
     }),
     commonjs(),
 

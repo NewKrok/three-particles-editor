@@ -178,13 +178,13 @@ const createPanel = () => {
       recreateParticleSystem: () => {
         // Transform change not requires a real re creation
         particleSystem.position.copy(particleSystemConfig.transform.position);
-        particleSystem.rotation.x = THREE.Math.degToRad(
+        particleSystem.rotation.x = THREE.MathUtils.degToRad(
           particleSystemConfig.transform.rotation.x
         );
-        particleSystem.rotation.y = THREE.Math.degToRad(
+        particleSystem.rotation.y = THREE.MathUtils.degToRad(
           particleSystemConfig.transform.rotation.y
         );
-        particleSystem.rotation.z = THREE.Math.degToRad(
+        particleSystem.rotation.z = THREE.MathUtils.degToRad(
           particleSystemConfig.transform.rotation.z
         );
         particleSystem.scale.copy(particleSystemConfig.transform.scale);
