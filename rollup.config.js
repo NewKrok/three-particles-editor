@@ -5,6 +5,7 @@ import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
 import svelte from "rollup-plugin-svelte";
 import { terser } from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -73,6 +74,12 @@ export default {
     }),
     commonjs(),
 
+    // Add TypeScript support
+    typescript({
+      sourceMap: !production,
+      inlineSources: !production
+    }),
+
     // In dev mode, call `npm run start` once
     // the bundle has been generated
     !production && serve(),
@@ -83,7 +90,7 @@ export default {
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
-    production && terser(),
+    production && terser,
   ],
   watch: {
     clearScreen: false,
