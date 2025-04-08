@@ -20,7 +20,7 @@ import {
   createWorld,
   setTerrain,
   updateWorld,
-} from "./three-particles-editor/world.js";
+} from "./three-particles-editor/world.ts";
 import {
   initAssets,
   loadCustomAssets,
