@@ -20,15 +20,15 @@ import {
   createWorld,
   setTerrain,
   updateWorld,
-} from "./three-particles-editor/world.ts";
+} from "./three-particles-editor/world";
 import {
   initAssets,
   loadCustomAssets,
-} from "./three-particles-editor/assets.js";
+} from "./three-particles-editor/assets";
 
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { Object3D } from "three";
-import { TextureId } from "./three-particles-editor/texture-config.js";
+import { TextureId } from "./three-particles-editor/texture-config";
 import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
 import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
 import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
