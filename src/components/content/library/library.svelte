@@ -2,7 +2,7 @@
   import {
     getTexture,
     loadCustomAssets,
-  } from "./../../../js/three-particles-editor/assets.js";
+  } from "./../../../js/three-particles-editor/assets";
   import FileUploader from "./file-uploader.svelte";
   import { Svroller } from "svrollbar";
   import { Input } from "@smui/textfield";
@@ -12,7 +12,7 @@
   import {
     textureConfigs,
     TextureId,
-  } from "./../../../js/three-particles-editor/texture-config.js";
+  } from "./../../../js/three-particles-editor/texture-config";
 
   const defaultList = Object.keys(TextureId)
     .filter(

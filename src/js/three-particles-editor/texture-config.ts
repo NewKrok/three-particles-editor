@@ -1,5 +1,6 @@
 import * as THREE from "three";
 
+
 export const TextureId = {
   TERRAIN_CHESS_BOARD: "TERRAIN_CHESS_BOARD",
   TERRAIN_CHESS_BOARD_COLORFUL: "TERRAIN_CHESS_BOARD_COLORFUL",
@@ -30,7 +31,16 @@ export const TextureId = {
   SQUARE: "SQUARE",
 };
 
-export const textureConfigs = [
+
+type TextureConfig = {
+  id: string;
+  url: string;
+  isParticleTexture?: boolean;
+  tiles?: THREE.Vector2;
+};
+
+
+export const textureConfigs: TextureConfig[] = [
   {
     id: TextureId.TERRAIN_CHESS_BOARD,
     url: "./assets/textures/terrain/chess-board.webp",

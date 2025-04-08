@@ -74,9 +74,9 @@ export const updateWorld = (): void => {
   stats.update();
 };
 
-interface TerrainConfig {
+type TerrainConfig = {
   textureId?: string;
-}
+};
 
 export const setTerrain = (config?: TerrainConfig): void => {
   const textureId = config?.textureId || TextureId.WIREFRAME;
