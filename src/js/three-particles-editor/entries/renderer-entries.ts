@@ -1,19 +1,31 @@
-import { TextureId, textureConfigs } from "../texture-config";
-
+import { TextureId } from "../texture-config";
+// @ts-ignore
 import { blendingMap } from "@newkrok/three-particles/src/js/effects/three-particles";
 import { getTexture } from "../assets";
+
+type RendererEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
+type RendererEntriesResult = {
+  onParticleSystemChange: () => void;
+  onUpdate: () => void;
+  onAssetUpdate: () => void;
+};
 
 export const createRendererEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: RendererEntriesParams): RendererEntriesResult => {
   let lastUsedTextureId = "";
 
   const folder = parentFolder.addFolder("Renderer");
   folder.close();
 
-  const setConfigByTexture = (textureId) => {
+  const setConfigByTexture = (textureId: string): void => {
     lastUsedTextureId = textureId;
     const texture = getTexture(textureId);
     if (texture) {
@@ -27,14 +39,14 @@ export const createRendererEntries = ({
     }
   };
 
-  let controllers = [];
+  let controllers: any[] = [];
 
-  const rebuild = () => {
+  const rebuild = (): void => {
     controllers.forEach((controller) => controller.destroy());
     controllers = [];
 
     let customAssetList =
-      JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
+      JSON.parse(localStorage.getItem("particle-system-editor/library") || "[]") || [];
 
     controllers.push(
       folder
@@ -42,7 +54,7 @@ export const createRendererEntries = ({
           particleSystemConfig._editorData,
           "textureId",
           customAssetList
-            .map(({ name }) => name)
+            .map(({ name }: { name: string }) => name)
             .concat(
               [
                 TextureId.POINT,
@@ -73,7 +85,7 @@ export const createRendererEntries = ({
             )
         )
         .listen()
-        .onChange((v) => {
+        .onChange((v: string) => {
           setConfigByTexture(v);
           recreateParticleSystem();
         })
@@ -109,7 +121,7 @@ export const createRendererEntries = ({
 
     if (typeof particleSystemConfig.renderer.blending === "number")
       particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
-        (entry) => blendingMap[entry] === particleSystemConfig.renderer.blending
+        (entry) => blendingMap[entry as keyof typeof blendingMap] === particleSystemConfig.renderer.blending
       );
     controllers.push(
       folder
@@ -149,14 +161,14 @@ export const createRendererEntries = ({
   rebuild();
 
   return {
-    onParticleSystemChange: () => {
+    onParticleSystemChange: (): void => {
       // It looks onChange doesn't work on dropdown entry so have to handle it manually
       if (lastUsedTextureId !== particleSystemConfig._editorData.textureId) {
         setConfigByTexture(particleSystemConfig._editorData.textureId);
         recreateParticleSystem();
       }
     },
-    onUpdate: () => {},
+    onUpdate: (): void => {},
     onAssetUpdate: rebuild,
   };
 };

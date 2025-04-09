@@ -37,6 +37,7 @@ type TextureConfig = {
   url: string;
   isParticleTexture?: boolean;
   tiles?: THREE.Vector2;
+  map?: THREE.Texture;
 };
 
 
