@@ -5,11 +5,17 @@ import {
 
 import { CurveFunction } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-curves";
 
+type SizeOverLifeTimeEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createSizeOverLifeTimeEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: SizeOverLifeTimeEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Size over lifetime");
   folder.close();
 
@@ -36,7 +42,7 @@ export const createSizeOverLifeTimeEntries = ({
   folder
     .add(
       {
-        editCurve: () => {
+        editCurve: (): void => {
           setCurveEditorTarget(particleSystemConfig.sizeOverLifetime);
           recreateParticleSystem();
         },
@@ -48,7 +54,7 @@ export const createSizeOverLifeTimeEntries = ({
   folder
     .add(
       {
-        loadCurve: () =>
+        loadCurve: (): void =>
           setCurveEditorPositions(particleSystemConfig.sizeOverLifetime),
       },
       "loadCurve"
