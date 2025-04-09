@@ -5,11 +5,17 @@ import {
 
 import { SimulationSpace } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-enums.js";
 
+type GeneralEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createGeneralEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: GeneralEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("General");
 
   folder
