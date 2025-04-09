@@ -1,0 +1,36 @@
+# Three Particles Editor - Development Rules
+
+## General Guidelines
+- The project aims to update the three-particles-editor to support @newkrok/three-particles package version 2.0.2
+- Use TypeScript instead of JavaScript, with typedefs (not interfaces or classes)
+- Remove JSDoc comments in favor of TypeScript type definitions
+- Follow Conventional Commit format for version control
+
+## Code Conventions
+- File extensions: .ts for TypeScript files, .svelte for Svelte components
+- Import paths: should not contain extensions (.js, .ts) for TypeScript files
+- Code formatting: Use ESLint and Prettier to ensure code quality
+- Pre-commit checks: Use Husky and lint-staged
+
+## API Changes Handling
+- Use THREE.MathUtils.degToRad instead of THREE.Math.degToRad
+- Replace MinMaxNumber type with Constant | RandomBetweenTwoConstants | LifetimeCurve types
+- Update default values (e.g., startLifeTime from 2.0 to 5.0)
+- Implement conversion function to transform old configurations to the new format
+
+## Version Control
+- Development happens on the v2.0.0 branch
+- The master branch contains the stable, released version
+- Each significant change is in a separate commit
+- Commit messages follow the conventional commit format (feat, fix, refactor, etc.)
+
+## Build and Deployment
+- The contents of the public/build folder are not version controlled
+- Static assets (e.g., images) are stored in the src/assets folder
+- The development server runs using sirv-cli from the public folder
+
+## Dependencies
+- @newkrok/three-particles: 2.0.2 (target version)
+- three.js: 0.155.0
+- Use sass instead of node-sass
+- Use Svelte framework for the user interface
