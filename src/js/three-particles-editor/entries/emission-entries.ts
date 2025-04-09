@@ -1,8 +1,14 @@
+type EmissionEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createEmissionEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: EmissionEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Emission");
   folder.close();
 
