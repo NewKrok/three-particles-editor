@@ -1,8 +1,14 @@
+type NoiseEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createNoiseEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: NoiseEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Noise");
   folder.close();
 
