@@ -1,10 +1,16 @@
 import { createMinMaxFloatFolderEntry } from "./entry-helpers";
 
+type RotationOverLifeTimeEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createRotationOverLifeTimeEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: RotationOverLifeTimeEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Rotation over lifetime");
   folder.close();
 
