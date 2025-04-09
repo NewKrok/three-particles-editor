@@ -1,7 +1,18 @@
-const resolveProperty = (rootObject, property) =>
+const resolveProperty = (rootObject: any, property: string): any =>
   property !== ""
     ? property.split(".").reduce((prev, current) => prev[current], rootObject)
     : rootObject;
+
+type MinMaxFloatFolderEntryParams = {
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+  parentFolder: any;
+  rootPropertyName?: string;
+  propertyName: string;
+  min?: number;
+  max?: number;
+  step?: number;
+};
 
 export const createMinMaxFloatFolderEntry = ({
   particleSystemConfig,
@@ -12,7 +23,7 @@ export const createMinMaxFloatFolderEntry = ({
   min,
   max,
   step,
-}) => {
+}: MinMaxFloatFolderEntryParams): any => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(
     particleSystemConfig,
@@ -21,14 +32,14 @@ export const createMinMaxFloatFolderEntry = ({
 
   folder
     .add(propertyReference, "min", min, max, step)
-    .onChange((v) => {
+    .onChange((v: number) => {
       propertyReference.min = Math.min(v, propertyReference.max);
       recreateParticleSystem();
     })
     .listen();
   folder
     .add(propertyReference, "max", min, max, step)
-    .onChange((v) => {
+    .onChange((v: number) => {
       propertyReference.max = Math.max(v, propertyReference.min);
       recreateParticleSystem();
     })
@@ -37,13 +48,21 @@ export const createMinMaxFloatFolderEntry = ({
   return folder;
 };
 
+type MinMaxColorFolderEntryParams = {
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+  parentFolder: any;
+  rootPropertyName?: string;
+  propertyName: string;
+};
+
 export const createMinMaxColorFolderEntry = ({
   particleSystemConfig,
   recreateParticleSystem,
   parentFolder,
   rootPropertyName = "",
   propertyName,
-}) => {
+}: MinMaxColorFolderEntryParams): any => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(
     particleSystemConfig,
@@ -52,20 +71,31 @@ export const createMinMaxColorFolderEntry = ({
 
   folder
     .addColor(propertyReference, "min")
-    .onChange((v) => {
+    .onChange((v: any) => {
       propertyReference.min = v;
       recreateParticleSystem();
     })
     .listen();
   folder
     .addColor(propertyReference, "max")
-    .onChange((v) => {
+    .onChange((v: any) => {
       propertyReference.max = v;
       recreateParticleSystem();
     })
     .listen();
 
   return folder;
+};
+
+type Vector2FolderEntryParams = {
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+  parentFolder: any;
+  rootPropertyName?: string;
+  propertyName: string;
+  min?: number;
+  max?: number;
+  step?: number;
 };
 
 export const createVector2FolderEntry = ({
@@ -77,7 +107,7 @@ export const createVector2FolderEntry = ({
   min,
   max,
   step,
-}) => {
+}: Vector2FolderEntryParams): any => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(
     particleSystemConfig,
@@ -94,6 +124,17 @@ export const createVector2FolderEntry = ({
     .listen();
 
   return folder;
+};
+
+type Vector3FolderEntryParams = {
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+  parentFolder: any;
+  rootPropertyName?: string;
+  propertyName: string;
+  min?: number;
+  max?: number;
+  step?: number;
 };
 
 export const createVector3FolderEntry = ({
@@ -105,7 +146,7 @@ export const createVector3FolderEntry = ({
   min,
   max,
   step,
-}) => {
+}: Vector3FolderEntryParams): any => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(
     particleSystemConfig,
@@ -114,21 +155,21 @@ export const createVector3FolderEntry = ({
 
   folder
     .add(propertyReference, "x", min, max, step)
-    .onChange((v) => {
+    .onChange((v: number) => {
       propertyReference.x = v;
       recreateParticleSystem();
     })
     .listen();
   folder
     .add(propertyReference, "y", min, max, step)
-    .onChange((v) => {
+    .onChange((v: number) => {
       propertyReference.y = v;
       recreateParticleSystem();
     })
     .listen();
   folder
     .add(propertyReference, "z", min, max, step)
-    .onChange((v) => {
+    .onChange((v: number) => {
       propertyReference.z = v;
       recreateParticleSystem();
     })
@@ -137,7 +178,8 @@ export const createVector3FolderEntry = ({
   return folder;
 };
 
-/* export const createMinMaxVector3FolderEntry = ({
+/* Commented out code from original file
+export const createMinMaxVector3FolderEntry = ({
   parentFolder,
   rootPropertyName,
   propertyName,
@@ -181,9 +223,9 @@ export const createVector3FolderEntry = ({
   });
 
   return folder;
-}; */
+};
 
-/*const createMinMaxVector4FolderEntry = ({
+const createMinMaxVector4FolderEntry = ({
     parentFolder,
     rootPropertyName,
     subPropertyNames,
@@ -235,4 +277,5 @@ export const createVector3FolderEntry = ({
       max,
       step,
     })
-  }*/
+  }
+*/
