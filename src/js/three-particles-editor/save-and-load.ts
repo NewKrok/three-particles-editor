@@ -1,3 +1,4 @@
+// @ts-ignore
 import { getDefaultParticleSystemConfig } from "@newkrok/three-particles/src/js/effects/three-particles";
 import { patchObject } from "@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js";
 import { setTerrain } from "./world";
@@ -75,6 +76,7 @@ export const loadParticleSystem = ({
   recreateParticleSystem,
 }) => {
   patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
+    skippedProperties: [],
     applyToFirstObject: true,
   });
   patchObject(particleSystemConfig, config, {
