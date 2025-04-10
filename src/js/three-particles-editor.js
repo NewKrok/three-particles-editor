@@ -3,14 +3,13 @@ import * as THREE from "three";
 import {
   MovementSimulations,
   RotationSimulations,
-  WIREFRAME,
   createHelperEntries,
 } from "./three-particles-editor/entries/helper-entries.js";
 import {
   copyToClipboard,
   loadFromClipboard,
   loadParticleSystem,
-} from "./three-particles-editor/save-and-load.js";
+} from "./three-particles-editor/save-and-load";
 import {
   createParticleSystem,
   getDefaultParticleSystemConfig,
@@ -55,7 +54,7 @@ const defaultEditorData = {
   showWorldAxes: false,
   frustumCulled: true,
   terrain: {
-    textureId: WIREFRAME,
+    textureId: TextureId.WIREFRAME,
   },
 };
 

@@ -6,12 +6,10 @@ import { setTerrain } from "../world";
 const worldAxesHelper = new THREE.AxesHelper(5);
 const localAxesHelper = new THREE.AxesHelper(1);
 
-let randomMovement = { delay: 0, speedX: 0, speedZ: 0 };
+let randomMovement: { delay?: number; speedX: number; speedZ: number; time?: number } = { delay: 0, speedX: 0, speedZ: 0, time: 0 };
 let currentPosition = new THREE.Vector3();
 let movementVector = new THREE.Vector3();
-let _particleSystem;
-
-export const WIREFRAME = "WIREFRAME";
+let _particleSystem: any;
 
 export const MovementSimulations = {
   DISABLED: "DISABLED",
@@ -21,7 +19,9 @@ export const MovementSimulations = {
   CIRCLE_WITH_WAVE: "CIRCLE_WITH_WAVE",
   INFINITE_SYMBOL: "INFINITE_SYMBOL",
   RANDOM_MOVEMENT: "RANDOM_MOVEMENT",
-};
+} as const;
+
+export type MovementSimulationType = typeof MovementSimulations[keyof typeof MovementSimulations];
 
 export const RotationSimulations = {
   DISABLED: "DISABLED",
@@ -30,6 +30,21 @@ export const RotationSimulations = {
   Y: "Y",
   Z: "Z",
   MIXED: "MIXED",
+} as const;
+
+export type RotationSimulationType = typeof RotationSimulations[keyof typeof RotationSimulations];
+
+type HelperEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  scene: THREE.Scene;
+  particleSystemContainer: THREE.Object3D;
+};
+
+type HelperEntriesResult = {
+  onParticleSystemChange: (particleSystem: any) => void;
+  onUpdate: (params: { elapsed: number }) => void;
+  onReset: () => void;
 };
 
 export const createHelperEntries = ({
@@ -37,10 +52,21 @@ export const createHelperEntries = ({
   particleSystemConfig,
   scene,
   particleSystemContainer,
-}) => {
+}: HelperEntriesParams): HelperEntriesResult => {
   const folder = parentFolder.addFolder("Helper");
   folder.close();
 
+  const calculateRandomMovement = (): void => {
+    const endPoint = { x: Math.random() * 2 - 1, z: Math.random() * 2 - 1 };
+        randomMovement = {
+          speedX: (endPoint.x - particleSystemContainer.position.x) / 200,
+          speedZ: (endPoint.z - particleSystemContainer.position.z) / 200,
+          time:
+            100 *
+            (1 / particleSystemConfig._editorData.simulation.movementSpeed),
+        };
+  };
+  calculateRandomMovement();
   folder
     .add(particleSystemConfig._editorData.simulation, "movements", [
       MovementSimulations.DISABLED,
@@ -53,7 +79,7 @@ export const createHelperEntries = ({
     ])
     .listen()
     .name("Simulate movements")
-    .onChange((v) => {
+    .onChange((v: MovementSimulationType) => {
       movementVector.set(0, 0, 0);
       if (v === MovementSimulations.DISABLED) {
         particleSystemContainer.position.x = 0;
@@ -64,14 +90,7 @@ export const createHelperEntries = ({
         particleSystemContainer.position.x = 0;
         particleSystemContainer.position.y = 0;
         particleSystemContainer.position.z = 0;
-        const endPoint = { x: Math.random() * 2 - 1, z: Math.random() * 2 - 1 };
-        randomMovement = {
-          speedX: (endPoint.x - particleSystemContainer.position.x) / 200,
-          speedZ: (endPoint.z - particleSystemContainer.position.z) / 200,
-          time:
-            100 *
-            (1 / particleSystemConfig._editorData.simulation.movementSpeed),
-        };
+        calculateRandomMovement();
       }
     });
 
@@ -97,7 +116,7 @@ export const createHelperEntries = ({
     ])
     .listen()
     .name("Simulate rotation")
-    .onChange((v) => {
+    .onChange((v: RotationSimulationType) => {
       particleSystemContainer.rotation.x = 0;
       particleSystemContainer.rotation.y = 0;
       particleSystemContainer.rotation.z = 0;
@@ -114,7 +133,7 @@ export const createHelperEntries = ({
     .name("Rotation speed")
     .listen();
 
-  const updateLocalAxesHelper = () => {
+  const updateLocalAxesHelper = (): void => {
     if (particleSystemContainer)
       if (particleSystemConfig._editorData.showLocalAxes) {
         particleSystemContainer.add(localAxesHelper);
@@ -128,7 +147,7 @@ export const createHelperEntries = ({
     .onChange(updateLocalAxesHelper)
     .listen();
 
-  const updateWorldAxesHelper = () => {
+  const updateWorldAxesHelper = (): void => {
     if (particleSystemConfig._editorData.showWorldAxes) {
       scene.add(worldAxesHelper);
     } else {
@@ -142,57 +161,43 @@ export const createHelperEntries = ({
     .listen();
 
   folder
-    .add(particleSystemConfig._editorData, "frustumCulled")
-    .name("Frustum Culling")
-    .onChange((v) => {
-      if (_particleSystem) _particleSystem.frustumCulled = v;
-    })
-    .listen();
-
-  folder
     .add(particleSystemConfig._editorData.terrain, "textureId", [
-      WIREFRAME,
+      TextureId.WIREFRAME,
       TextureId.TERRAIN_CHESS_BOARD,
       TextureId.TERRAIN_CHESS_BOARD_COLORFUL,
       TextureId.TERRAIN_DIRT,
     ])
-    .listen()
-    .name("Terrain texture")
-    .onChange(setTerrain);
+    .name("Terrain")
+    .onChange((v: string) => {
+      setTerrain(v);
+    })
+    .listen();
+
+  updateLocalAxesHelper();
+  updateWorldAxesHelper();
 
   return {
-    onParticleSystemChange: (particleSystem) => {
+    onParticleSystemChange: (particleSystem: any): void => {
+      _particleSystem = particleSystem;
       updateLocalAxesHelper();
       updateWorldAxesHelper();
-      _particleSystem = particleSystem;
-      _particleSystem.frustumCulled =
-        particleSystemConfig._editorData.frustumCulled;
     },
-    onUpdate: ({ elapsed }) => {
+    onUpdate: ({ elapsed }: { elapsed: number }): void => {
       if (particleSystemContainer) {
-        currentPosition.clone(particleSystemContainer.position);
+        currentPosition.copy(particleSystemContainer.position);
         let movementMultiplier =
           particleSystemConfig._editorData.simulation.movementSpeed;
-        let percentage, speed;
         switch (particleSystemConfig._editorData.simulation.movements) {
           case MovementSimulations.PROJECTILE_STRAIGHT:
-            speed = 2;
-            percentage =
-              (elapsed - Math.floor(elapsed / speed) * speed) / speed;
-            particleSystemContainer.position.x =
-              percentage * 5 * movementMultiplier;
-            particleSystemContainer.position.y = 1;
+            particleSystemContainer.position.x = (elapsed * movementMultiplier) % 10;
+            particleSystemContainer.position.y = 0;
             particleSystemContainer.position.z = 0;
             break;
 
           case MovementSimulations.PROJECTILE_ARC:
-            speed = 2;
-            percentage =
-              (elapsed - Math.floor(elapsed / speed) * speed) / speed;
-            particleSystemContainer.position.x =
-              percentage * 5 * movementMultiplier;
+            particleSystemContainer.position.x = (elapsed * movementMultiplier) % 10;
             particleSystemContainer.position.y =
-              1 + Math.sin(percentage * Math.PI);
+              Math.sin(elapsed * movementMultiplier * 0.5) * 2;
             particleSystemContainer.position.z = 0;
             break;
 
@@ -224,7 +229,7 @@ export const createHelperEntries = ({
             break;
 
           case MovementSimulations.RANDOM_MOVEMENT:
-            if (randomMovement.time-- <= 0) {
+            if (randomMovement.time && randomMovement.time-- <= 0) {
               const endPoint = {
                 x: particleSystemContainer.position.x + Math.random() * 2 - 1,
                 z: particleSystemContainer.position.z + Math.random() * 2 - 1,
@@ -283,7 +288,7 @@ export const createHelperEntries = ({
         }
       }
     },
-    onReset: () => {
+    onReset: (): void => {
       updateWorldAxesHelper();
       particleSystemContainer.position.x = 0;
       particleSystemContainer.position.y = 0;

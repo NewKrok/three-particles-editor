@@ -74,14 +74,8 @@ export const updateWorld = (): void => {
   stats.update();
 };
 
-type TerrainConfig = {
-  textureId?: string;
-};
-
-export const setTerrain = (config?: TerrainConfig): void => {
-  const textureId = config?.textureId || TextureId.WIREFRAME;
-
-  if (textureId === TextureId.WIREFRAME) {
+export const setTerrain = (textureId:string): void => {
+  if (!textureId || textureId === TextureId.WIREFRAME) {
     const material = new THREE.MeshBasicMaterial({
       wireframe: true,
       depthWrite: false,
@@ -89,12 +83,14 @@ export const setTerrain = (config?: TerrainConfig): void => {
     });
     mesh.material = material;
   } else {
-    const textureData = getTexture(textureId) as unknown as THREE.Texture;
-    const material = new THREE.MeshBasicMaterial({
-      map: textureData instanceof THREE.Texture ? textureData : undefined,
-      wireframe: false
+    const {map} = getTexture(textureId);
+    map.wrapS = THREE.MirroredRepeatWrapping;
+    map.wrapT = THREE.MirroredRepeatWrapping;
+    map.repeat.x = 50;
+    map.repeat.y = 50;
+    map.colorSpace = THREE.SRGBColorSpace;
+    mesh.material = new THREE.MeshBasicMaterial({
+      map
     });
-    mesh.material = material;
-
   }
 };

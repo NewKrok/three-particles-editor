@@ -1,6 +1,5 @@
 import * as THREE from "three";
 
-
 export const TextureId = {
   TERRAIN_CHESS_BOARD: "TERRAIN_CHESS_BOARD",
   TERRAIN_CHESS_BOARD_COLORFUL: "TERRAIN_CHESS_BOARD_COLORFUL",
@@ -29,6 +28,7 @@ export const TextureId = {
   HEART: "HEART",
   ROCKS: "ROCKS",
   SQUARE: "SQUARE",
+  WIREFRAME: "WIREFRAME",
 };
 
 
