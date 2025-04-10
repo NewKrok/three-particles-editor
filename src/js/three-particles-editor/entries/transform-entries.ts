@@ -1,10 +1,16 @@
 import { createVector3FolderEntry } from "./entry-helpers";
 
+type TransformEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createTransformEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: TransformEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Transform");
   folder.close();
 

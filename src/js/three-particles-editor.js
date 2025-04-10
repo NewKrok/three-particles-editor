@@ -28,18 +28,18 @@ import {
 import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
 import { Object3D } from "three";
 import { TextureId } from "./three-particles-editor/texture-config";
-import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor.js";
-import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries.js";
-import { createGeneralEntries } from "./three-particles-editor/entries/general-entries.js";
-import { createNoiseEntries } from "./three-particles-editor/entries/noise-entries.js";
-import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries.js";
-import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries.js";
-import { createRotationOverLifeTimeEntries } from "./three-particles-editor/entries/rotation-over-lifetime-entries.js";
-import { createShapeEntries } from "./three-particles-editor/entries/shape-entries.js";
-import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/size-over-lifetime-entries.js";
-import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries.js";
-import { createTransformEntries } from "./three-particles-editor/entries/transform-entries.js";
-import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries.js";
+import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor";
+import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries";
+import { createGeneralEntries } from "./three-particles-editor/entries/general-entries";
+import { createNoiseEntries } from "./three-particles-editor/entries/noise-entries";
+import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries";
+import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries";
+import { createRotationOverLifeTimeEntries } from "./three-particles-editor/entries/rotation-over-lifetime-entries";
+import { createShapeEntries } from "./three-particles-editor/entries/shape-entries";
+import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/size-over-lifetime-entries";
+import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries";
+import { createTransformEntries } from "./three-particles-editor/entries/transform-entries";
+import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries";
 import { patchObject } from "@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js";
 
 const defaultEditorData = {
@@ -170,23 +170,24 @@ const createPanel = () => {
       particleSystemContainer,
     })
   );
+
   configEntries.push(
     createTransformEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem: () => {
         // Transform change not requires a real re creation
-        particleSystem.position.copy(particleSystemConfig.transform.position);
-        particleSystem.rotation.x = THREE.MathUtils.degToRad(
+        particleSystem.instance.position.copy(particleSystemConfig.transform.position);
+        particleSystem.instance.rotation.x = THREE.MathUtils.degToRad(
           particleSystemConfig.transform.rotation.x
         );
-        particleSystem.rotation.y = THREE.MathUtils.degToRad(
+        particleSystem.instance.rotation.y = THREE.MathUtils.degToRad(
           particleSystemConfig.transform.rotation.y
         );
-        particleSystem.rotation.z = THREE.MathUtils.degToRad(
+        particleSystem.instance.rotation.z = THREE.MathUtils.degToRad(
           particleSystemConfig.transform.rotation.z
         );
-        particleSystem.scale.copy(particleSystemConfig.transform.scale);
+        particleSystem.instance.scale.copy(particleSystemConfig.transform.scale);
       },
     })
   );
