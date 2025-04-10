@@ -5,11 +5,17 @@ import {
 
 import { CurveFunction } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-curves";
 
+type OpacityOverLifeTimeEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createOpacityOverLifeTimeEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: OpacityOverLifeTimeEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Opacity over lifetime");
   folder.close();
 
@@ -36,7 +42,7 @@ export const createOpacityOverLifeTimeEntries = ({
   folder
     .add(
       {
-        editCurve: () => {
+        editCurve: (): void => {
           setCurveEditorTarget(particleSystemConfig.opacityOverLifetime);
           recreateParticleSystem();
         },
@@ -48,7 +54,7 @@ export const createOpacityOverLifeTimeEntries = ({
   folder
     .add(
       {
-        loadCurve: () =>
+        loadCurve: (): void =>
           setCurveEditorPositions(particleSystemConfig.opacityOverLifetime),
       },
       "loadCurve"
