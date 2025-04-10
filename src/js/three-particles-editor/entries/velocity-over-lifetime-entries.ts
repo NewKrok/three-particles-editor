@@ -1,10 +1,16 @@
 import { createMinMaxFloatFolderEntry } from "./entry-helpers";
 
+type VelocityOverLifeTimeEntriesParams = {
+  parentFolder: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: () => void;
+};
+
 export const createVelocityOverLifeTimeEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
-}) => {
+}: VelocityOverLifeTimeEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder("Velocity over lifetime");
   folder.close();
 
