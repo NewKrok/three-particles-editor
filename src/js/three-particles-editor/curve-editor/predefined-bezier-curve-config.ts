@@ -1,4 +1,15 @@
-export const examples = [
+type BezierPoint = {
+  x: number;
+  y: number;
+  percentage?: number;
+};
+
+type BezierCurveExample = {
+  bezierPoints: BezierPoint[];
+  preview: string;
+};
+
+export const examples: BezierCurveExample[] = [
   {
     bezierPoints: [
       { x: 0, y: 0, percentage: 0 },
