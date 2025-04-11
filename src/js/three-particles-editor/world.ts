@@ -74,7 +74,7 @@ export const updateWorld = (): void => {
   stats.update();
 };
 
-export const setTerrain = (textureId:string): void => {
+export const setTerrain = (textureId?:string): void => {
   if (!textureId || textureId === TextureId.WIREFRAME) {
     const material = new THREE.MeshBasicMaterial({
       wireframe: true,
