@@ -75,6 +75,7 @@ type ConfigEntry = {
   onReset?: () => void;
   onParticleSystemChange?: (particleSystem: any) => void;
   onAssetUpdate?: () => void;
+  onUpdate?: (cycleData: CycleData) => void;
 };
 
 const defaultEditorData: EditorData = {
