@@ -1,47 +1,40 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
 import {
   MovementSimulations,
   RotationSimulations,
   createHelperEntries,
-} from "./three-particles-editor/entries/helper-entries";
+} from './three-particles-editor/entries/helper-entries';
 import {
   copyToClipboard,
   loadFromClipboard,
   loadParticleSystem,
-} from "./three-particles-editor/save-and-load";
+} from './three-particles-editor/save-and-load';
 import {
   createParticleSystem,
   // @ts-ignore
   getDefaultParticleSystemConfig,
   updateParticleSystems,
-} from "@newkrok/three-particles/src/js/effects/three-particles";
-import {
-  createWorld,
-  setTerrain,
-  updateWorld,
-} from "./three-particles-editor/world";
-import {
-  initAssets,
-  loadCustomAssets,
-} from "./three-particles-editor/assets";
+} from '@newkrok/three-particles/src/js/effects/three-particles';
+import { createWorld, setTerrain, updateWorld } from './three-particles-editor/world';
+import { initAssets, loadCustomAssets } from './three-particles-editor/assets';
 
-import { GUI } from "three/examples/jsm/libs/lil-gui.module.min.js";
-import { Object3D } from "three";
-import { TextureId } from "./three-particles-editor/texture-config";
-import { createCurveEditor } from "./three-particles-editor/curve-editor/curve-editor";
-import { createEmissionEntries } from "./three-particles-editor/entries/emission-entries";
-import { createGeneralEntries } from "./three-particles-editor/entries/general-entries";
-import { createNoiseEntries } from "./three-particles-editor/entries/noise-entries";
-import { createOpacityOverLifeTimeEntries } from "./three-particles-editor/entries/opacity-over-lifetime-entries";
-import { createRendererEntries } from "./three-particles-editor/entries/renderer-entries";
-import { createRotationOverLifeTimeEntries } from "./three-particles-editor/entries/rotation-over-lifetime-entries";
-import { createShapeEntries } from "./three-particles-editor/entries/shape-entries";
-import { createSizeOverLifeTimeEntries } from "./three-particles-editor/entries/size-over-lifetime-entries";
-import { createTextureSheetAnimationEntries } from "./three-particles-editor/entries/texture-sheet-animation-entries";
-import { createTransformEntries } from "./three-particles-editor/entries/transform-entries";
-import { createVelocityOverLifeTimeEntries } from "./three-particles-editor/entries/velocity-over-lifetime-entries";
-import { patchObject } from "@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js";
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { Object3D } from 'three';
+import { TextureId } from './three-particles-editor/texture-config';
+import { createCurveEditor } from './three-particles-editor/curve-editor/curve-editor';
+import { createEmissionEntries } from './three-particles-editor/entries/emission-entries';
+import { createGeneralEntries } from './three-particles-editor/entries/general-entries';
+import { createNoiseEntries } from './three-particles-editor/entries/noise-entries';
+import { createOpacityOverLifeTimeEntries } from './three-particles-editor/entries/opacity-over-lifetime-entries';
+import { createRendererEntries } from './three-particles-editor/entries/renderer-entries';
+import { createRotationOverLifeTimeEntries } from './three-particles-editor/entries/rotation-over-lifetime-entries';
+import { createShapeEntries } from './three-particles-editor/entries/shape-entries';
+import { createSizeOverLifeTimeEntries } from './three-particles-editor/entries/size-over-lifetime-entries';
+import { createTextureSheetAnimationEntries } from './three-particles-editor/entries/texture-sheet-animation-entries';
+import { createTransformEntries } from './three-particles-editor/entries/transform-entries';
+import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
+import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
 
 type EditorData = {
   textureId: string;
@@ -65,7 +58,7 @@ type EditorData = {
 
 type CycleData = {
   pauseStartTime: number;
-  totalPauseTime: number; 
+  totalPauseTime: number;
   now: number;
   delta: number;
   elapsed: number;
@@ -147,10 +140,13 @@ export const createParticleSystemEditor = (targetQuery: string): void => {
   scene.add(particleSystemContainer);
 
   initAssets(() => {
-    let customTextures =
-      JSON.parse(localStorage.getItem("particle-system-editor/library") || "[]") || [];
+    const customTextures =
+      JSON.parse(localStorage.getItem('particle-system-editor/library') || '[]') || [];
     loadCustomAssets({
-      textures: customTextures.map(({ name, url }: { name: string; url: string }) => ({ id: name, url })),
+      textures: customTextures.map(({ name, url }: { name: string; url: string }) => ({
+        id: name,
+        url,
+      })),
       onComplete: () => {
         createPanel();
         createCurveEditor();
@@ -187,16 +183,15 @@ const recreateParticleSystem = (): void => {
 
   particleSystemContainer.add(particleSystem.instance);
   configEntries.forEach(
-    ({ onParticleSystemChange }) =>
-      onParticleSystemChange && onParticleSystemChange(particleSystem)
+    ({ onParticleSystemChange }) => onParticleSystemChange && onParticleSystemChange(particleSystem)
   );
 };
 
 const createPanel = (): void => {
   const panel = new GUI({
     width: 310,
-    title: "Particle System Editor",
-    container: document.querySelector(".right-panel"),
+    title: 'Particle System Editor',
+    container: document.querySelector('.right-panel'),
   });
 
   configEntries.push(
@@ -348,8 +343,6 @@ window.editor = {
   play: resumeTime,
   pause: pauseTime,
   updateAssets: () =>
-    configEntries.forEach(
-      ({ onAssetUpdate }) => onAssetUpdate && onAssetUpdate()
-    ),
+    configEntries.forEach(({ onAssetUpdate }) => onAssetUpdate && onAssetUpdate()),
   getCurrentParticleSystemConfig: () => particleSystemConfig,
 };

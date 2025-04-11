@@ -15,7 +15,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
-    "prepare": "npm run smui-theme-light && npm run smui-theme-dark",
+    "prepare": "husky",
     "smui-theme-light": "smui-theme compile public/build/static/smui.css -i src/theme",
     "smui-theme-dark": "smui-theme compile public/build/static/smui-dark.css -i src/theme/dark",
     "lint": "eslint --ext .js,.svelte src/",

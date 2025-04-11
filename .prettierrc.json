@@ -4,11 +4,18 @@
   "printWidth": 100,
   "tabWidth": 2,
   "semi": true,
-  "svelteSortOrder": "options-scripts-markup-styles",
-  "svelteStrictMode": false,
-  "svelteIndentScriptAndStyle": true,
-  "svelteBracketNewLine": true,
   "arrowParens": "always",
   "bracketSpacing": true,
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.svelte",
+      "options": {
+        "svelteSortOrder": "options-scripts-markup-styles",
+        "svelteStrictMode": false,
+        "svelteIndentScriptAndStyle": true,
+        "svelteBracketNewLine": true
+      }
+    }
+  ]
 }
