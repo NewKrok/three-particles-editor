@@ -17,7 +17,7 @@
   const defaultList = Object.keys(TextureId)
     .filter(
       (key) =>
-        textureConfigs.find(({ id }) => id === TextureId[key]).isParticleTexture
+        textureConfigs.find(({ id }) => id === TextureId[key])?.isParticleTexture
     )
     .map((key, index) => ({
       id: index,
