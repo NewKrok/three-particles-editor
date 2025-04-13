@@ -21,7 +21,7 @@ function serve() {
     writeBundle() {
       if (server) return;
       // ESLint: @typescript-eslint/no-require-imports
-      // Mivel ez egy config fájl, ez a hiba figyelmen kívül hagyható
+      // Since this is a config file, this error can be ignored
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
         stdio: ['ignore', 'inherit', 'inherit'],

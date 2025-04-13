@@ -9,6 +9,7 @@ const resolveProperty = (rootObject: any, property: string): any =>
 type ValueType = Constant | RandomBetweenTwoConstants | LifetimeCurve;
 
 // Helper function to determine if a value is a RandomBetweenTwoConstants
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isRandomBetweenTwoConstants = (value: ValueType): value is RandomBetweenTwoConstants => {
   return typeof value === 'object' && 'min' in value && 'max' in value;
 };
@@ -19,7 +20,7 @@ const isLifetimeCurve = (value: ValueType): value is LifetimeCurve => {
 };
 
 // Helper function to convert value to RandomBetweenTwoConstants if it's not already
-// Megjegyzés: Ezt a függvényt jelenleg nem használjuk, de később szükség lehet rá
+// Note: This function is not currently used, but may be needed later
 /* 
 const ensureRandomBetweenTwoConstants = (value: ValueType): RandomBetweenTwoConstants => {
   if (isRandomBetweenTwoConstants(value)) {
