@@ -23,6 +23,7 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { Object3D } from 'three';
 import { TextureId } from './three-particles-editor/texture-config';
 import { createCurveEditor } from './three-particles-editor/curve-editor/curve-editor';
+import { createColorOverLifeTimeEntries } from './three-particles-editor/entries/color-over-lifetime-entries';
 import { createEmissionEntries } from './three-particles-editor/entries/emission-entries';
 import { createGeneralEntries } from './three-particles-editor/entries/general-entries';
 import { createNoiseEntries } from './three-particles-editor/entries/noise-entries';
@@ -141,7 +142,6 @@ export const createParticleSystemEditor = (targetQuery: string): void => {
   particleSystemContainer = new Object3D();
   scene.add(particleSystemContainer);
 
-  // Tab fókusz figyelése
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) pauseTime();
     else if (!isPaused) resumeTime();
@@ -261,13 +261,13 @@ const createPanel = (): void => {
       recreateParticleSystem,
     })
   );
-  /* configEntries.push(
+  configEntries.push(
     createColorOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem,
     })
-  ); */
+  );
   configEntries.push(
     createOpacityOverLifeTimeEntries({
       parentFolder: panel,
@@ -310,6 +310,7 @@ const createPanel = (): void => {
       recreateParticleSystem,
     })
   );
+  /* Other components temporarily disabled for debugging */
   recreateParticleSystem();
 };
 

@@ -1,4 +1,5 @@
-import { createMinMaxColorFolderEntry } from "./entry-helpers";
+import { createMinMaxColorFolderEntry } from './entry-helpers';
+import { Color } from 'three';
 
 type ColorOverLifetimeEntriesParams = {
   parentFolder: any;
@@ -11,11 +12,26 @@ export const createColorOverLifeTimeEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }: ColorOverLifetimeEntriesParams): Record<string, unknown> => {
-  const folder = parentFolder.addFolder("Color over lifetime");
+  const folder = parentFolder.addFolder('Color over lifetime');
   folder.close();
 
+  // Ensure the colorOverLifetime object exists and has the correct structure for v2.0.2
+  if (!particleSystemConfig.colorOverLifetime) {
+    particleSystemConfig.colorOverLifetime = {
+      isActive: false,
+    };
+  }
+
+  // Ensure gradient is properly initialized
+  if (!particleSystemConfig.colorOverLifetime.gradient) {
+    particleSystemConfig.colorOverLifetime.gradient = {
+      min: new Color(1, 1, 1),
+      max: new Color(1, 1, 1),
+    };
+  }
+
   folder
-    .add(particleSystemConfig.colorOverLifetime, "isActive")
+    .add(particleSystemConfig.colorOverLifetime, 'isActive')
     .onChange((v: boolean) => {
       particleSystemConfig.looping = v;
       recreateParticleSystem();
@@ -26,8 +42,8 @@ export const createColorOverLifeTimeEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    rootPropertyName: "colorOverLifetime",
-    propertyName: "gradient",
+    rootPropertyName: 'colorOverLifetime',
+    propertyName: 'gradient',
   });
 
   return {};

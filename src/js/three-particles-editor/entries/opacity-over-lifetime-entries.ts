@@ -1,10 +1,7 @@
-import {
-  setCurveEditorPositions,
-  setCurveEditorTarget,
-} from "../curve-editor/curve-editor";
+import { setCurveEditorPositions, setCurveEditorTarget } from '../curve-editor/curve-editor';
 
-import { LifeTimeCurve } from "@newkrok/three-particles";
-import { createLifetimeCurveFolderEntry } from "./entry-helpers-v2";
+import { LifeTimeCurve } from '@newkrok/three-particles';
+import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
 
 type OpacityOverLifeTimeEntriesParams = {
   parentFolder: any;
@@ -17,10 +14,14 @@ export const createOpacityOverLifeTimeEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }: OpacityOverLifeTimeEntriesParams): Record<string, unknown> => {
-  const folder = parentFolder.addFolder("Opacity over lifetime");
+  const folder = parentFolder.addFolder('Opacity over lifetime');
   folder.close();
 
-  // Ensure the opacityOverLifetime object has the correct structure for v2.0.2
+  // Ensure the opacityOverLifetime object exists and has the correct structure for v2.0.2
+  if (!particleSystemConfig.opacityOverLifetime) {
+    particleSystemConfig.opacityOverLifetime = {};
+  }
+
   if (!particleSystemConfig.opacityOverLifetime.lifetimeCurve) {
     particleSystemConfig.opacityOverLifetime.lifetimeCurve = {
       type: LifeTimeCurve.BEZIER,
@@ -32,7 +33,7 @@ export const createOpacityOverLifeTimeEntries = ({
   }
 
   folder
-    .add(particleSystemConfig.opacityOverLifetime, "isActive")
+    .add(particleSystemConfig.opacityOverLifetime, 'isActive')
     .onChange(recreateParticleSystem)
     .listen();
 
@@ -41,8 +42,8 @@ export const createOpacityOverLifeTimeEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    rootPropertyName: "opacityOverLifetime",
-    propertyName: "lifetimeCurve",
+    rootPropertyName: 'opacityOverLifetime',
+    propertyName: 'lifetimeCurve',
   });
 
   folder
@@ -54,19 +55,18 @@ export const createOpacityOverLifeTimeEntries = ({
           recreateParticleSystem();
         },
       },
-      "editCurve"
+      'editCurve'
     )
-    .name("Apply curve");
+    .name('Apply curve');
 
   folder
     .add(
       {
-        loadCurve: (): void =>
-          setCurveEditorPositions(particleSystemConfig.opacityOverLifetime),
+        loadCurve: (): void => setCurveEditorPositions(particleSystemConfig.opacityOverLifetime),
       },
-      "loadCurve"
+      'loadCurve'
     )
-    .name("Edit curve");
+    .name('Edit curve');
 
   return {};
 };
