@@ -12,10 +12,10 @@ import {
 } from './three-particles-editor/save-and-load';
 import {
   createParticleSystem,
-  // @ts-ignore
   getDefaultParticleSystemConfig,
   updateParticleSystems,
-} from '@newkrok/three-particles/src/js/effects/three-particles';
+} from '@newkrok/three-particles';
+import { convertToNewFormat } from './three-particles-editor/config-converter';
 import { createWorld, setTerrain, updateWorld } from './three-particles-editor/world';
 import { initAssets, loadCustomAssets } from './three-particles-editor/assets';
 
@@ -185,7 +185,9 @@ const recreateParticleSystem = (): void => {
     cycleData.totalPauseTime = 0;
   }
 
-  particleSystem = createParticleSystem(particleSystemConfig);
+  // Convert old configuration format to new format before creating particle system
+  const convertedConfig = convertToNewFormat(particleSystemConfig);
+  particleSystem = createParticleSystem(convertedConfig);
 
   particleSystemContainer.add(particleSystem.instance);
   configEntries.forEach(

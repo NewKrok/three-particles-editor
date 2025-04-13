@@ -3,7 +3,8 @@ import {
   setCurveEditorTarget,
 } from "../curve-editor/curve-editor";
 
-import { CurveFunction } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-curves";
+import { LifeTimeCurve } from "@newkrok/three-particles";
+import { createLifetimeCurveFolderEntry } from "./entry-helpers-v2";
 
 type SizeOverLifeTimeEntriesParams = {
   parentFolder: any;
@@ -19,31 +20,37 @@ export const createSizeOverLifeTimeEntries = ({
   const folder = parentFolder.addFolder("Size over lifetime");
   folder.close();
 
-  particleSystemConfig.sizeOverLifetime.curveFunction =
-    typeof particleSystemConfig.sizeOverLifetime.curveFunction === "function"
-      ? CurveFunction.BEZIER
-      : particleSystemConfig.sizeOverLifetime.curveFunction ||
-        CurveFunction.BEZIER;
+  // Ensure the sizeOverLifetime object has the correct structure for v2.0.2
+  if (!particleSystemConfig.sizeOverLifetime.lifetimeCurve) {
+    particleSystemConfig.sizeOverLifetime.lifetimeCurve = {
+      type: LifeTimeCurve.BEZIER,
+      bezierPoints: [
+        { x: 0, y: 0, percentage: 0 },
+        { x: 1, y: 1, percentage: 1 },
+      ],
+    };
+  }
 
   folder
     .add(particleSystemConfig.sizeOverLifetime, "isActive")
     .onChange(recreateParticleSystem)
     .listen();
 
-  folder
-    .add(
-      particleSystemConfig.sizeOverLifetime,
-      "curveFunction",
-      Object.keys(CurveFunction)
-    )
-    .listen()
-    .onChange(recreateParticleSystem);
+  // Use the createLifetimeCurveFolderEntry helper to create UI for the lifetimeCurve
+  createLifetimeCurveFolderEntry({
+    particleSystemConfig,
+    recreateParticleSystem,
+    parentFolder: folder,
+    rootPropertyName: "sizeOverLifetime",
+    propertyName: "lifetimeCurve",
+  });
 
   folder
     .add(
       {
         editCurve: (): void => {
-          setCurveEditorTarget(particleSystemConfig.sizeOverLifetime);
+          // Update to use lifetimeCurve instead of curveFunction
+          setCurveEditorTarget(particleSystemConfig.sizeOverLifetime.lifetimeCurve);
           recreateParticleSystem();
         },
       },

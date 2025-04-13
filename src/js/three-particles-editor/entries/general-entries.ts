@@ -1,9 +1,9 @@
 import {
   createMinMaxColorFolderEntry,
   createMinMaxFloatFolderEntry,
-} from "./entry-helpers";
+} from "./entry-helpers-v2";
 
-import { SimulationSpace } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-enums.js";
+import { SimulationSpace } from "@newkrok/three-particles";
 
 type GeneralEntriesParams = {
   parentFolder: any;

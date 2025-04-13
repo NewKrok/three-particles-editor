@@ -3,7 +3,7 @@ import {
   createVector2FolderEntry,
 } from "./entry-helpers";
 
-import { TimeMode } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-enums.js";
+import { TimeMode } from "@newkrok/three-particles";
 
 let timeModeControllers: any[] = [];
 let lastInitedTimeMode: string | null = null;

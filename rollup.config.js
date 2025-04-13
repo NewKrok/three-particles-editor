@@ -6,6 +6,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import svelte from "rollup-plugin-svelte";
 import { terser } from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
+import alias from "@rollup/plugin-alias";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -42,11 +43,18 @@ export default {
     name: "app",
     file: "public/build/bundle.js",
     globals: {
+      'three': 'THREE',
       '@smui/common/internal': 'smuiInternal',
       '@smui/common/classadder': 'smuiClassadder'
     }
   },
+
   plugins: [
+    alias({
+      entries: [
+        { find: '@newkrok/three-particles', replacement: 'node_modules/@newkrok/three-particles/dist/index.js' }
+      ]
+    }),
     svelte({
       compilerOptions: {
         // enable run-time checks when not in production
@@ -70,7 +78,9 @@ export default {
     resolve({
       browser: true,
       dedupe: ["svelte"],
-      exportConditions: ['svelte'],
+      exportConditions: ['svelte', 'module', 'import', 'default'],
+      mainFields: ['module', 'main', 'browser'],
+      extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx']
     }),
     commonjs(),
 

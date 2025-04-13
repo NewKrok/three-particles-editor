@@ -296,7 +296,15 @@ const render = (): void => {
 
 const round = (value: number): number => Math.floor(value * 10000) / 10000;
 
-export const setCurveEditorTarget = (target: { bezierPoints: BezierPoint[] }): void => {
+export const setCurveEditorTarget = (target: { bezierPoints?: BezierPoint[], type?: string }): void => {
+  // Handle the new LifetimeCurve format in v2.0.2
+  if (!target.bezierPoints && target.type === 'BEZIER') {
+    // Initialize bezierPoints if it doesn't exist
+    target.bezierPoints = [
+      { x: 0, y: 0, percentage: 0 },
+      { x: 1, y: 1, percentage: 1 },
+    ];
+  }
   const points = Array.from(document.querySelectorAll(".bezier-point")) as HTMLElement[];
   target.bezierPoints = points
     .reduce((prev: BezierPoint[], current, index) => {

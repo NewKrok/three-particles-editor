@@ -1,6 +1,5 @@
 import { TextureId } from "../texture-config";
-// @ts-ignore
-import { blendingMap } from "@newkrok/three-particles/src/js/effects/three-particles";
+import { blendingMap } from "@newkrok/three-particles";
 import { getTexture } from "../assets";
 
 type RendererEntriesParams = {

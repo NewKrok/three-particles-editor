@@ -3,7 +3,8 @@ import {
   setCurveEditorTarget,
 } from "../curve-editor/curve-editor";
 
-import { CurveFunction } from "@newkrok/three-particles/src/js/effects/three-particles/three-particles-curves";
+import { LifeTimeCurve } from "@newkrok/three-particles";
+import { createLifetimeCurveFolderEntry } from "./entry-helpers-v2";
 
 type OpacityOverLifeTimeEntriesParams = {
   parentFolder: any;
@@ -19,31 +20,37 @@ export const createOpacityOverLifeTimeEntries = ({
   const folder = parentFolder.addFolder("Opacity over lifetime");
   folder.close();
 
-  particleSystemConfig.opacityOverLifetime.curveFunction =
-    typeof particleSystemConfig.opacityOverLifetime.curveFunction === "function"
-      ? CurveFunction.BEZIER
-      : particleSystemConfig.opacityOverLifetime.curveFunction ||
-        CurveFunction.BEZIER;
+  // Ensure the opacityOverLifetime object has the correct structure for v2.0.2
+  if (!particleSystemConfig.opacityOverLifetime.lifetimeCurve) {
+    particleSystemConfig.opacityOverLifetime.lifetimeCurve = {
+      type: LifeTimeCurve.BEZIER,
+      bezierPoints: [
+        { x: 0, y: 0, percentage: 0 },
+        { x: 1, y: 1, percentage: 1 },
+      ],
+    };
+  }
 
   folder
     .add(particleSystemConfig.opacityOverLifetime, "isActive")
     .onChange(recreateParticleSystem)
     .listen();
 
-  folder
-    .add(
-      particleSystemConfig.opacityOverLifetime,
-      "curveFunction",
-      Object.keys(CurveFunction)
-    )
-    .listen()
-    .onChange(recreateParticleSystem);
+  // Use the createLifetimeCurveFolderEntry helper to create UI for the lifetimeCurve
+  createLifetimeCurveFolderEntry({
+    particleSystemConfig,
+    recreateParticleSystem,
+    parentFolder: folder,
+    rootPropertyName: "opacityOverLifetime",
+    propertyName: "lifetimeCurve",
+  });
 
   folder
     .add(
       {
         editCurve: (): void => {
-          setCurveEditorTarget(particleSystemConfig.opacityOverLifetime);
+          // Update to use lifetimeCurve instead of curveFunction
+          setCurveEditorTarget(particleSystemConfig.opacityOverLifetime.lifetimeCurve);
           recreateParticleSystem();
         },
       },
