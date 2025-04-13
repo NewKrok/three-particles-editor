@@ -139,6 +139,12 @@ export const createParticleSystemEditor = (targetQuery: string): void => {
   particleSystemContainer = new Object3D();
   scene.add(particleSystemContainer);
 
+  // Tab fókusz figyelése
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pauseTime();
+    else if (!isPaused) resumeTime();
+  });
+
   initAssets(() => {
     const customTextures =
       JSON.parse(localStorage.getItem('particle-system-editor/library') || '[]') || [];
