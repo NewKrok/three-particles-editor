@@ -31,6 +31,6 @@
 
 ## Dependencies
 - @newkrok/three-particles: 2.0.2 (target version)
-- three.js: 0.155.0
+- three.js: 0.175.0
 - Use sass instead of node-sass
 - Use Svelte framework for the user interface
