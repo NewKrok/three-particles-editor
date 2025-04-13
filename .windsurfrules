@@ -1,36 +1,56 @@
-# Three Particles Editor - Development Rules
+# Three Particles Editor – Development Rules
 
 ## General Guidelines
-- The project aims to update the three-particles-editor to support @newkrok/three-particles package version 2.0.2
-- Use TypeScript instead of JavaScript, with typedefs (not interfaces or classes)
-- Remove JSDoc comments in favor of TypeScript type definitions
-- Follow Conventional Commit format for version control
+- The project uses the latest version of the `@newkrok/three-particles` package.
+- Use **TypeScript** for all code, utilizing `type` definitions (avoid `interface` and `class` unless necessary).
+- Prefer **TypeScript types** over JSDoc for internal documentation.
+- Use **English** for all code and documentation.
+- All variables and functions must have explicitly declared types.
+- Avoid using `any`. If unavoidable, document the reason.
+- Create and reuse proper composite types instead of repeating structures.
+- Use **JSDoc** for documenting public classes and methods.
 
 ## Code Conventions
-- File extensions: .ts for TypeScript files, .svelte for Svelte components
-- Import paths: should not contain extensions (.js, .ts) for TypeScript files
-- Code formatting: Use ESLint and Prettier to ensure code quality
-- Pre-commit checks: Use Husky and lint-staged
+- File extensions: `.ts` for TypeScript, `.svelte` for Svelte components.
+- Import paths **must not include** file extensions (e.g., `.js`, `.ts`).
+- Use **PascalCase** for classes.
+- Use **camelCase** for variables, functions, and methods.
+- Use **kebab-case** for file and directory names.
+- Use **UPPERCASE** for environment variables.
+- Avoid magic numbers — define them as constants.
+- Ensure code is formatted using **ESLint** and **Prettier**.
+- Use **Husky** and **lint-staged** for pre-commit checks.
 
-## API Changes Handling
-- Use THREE.MathUtils.degToRad instead of THREE.Math.degToRad
-- Replace MinMaxNumber type with Constant | RandomBetweenTwoConstants | LifetimeCurve types
-- Update default values (e.g., startLifeTime from 2.0 to 5.0)
-- Implement conversion function to transform old configurations to the new format
+## Functions & Logic
+- Keep functions short and focused — preferably under 20 lines.
+- Avoid deeply nested blocks:
+  - Use early returns.
+  - Extract logic into utility functions.
+- Use higher-order functions like `map`, `filter`, and `reduce` where applicable.
+- Prefer arrow functions for simple cases (under 3 instructions), and named functions otherwise.
+- Use default parameter values instead of null/undefined checks.
+- Use RO-RO pattern (Receive Object, Return Object) for multiple parameters or return values.
+- Don’t leave unnecessary blank lines within functions.
+
+## Data Handling
+- Avoid excessive use of primitive types — encapsulate related data in composite types.
+- Avoid inline validation in functions — use types or classes with internal validation logic.
+- Prefer immutable data structures:
+  - Use `readonly` for immutable properties.
+  - Use `as const` for literals that should never change.
 
 ## Version Control
-- Development happens on the v2.0.0 branch
-- The master branch contains the stable, released version
-- Each significant change is in a separate commit
-- Commit messages follow the conventional commit format (feat, fix, refactor, etc.)
+- Use **Conventional Commits** for all commit messages (`feat`, `fix`, `refactor`, etc.).
+- Each significant change must be in a separate commit.
+- The `master` branch contains the latest stable version.
 
 ## Build and Deployment
-- The contents of the public/build folder are not version controlled
-- Static assets (e.g., images) are stored in the src/assets folder
-- The development server runs using sirv-cli from the public folder
+- The contents of the `public/build` folder are not version controlled.
+- Static assets (e.g., images) are stored in the `src/assets` directory.
+- The development server runs using `sirv-cli` from the `public` folder.
 
 ## Dependencies
-- @newkrok/three-particles: 2.0.2 (target version)
-- three.js: 0.175.0
-- Use sass instead of node-sass
-- Use Svelte framework for the user interface
+- `@newkrok/three-particles`: latest version.
+- `three`: must match the version used by `@newkrok/three-particles`.
+- Use `sass` (not `node-sass`) for styling.
+- Use the **Svelte** framework for the user interface.
