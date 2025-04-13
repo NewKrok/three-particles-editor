@@ -45,6 +45,10 @@ export default {
       three: 'THREE',
       '@smui/common/internal': 'smuiInternal',
       '@smui/common/classadder': 'smuiClassadder',
+      '@newkrok/three-particles': 'threeParticles',
+      'three/examples/jsm/libs/lil-gui.module.min.js': 'lil',
+      'three/examples/jsm/controls/OrbitControls.js': 'OrbitControls',
+      'three/examples/jsm/libs/stats.module.js': 'Stats',
     },
   },
 
@@ -79,7 +83,7 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ['svelte'],
+      dedupe: ['svelte', 'three'],
       exportConditions: ['svelte', 'module', 'import', 'default'],
       mainFields: ['module', 'main', 'browser'],
       extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx'],
