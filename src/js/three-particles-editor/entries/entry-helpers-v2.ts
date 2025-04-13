@@ -1,5 +1,9 @@
-import { Constant, LifetimeCurve, RandomBetweenTwoConstants } from '@newkrok/three-particles';
-import { LifeTimeCurve } from '@newkrok/three-particles';
+import {
+  Constant,
+  LifetimeCurve,
+  RandomBetweenTwoConstants,
+  LifeTimeCurve,
+} from '@newkrok/three-particles';
 
 const resolveProperty = (rootObject: any, property: string): any =>
   property !== ''
