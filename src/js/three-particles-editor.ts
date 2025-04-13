@@ -66,8 +66,10 @@ type CycleData = {
 
 type ConfigEntry = {
   onReset?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onParticleSystemChange?: (particleSystem: any) => void;
   onAssetUpdate?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUpdate?: (cycleData: CycleData) => void;
 };
 
@@ -313,6 +315,7 @@ const createPanel = (): void => {
 
 interface EditorInterface {
   createNew: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   load: (config: any) => void;
   loadFromClipboard: () => void;
   copyToClipboard: () => void;
