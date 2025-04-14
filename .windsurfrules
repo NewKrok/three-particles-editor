@@ -46,6 +46,8 @@
 - Use **Conventional Commits** for all commit messages (`feat`, `fix`, `refactor`, etc.).
 - Each significant change must be in a separate commit.
 - The `master` branch contains the latest stable version.
+- **NEVER** use `--no-verify` when committing.
+
 
 ## Build and Deployment
 - The contents of the `public/build` folder are not version controlled.
