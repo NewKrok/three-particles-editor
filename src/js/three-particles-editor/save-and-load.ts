@@ -56,8 +56,9 @@ export const loadFromClipboard = ({ particleSystemConfig, recreateParticleSystem
         recreateParticleSystem,
       });
     })
-    .catch((err) => {
-      console.error('Failed to read clipboard contents: ', err);
+    .catch(() => {
+      // Handle clipboard read error silently
+      // In a production app, we might want to show a notification to the user
     });
 };
 
