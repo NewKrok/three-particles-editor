@@ -1,17 +1,14 @@
-import { getDefaultParticleSystemConfig } from "@newkrok/three-particles";
-import { patchObject } from "@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js";
-import { setTerrain } from "./world";
+import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
+import { isConfigV2 } from './config-util';
+import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
+import { setTerrain } from './world';
 
-const getObjectDiff = (
-  objectA,
-  objectB,
-  config = { skippedProperties: [] }
-) => {
+const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {
   const result = {};
   Object.keys(objectA).forEach((key) => {
     if (!config.skippedProperties || !config.skippedProperties.includes(key)) {
       if (
-        typeof objectA[key] === "object" &&
+        typeof objectA[key] === 'object' &&
         objectA[key] &&
         objectB[key] &&
         !Array.isArray(objectA[key])
@@ -28,22 +25,18 @@ const getObjectDiff = (
 };
 
 export const copyToClipboard = (particleSystemConfig) => {
-  const type = "text/plain";
+  const type = 'text/plain';
   const blob = new Blob(
     [
       JSON.stringify({
-        ...getObjectDiff(
-          getDefaultParticleSystemConfig(),
-          particleSystemConfig,
-          {
-            skippedProperties: ["map"],
-          }
-        ),
+        ...getObjectDiff(getDefaultParticleSystemConfig(), particleSystemConfig, {
+          skippedProperties: ['map'],
+        }),
         _editorData: { ...particleSystemConfig._editorData },
       }),
     ],
     {
-      type: "text/plain",
+      type: 'text/plain',
     }
   );
   const data = [new ClipboardItem({ [type]: blob })];
@@ -51,10 +44,7 @@ export const copyToClipboard = (particleSystemConfig) => {
   navigator.clipboard.write(data);
 };
 
-export const loadFromClipboard = ({
-  particleSystemConfig,
-  recreateParticleSystem,
-}) => {
+export const loadFromClipboard = ({ particleSystemConfig, recreateParticleSystem }) => {
   navigator.clipboard
     .readText()
     .then((text) => {
@@ -65,21 +55,21 @@ export const loadFromClipboard = ({
       });
     })
     .catch((err) => {
-      console.error("Failed to read clipboard contents: ", err);
+      console.error('Failed to read clipboard contents: ', err);
     });
 };
 
-export const loadParticleSystem = ({
-  config,
-  particleSystemConfig,
-  recreateParticleSystem,
-}) => {
+export const loadParticleSystem = ({ config, particleSystemConfig, recreateParticleSystem }) => {
+  // Check if the loaded configuration is from version 2.0.0 or newer
+  const isV2Config = isConfigV2(config);
+  console.log('Loaded configuration version:', isV2Config ? 'v2.0.0+' : 'pre-v2.0.0');
+
   patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
     skippedProperties: [],
     applyToFirstObject: true,
   });
   patchObject(particleSystemConfig, config, {
-    skippedProperties: ["map"],
+    skippedProperties: ['map'],
     applyToFirstObject: true,
   });
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
