@@ -9,6 +9,9 @@
 - Avoid using `any`. If unavoidable, document the reason.
 - Create and reuse proper composite types instead of repeating structures.
 - Use **JSDoc** for documenting public classes and methods.
+- Use **ESLint** and **Prettier** for code formatting.
+- Use **Jest** for unit testing.
+- Always create unit tests for **utility functions**.
 
 ## Code Conventions
 - File extensions: `.ts` for TypeScript, `.svelte` for Svelte components.
