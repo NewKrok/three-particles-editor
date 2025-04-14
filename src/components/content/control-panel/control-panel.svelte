@@ -1,7 +1,7 @@
 <script lang="ts">
   import Card, { Actions } from "@smui/card";
   import Button, { Label } from "@smui/button";
-  import IconButton, { Icon } from "@smui/icon-button";
+  import { Icon } from "@smui/icon-button";
 </script>
 
 <div class="wrapper">

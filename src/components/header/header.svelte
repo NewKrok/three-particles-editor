@@ -1,23 +1,22 @@
 <script>
-  import Button, { Label, Icon } from "@smui/button";
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Button, { Label, Icon } from '@smui/button';
+  import Dialog, { Title, Content, Actions } from '@smui/dialog';
 
   let lightTheme =
-    typeof window === "undefined" ||
-    window.matchMedia("(prefers-color-scheme: light)").matches;
+    typeof window === 'undefined' || window.matchMedia('(prefers-color-scheme: light)').matches;
 
   const switchTheme = () => {
     lightTheme = !lightTheme;
-    let themeLink = document.head.querySelector("#theme");
+    let themeLink = document.head.querySelector('#theme');
     if (!themeLink) {
-      themeLink = document.createElement("link");
-      themeLink.rel = "stylesheet";
-      themeLink.id = "theme";
+      themeLink = document.createElement('link');
+      themeLink.rel = 'stylesheet';
+      themeLink.id = 'theme';
     }
-    themeLink.href = `./build/static/smui${lightTheme ? "" : "-dark"}.css`;
+    themeLink.href = `./build/static/smui${lightTheme ? '' : '-dark'}.css`;
     document.head
       .querySelector('link[href="./build/static/smui-dark.css"]')
-      ?.insertAdjacentElement("afterend", themeLink);
+      ?.insertAdjacentElement('afterend', themeLink);
   };
 
   let open = false;
@@ -32,26 +31,18 @@
       <Icon class="material-icons">note_add</Icon><Label>New</Label>
     </Button>
     <Button on:click={window.editor.copyToClipboard} variant="raised">
-      <Icon class="material-icons">file_copy</Icon><Label
-        >Copy to clipboard</Label
-      >
+      <Icon class="material-icons">file_copy</Icon><Label>Copy to clipboard</Label>
     </Button>
     <Button on:click={window.editor.loadFromClipboard} variant="raised">
-      <Icon class="material-icons">content_paste</Icon><Label
-        >Load from clipboard</Label
-      >
+      <Icon class="material-icons">content_paste</Icon><Label>Load from clipboard</Label>
     </Button>
   </div>
   <Button on:click={switchTheme}>
-    <Label>{lightTheme ? "Lights off" : "Lights on"}</Label>
+    <Label>{lightTheme ? 'Lights off' : 'Lights on'}</Label>
   </Button>
 </div>
 
-<Dialog
-  bind:open
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
->
+<Dialog bind:open aria-labelledby="simple-title" aria-describedby="simple-content">
   <Title id="simple-title">Do you want to create a new particle system?</Title>
   <Content id="simple-content">You will loose your current config.</Content>
   <Actions>

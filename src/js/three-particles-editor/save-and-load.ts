@@ -1,5 +1,6 @@
 import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
 import { isConfigV2 } from './config-util';
+import { showLegacyConfigModal } from './showLegacyConfigModal';
 import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
 import { setTerrain } from './world';
 
@@ -62,7 +63,10 @@ export const loadFromClipboard = ({ particleSystemConfig, recreateParticleSystem
 export const loadParticleSystem = ({ config, particleSystemConfig, recreateParticleSystem }) => {
   // Check if the loaded configuration is from version 2.0.0 or newer
   const isV2Config = isConfigV2(config);
-  console.log('Loaded configuration version:', isV2Config ? 'v2.0.0+' : 'pre-v2.0.0');
+
+  if (!isV2Config) {
+    showLegacyConfigModal.set(true);
+  }
 
   patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
     skippedProperties: [],
