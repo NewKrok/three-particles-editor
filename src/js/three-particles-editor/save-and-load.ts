@@ -1,5 +1,6 @@
 import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
 import { isConfigV2 } from './config-util';
+import { convertToNewFormat } from './config-converter';
 import { showLegacyConfigModal } from './showLegacyConfigModal';
 import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
 import { setTerrain } from './world';
@@ -65,7 +66,14 @@ export const loadParticleSystem = ({ config, particleSystemConfig, recreateParti
   const isV2Config = isConfigV2(config);
 
   if (!isV2Config) {
+    // Show the legacy config modal to notify the user
     showLegacyConfigModal.set(true);
+
+    // Convert the old configuration to the new format
+    const convertedConfig = convertToNewFormat(config);
+
+    // Use the converted config instead of the original
+    config = convertedConfig;
   }
 
   patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
