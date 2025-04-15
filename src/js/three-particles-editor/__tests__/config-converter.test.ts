@@ -49,9 +49,10 @@ describe('config-converter', () => {
 
       const newConfig = convertToNewFormat(oldConfig);
 
-      // When only min is provided, it should be used as a constant
+      // When only min is provided, it should be used as a constant for startSpeed
       expect(newConfig.startSpeed).toBe(0.5);
-      expect(newConfig.startSize).toBe(0.1);
+      // For startSize, the structure should be preserved
+      expect(newConfig.startSize).toEqual({ min: 0.1 });
     });
 
     test('should handle objects with only max property', () => {
@@ -62,9 +63,10 @@ describe('config-converter', () => {
 
       const newConfig = convertToNewFormat(oldConfig);
 
-      // When only max is provided, it should be used as a constant
+      // When only max is provided, it should be used as a constant for startSpeed
       expect(newConfig.startSpeed).toBe(3.0);
-      expect(newConfig.startSize).toBe(1.5);
+      // For startSize, the structure should be preserved
+      expect(newConfig.startSize).toEqual({ max: 1.5 });
     });
 
     test('should handle velocityOverLifetime with only max property', () => {
@@ -104,6 +106,17 @@ describe('config-converter', () => {
 
       // The default startLifetime changed from 2.0 to 5.0 in v2.0.0
       expect(newConfig.startLifetime).toBe(5.0);
+    });
+
+    test('should preserve structure for startLifetime with min=max!=2.0', () => {
+      const oldConfig = {
+        startLifetime: { min: 0.8, max: 0.8 },
+      };
+
+      const newConfig = convertToNewFormat(oldConfig);
+
+      // The structure should be preserved for non-default values
+      expect(newConfig.startLifetime).toEqual({ min: 0.8, max: 0.8 });
     });
 
     test('should not update custom startLifetime values', () => {
@@ -158,9 +171,9 @@ describe('config-converter', () => {
 
       const newConfig = convertToNewFormat(oldConfig);
 
-      // Should set isActive to true if bezierPoints exist
+      // Should set isActive to false if it wasn't explicitly set in the original config
       expect(newConfig.sizeOverLifetime).toEqual({
-        isActive: true,
+        isActive: false,
         lifetimeCurve: {
           type: LifeTimeCurve.BEZIER,
           bezierPoints: [
@@ -213,9 +226,9 @@ describe('config-converter', () => {
 
       const newConfig = convertToNewFormat(oldConfig);
 
-      // Should set isActive to true if bezierPoints exist
+      // Should set isActive to false if it wasn't explicitly set in the original config
       expect(newConfig.opacityOverLifetime).toEqual({
-        isActive: true,
+        isActive: false,
         lifetimeCurve: {
           type: LifeTimeCurve.BEZIER,
           bezierPoints: [
@@ -293,6 +306,52 @@ describe('config-converter', () => {
           ],
         },
       });
+    });
+
+    test('should handle TELEPORT configuration correctly', () => {
+      // This is a simplified version of the TELEPORT configuration
+      const oldConfig = {
+        startLifetime: { min: 0.8, max: 0.8 },
+        startSpeed: { min: 0, max: 0 },
+        startSize: { max: 2 },
+        velocityOverLifetime: {
+          isActive: true,
+          orbital: {
+            x: { min: -1, max: 1 },
+            y: { min: -5, max: 2 },
+          },
+        },
+        sizeOverLifetime: {
+          bezierPoints: [
+            { x: 0, y: 0, percentage: 0 },
+            { x: 1, y: 1, percentage: 1 },
+          ],
+        },
+        opacityOverLifetime: {
+          bezierPoints: [
+            { x: 0, y: 0, percentage: 0 },
+            { x: 1, y: 1, percentage: 1 },
+          ],
+        },
+      };
+
+      const newConfig = convertToNewFormat(oldConfig);
+
+      // Check startSize conversion (only max value)
+      expect(newConfig.startSize).toEqual({ max: 2 });
+
+      // Check velocityOverLifetime conversion
+      expect(newConfig.velocityOverLifetime.isActive).toBe(true);
+      expect(newConfig.velocityOverLifetime.orbital.x).toEqual({ min: -1, max: 1 });
+      expect(newConfig.velocityOverLifetime.orbital.y).toEqual({ min: -5, max: 2 });
+
+      // Check sizeOverLifetime conversion
+      expect(newConfig.sizeOverLifetime.isActive).toBe(false);
+      expect(newConfig.sizeOverLifetime.lifetimeCurve.type).toBe(LifeTimeCurve.BEZIER);
+
+      // Check opacityOverLifetime conversion
+      expect(newConfig.opacityOverLifetime.isActive).toBe(false);
+      expect(newConfig.opacityOverLifetime.lifetimeCurve.type).toBe(LifeTimeCurve.BEZIER);
     });
   });
 });
