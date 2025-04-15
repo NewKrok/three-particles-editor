@@ -310,6 +310,27 @@ describe('config-converter', () => {
       });
     });
 
+    test('should handle startOpacity property correctly', () => {
+      // Test case where startOpacity is present in the original config
+      const withOpacityConfig = {
+        startOpacity: 0.8,
+      };
+
+      // Test case where startOpacity is not present in the original config
+      const withoutOpacityConfig = {
+        startSize: 1.0,
+      };
+
+      const withOpacityResult = convertToNewFormat(withOpacityConfig);
+      const withoutOpacityResult = convertToNewFormat(withoutOpacityConfig);
+
+      // When startOpacity is present, it should be preserved
+      expect(withOpacityResult.startOpacity).toBe(0.8);
+
+      // When startOpacity is not present, it should not be added to the new config
+      expect(withoutOpacityResult.startOpacity).toBeUndefined();
+    });
+
     test('should handle TELEPORT configuration correctly', () => {
       // This is a simplified version of the TELEPORT configuration
       const oldConfig = {

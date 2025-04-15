@@ -178,12 +178,17 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
     );
   }
 
+  // Only add startOpacity if it was present in the original config
+  // This prevents adding default values to configs that didn't have this property
   if (oldConfig.startOpacity !== undefined) {
     newConfig.startOpacity = convertMinMaxValue(
       oldConfig.startOpacity as number | { min: number; max: number },
       false,
-      false
+      true // Preserve structure for startOpacity to maintain min/max format
     );
+  } else {
+    // If startOpacity was not in the original config, make sure it's not in the new config either
+    delete newConfig.startOpacity;
   }
 
   // Handle velocityOverLifetime if it exists
