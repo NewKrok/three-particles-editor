@@ -353,5 +353,79 @@ describe('config-converter', () => {
       expect(newConfig.opacityOverLifetime.isActive).toBe(false);
       expect(newConfig.opacityOverLifetime.lifetimeCurve.type).toBe(LifeTimeCurve.BEZIER);
     });
+
+    test('should handle textureSheetAnimation.startFrame correctly', () => {
+      // Test case for number value
+      const numberConfig = {
+        textureSheetAnimation: {
+          tiles: { x: 5, y: 2 },
+          timeMode: 'FPS',
+          fps: 0,
+          startFrame: 5,
+        },
+      };
+
+      // Test case for object with min and max
+      const minMaxConfig = {
+        textureSheetAnimation: {
+          tiles: { x: 5, y: 2 },
+          timeMode: 'FPS',
+          fps: 0,
+          startFrame: { min: 0, max: 10 },
+        },
+      };
+
+      // Test case for object with only min
+      const minOnlyConfig = {
+        textureSheetAnimation: {
+          tiles: { x: 5, y: 2 },
+          timeMode: 'FPS',
+          fps: 0,
+          startFrame: { min: 5 },
+        },
+      };
+
+      // Test case for object with only max (like in ROCK_EXPLOSION)
+      const maxOnlyConfig = {
+        textureSheetAnimation: {
+          tiles: { x: 5, y: 2 },
+          timeMode: 'FPS',
+          fps: 0,
+          startFrame: { max: 10 },
+        },
+      };
+
+      const numberResult = convertToNewFormat(numberConfig);
+      const minMaxResult = convertToNewFormat(minMaxConfig);
+      const minOnlyResult = convertToNewFormat(minOnlyConfig);
+      const maxOnlyResult = convertToNewFormat(maxOnlyConfig);
+
+      // Number value should remain a number
+      expect(numberResult.textureSheetAnimation.startFrame).toBe(5);
+
+      // Object with min and max should remain unchanged
+      expect(minMaxResult.textureSheetAnimation.startFrame).toEqual({ min: 0, max: 10 });
+
+      // Object with only min should have min=max
+      expect(minOnlyResult.textureSheetAnimation.startFrame).toEqual({ min: 5, max: 5 });
+
+      // Object with only max should have min=0 (like in ROCK_EXPLOSION)
+      expect(maxOnlyResult.textureSheetAnimation.startFrame).toEqual({ min: 0, max: 10 });
+
+      // Test the ROCK_EXPLOSION case specifically
+      const rockExplosionConfig = {
+        textureSheetAnimation: {
+          tiles: { x: 5, y: 2 },
+          timeMode: 'FPS',
+          fps: 0,
+          startFrame: { max: 10 },
+        },
+      };
+
+      const rockExplosionResult = convertToNewFormat(rockExplosionConfig);
+
+      // Should have both min and max properties
+      expect(rockExplosionResult.textureSheetAnimation.startFrame).toEqual({ min: 0, max: 10 });
+    });
   });
 });

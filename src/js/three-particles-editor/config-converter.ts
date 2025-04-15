@@ -1,9 +1,10 @@
-import { LifeTimeCurve } from '@newkrok/three-particles';
+import { LifeTimeCurve, TimeMode } from '@newkrok/three-particles';
 import {
   Constant,
   ParticleSystemConfig,
   RandomBetweenTwoConstants,
 } from '@newkrok/three-particles';
+import * as THREE from 'three';
 
 /**
  * Converts a value from the old MinMaxNumber format to the new format
@@ -117,6 +118,14 @@ interface LegacyParticleSystemConfig {
       y?: { min?: number; max?: number };
       z?: { min?: number; max?: number };
     };
+  };
+
+  // Texture sheet animation properties
+  textureSheetAnimation?: {
+    tiles?: { x: number; y: number };
+    timeMode?: string;
+    fps?: number;
+    startFrame?: number | { min?: number; max?: number };
   };
 
   // Other properties
@@ -368,6 +377,68 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         max:
           oldConfig.rotationOverLifetime.max !== undefined ? oldConfig.rotationOverLifetime.max : 0,
       };
+    }
+  }
+
+  // Handle textureSheetAnimation if it exists
+  if (oldConfig.textureSheetAnimation) {
+    // Create a new textureSheetAnimation object with proper type casting
+    const oldTextureSheetAnimation = oldConfig.textureSheetAnimation as {
+      tiles?: { x: number; y: number };
+      timeMode?: string;
+      fps?: number;
+      startFrame?: number | { min?: number; max?: number };
+    };
+
+    if (!newConfig.textureSheetAnimation) {
+      // Create a new object with explicit type casting for each property
+      // Use a specific type instead of 'any' to satisfy ESLint rules
+      newConfig.textureSheetAnimation = {} as {
+        tiles?: THREE.Vector2;
+        timeMode?: TimeMode;
+        fps?: number;
+        startFrame?: number | { min: number; max: number };
+      };
+
+      // Copy tiles with proper type conversion if it exists
+      if (oldTextureSheetAnimation.tiles) {
+        // Create a THREE.Vector2 object with the appropriate x and y values
+        newConfig.textureSheetAnimation.tiles = new THREE.Vector2(
+          oldTextureSheetAnimation.tiles.x,
+          oldTextureSheetAnimation.tiles.y
+        );
+      }
+
+      // Copy timeMode with proper type conversion if it exists
+      if (oldTextureSheetAnimation.timeMode) {
+        // Convert string to TimeMode enum if possible, or use as is with type assertion
+        newConfig.textureSheetAnimation.timeMode = oldTextureSheetAnimation.timeMode as TimeMode;
+      }
+
+      // Copy fps with proper type conversion if it exists
+      if (oldTextureSheetAnimation.fps !== undefined) {
+        newConfig.textureSheetAnimation.fps = oldTextureSheetAnimation.fps;
+      }
+    }
+
+    // Handle startFrame property which can be a number or an object with min/max
+    if (oldTextureSheetAnimation.startFrame !== undefined) {
+      // Ensure startFrame is always a number or a proper RandomBetweenTwoConstants object
+      // with both min and max properties defined
+      const value = oldTextureSheetAnimation.startFrame;
+      if (typeof value === 'number') {
+        newConfig.textureSheetAnimation.startFrame = value;
+      } else if (value.min !== undefined && value.max !== undefined) {
+        newConfig.textureSheetAnimation.startFrame = { min: value.min, max: value.max };
+      } else if (value.min !== undefined && value.max === undefined) {
+        newConfig.textureSheetAnimation.startFrame = { min: value.min, max: value.min };
+      } else if (value.min === undefined && value.max !== undefined) {
+        // When only max is defined, set min to 0
+        newConfig.textureSheetAnimation.startFrame = { min: 0, max: value.max };
+      } else {
+        // Default case, should not happen with valid input
+        newConfig.textureSheetAnimation.startFrame = 0;
+      }
     }
   }
 
