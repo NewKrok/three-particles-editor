@@ -49,8 +49,9 @@ describe('config-converter', () => {
 
       const newConfig = convertToNewFormat(oldConfig);
 
-      // When only min is provided, it should be used as a constant for startSpeed
-      expect(newConfig.startSpeed).toBe(0.5);
+      // When only min is provided, the structure should be preserved for startSpeed
+      // This is consistent with how we handle objects with only max property
+      expect(newConfig.startSpeed).toEqual({ min: 0.5 });
       // For startSize, the structure should be preserved
       expect(newConfig.startSize).toEqual({ min: 0.1 });
     });
@@ -63,8 +64,9 @@ describe('config-converter', () => {
 
       const newConfig = convertToNewFormat(oldConfig);
 
-      // When only max is provided, it should be used as a constant for startSpeed
-      expect(newConfig.startSpeed).toBe(3.0);
+      // When only max is provided, the structure should be preserved for startSpeed
+      // This is important for configurations like FIRE where startSpeed has only max value
+      expect(newConfig.startSpeed).toEqual({ max: 3.0 });
       // For startSize, the structure should be preserved
       expect(newConfig.startSize).toEqual({ max: 1.5 });
     });

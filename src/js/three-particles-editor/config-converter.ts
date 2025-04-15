@@ -153,10 +153,12 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
   }
 
   if (oldConfig.startSpeed !== undefined) {
+    // For startSpeed, we need to preserve the structure when only max is defined
+    // This ensures that {max: 2.2} is converted to {max: 2.2} and not to a constant
     newConfig.startSpeed = convertMinMaxValue(
       oldConfig.startSpeed as number | { min: number; max: number },
       false,
-      false
+      true // Preserve structure for startSpeed to maintain max value when only max is defined
     );
   }
 
