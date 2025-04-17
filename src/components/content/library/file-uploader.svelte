@@ -1,5 +1,5 @@
 <script>
-  import Button, { Label, Icon } from "@smui/button";
+  import Button, { Label, Icon } from '@smui/button';
 
   export let add;
 

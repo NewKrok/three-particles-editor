@@ -1,6 +1,6 @@
 <script>
-  import ControlPanel from "./control-panel/control-panel.svelte";
-  import LeftSide from "./left-side/left-side.svelte";
+  import ControlPanel from './control-panel/control-panel.svelte';
+  import LeftSide from './left-side/left-side.svelte';
 </script>
 
 <div class="wrapper">

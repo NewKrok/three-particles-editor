@@ -1,17 +1,17 @@
 <script>
-  import Tab, { Icon, Label } from "@smui/tab";
-  import TabBar from "@smui/tab-bar";
-  import Examples from "../examples/examples.svelte";
-  import Library from "../library/library.svelte";
+  import Tab, { Icon, Label } from '@smui/tab';
+  import TabBar from '@smui/tab-bar';
+  import Examples from '../examples/examples.svelte';
+  import Library from '../library/library.svelte';
 
   const tabs = [
     {
-      icon: "settings_suggest",
-      label: "Examples",
+      icon: 'settings_suggest',
+      label: 'Examples',
     },
     {
-      icon: "collections",
-      label: "Library",
+      icon: 'collections',
+      label: 'Library',
     },
   ].map((entry, index) => ({ ...entry, index }));
   let active = tabs[0];
