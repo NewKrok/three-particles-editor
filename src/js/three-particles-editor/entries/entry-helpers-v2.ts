@@ -2,12 +2,13 @@ import {
   Constant,
   LifetimeCurve,
   RandomBetweenTwoConstants,
-  LifeTimeCurve,
+  ParticleSystemConfig,
 } from '@newkrok/three-particles';
+import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 
-const resolveProperty = (rootObject: any, property: string): any =>
+const resolveProperty = <T>(rootObject: T, property: string): unknown =>
   property !== ''
-    ? property.split('.').reduce((prev, current) => prev[current], rootObject)
+    ? property.split('.').reduce((prev, current) => prev[current as keyof typeof prev], rootObject)
     : rootObject;
 
 type ValueType = Constant | RandomBetweenTwoConstants | LifetimeCurve;
@@ -40,9 +41,9 @@ const ensureRandomBetweenTwoConstants = (value: ValueType): RandomBetweenTwoCons
 */
 
 type MinMaxFloatFolderEntryParams = {
-  particleSystemConfig: any;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
-  parentFolder: any;
+  parentFolder: GUI;
   rootPropertyName?: string;
   propertyName: string;
   min?: number;
@@ -59,7 +60,7 @@ export const createMinMaxFloatFolderEntry = ({
   min,
   max,
   step,
-}: MinMaxFloatFolderEntryParams): any => {
+}: MinMaxFloatFolderEntryParams): GUI => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyContainer = resolveProperty(particleSystemConfig, rootPropertyName);
 
@@ -99,9 +100,9 @@ export const createMinMaxFloatFolderEntry = ({
 };
 
 type MinMaxColorFolderEntryParams = {
-  particleSystemConfig: any;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
-  parentFolder: any;
+  parentFolder: GUI;
   rootPropertyName?: string;
   propertyName: string;
 };
@@ -112,13 +113,13 @@ export const createMinMaxColorFolderEntry = ({
   parentFolder,
   rootPropertyName = '',
   propertyName,
-}: MinMaxColorFolderEntryParams): any => {
+}: MinMaxColorFolderEntryParams): GUI => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(particleSystemConfig, rootPropertyName)[propertyName];
 
   folder
     .addColor(propertyReference, 'min')
-    .onChange((v: any) => {
+    .onChange((v: string) => {
       propertyReference.min = v;
       recreateParticleSystem();
     })
@@ -126,7 +127,7 @@ export const createMinMaxColorFolderEntry = ({
 
   folder
     .addColor(propertyReference, 'max')
-    .onChange((v: any) => {
+    .onChange((v: string) => {
       propertyReference.max = v;
       recreateParticleSystem();
     })
@@ -136,9 +137,9 @@ export const createMinMaxColorFolderEntry = ({
 };
 
 type Vector2FolderEntryParams = {
-  particleSystemConfig: any;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
-  parentFolder: any;
+  parentFolder: GUI;
   rootPropertyName?: string;
   propertyName: string;
   min?: number;
@@ -155,7 +156,7 @@ export const createVector2FolderEntry = ({
   min,
   max,
   step,
-}: Vector2FolderEntryParams): any => {
+}: Vector2FolderEntryParams): GUI => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(particleSystemConfig, rootPropertyName)[propertyName];
 
@@ -173,9 +174,9 @@ export const createVector2FolderEntry = ({
 };
 
 type Vector3FolderEntryParams = {
-  particleSystemConfig: any;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
-  parentFolder: any;
+  parentFolder: GUI;
   rootPropertyName?: string;
   propertyName: string;
   min?: number;
@@ -192,7 +193,7 @@ export const createVector3FolderEntry = ({
   min,
   max,
   step,
-}: Vector3FolderEntryParams): any => {
+}: Vector3FolderEntryParams): GUI => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyReference = resolveProperty(particleSystemConfig, rootPropertyName)[propertyName];
 
@@ -215,9 +216,9 @@ export const createVector3FolderEntry = ({
 };
 
 type LifetimeCurveFolderEntryParams = {
-  particleSystemConfig: any;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
-  parentFolder: any;
+  parentFolder: GUI;
   rootPropertyName?: string;
   propertyName: string;
 };
@@ -228,20 +229,9 @@ export const createLifetimeCurveFolderEntry = ({
   parentFolder,
   rootPropertyName = '',
   propertyName,
-}: LifetimeCurveFolderEntryParams): any => {
+}: LifetimeCurveFolderEntryParams): GUI => {
   const folder = parentFolder.addFolder(propertyName);
   const propertyContainer = resolveProperty(particleSystemConfig, rootPropertyName);
-
-  // If the property doesn't exist or isn't a LifetimeCurve, create a default one
-  if (!propertyContainer[propertyName] || !isLifetimeCurve(propertyContainer[propertyName])) {
-    propertyContainer[propertyName] = {
-      type: LifeTimeCurve.BEZIER,
-      bezierPoints: [
-        { x: 0, y: 0, percentage: 0 },
-        { x: 1, y: 1, percentage: 1 },
-      ],
-    };
-  }
 
   const propertyReference = propertyContainer[propertyName];
 
