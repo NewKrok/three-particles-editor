@@ -1,11 +1,12 @@
 import { setCurveEditorPositions, setCurveEditorTarget } from '../curve-editor/curve-editor';
-
-import { LifeTimeCurve } from '@newkrok/three-particles';
 import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
+import { LifeTimeCurve, ParticleSystemConfig } from '@newkrok/three-particles';
+// Use direct import instead of @types
+import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 
 type OpacityOverLifeTimeEntriesParams = {
-  parentFolder: any;
-  particleSystemConfig: any;
+  parentFolder: GUI;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
 };
 
@@ -19,16 +20,15 @@ export const createOpacityOverLifeTimeEntries = ({
 
   // Ensure the opacityOverLifetime object exists and has the correct structure for v2.0.2
   if (!particleSystemConfig.opacityOverLifetime) {
-    particleSystemConfig.opacityOverLifetime = {};
-  }
-
-  if (!particleSystemConfig.opacityOverLifetime.lifetimeCurve) {
-    particleSystemConfig.opacityOverLifetime.lifetimeCurve = {
-      type: LifeTimeCurve.BEZIER,
-      bezierPoints: [
-        { x: 0, y: 0, percentage: 0 },
-        { x: 1, y: 1, percentage: 1 },
-      ],
+    particleSystemConfig.opacityOverLifetime = {
+      isActive: false,
+      lifetimeCurve: {
+        type: LifeTimeCurve.BEZIER,
+        bezierPoints: [
+          { x: 0, y: 0, percentage: 0 },
+          { x: 1, y: 1, percentage: 1 },
+        ],
+      },
     };
   }
 
@@ -62,7 +62,16 @@ export const createOpacityOverLifeTimeEntries = ({
   folder
     .add(
       {
-        loadCurve: (): void => setCurveEditorPositions(particleSystemConfig.opacityOverLifetime),
+        loadCurve: (): void => {
+          // Ensure bezierPoints is available for setCurveEditorPositions
+          // Type assertion is necessary because LifetimeCurve can be either BezierCurve or EasingCurve
+          const lifetimeCurve = particleSystemConfig.opacityOverLifetime.lifetimeCurve;
+          if (lifetimeCurve.type === LifeTimeCurve.BEZIER && 'bezierPoints' in lifetimeCurve) {
+            setCurveEditorPositions({
+              bezierPoints: lifetimeCurve.bezierPoints,
+            });
+          }
+        },
       },
       'loadCurve'
     )
