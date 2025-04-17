@@ -24,8 +24,8 @@
         2.x.x format. Exporting is currently available only in the 2.x.x format.
       </p>
       <div class="about-details">
-        <p><strong>Version:</strong> 2.0.0</p>
-        <p><strong>Build Date:</strong> April 17, 2025</p>
+        <p><strong>Version:</strong> __APP_VERSION__</p>
+        <p><strong>Build Date:</strong> __BUILD_DATE__</p>
         <p><strong>License:</strong> MIT License</p>
         <p>
           <strong>Author:</strong>

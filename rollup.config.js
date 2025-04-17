@@ -7,8 +7,18 @@ import svelte from 'rollup-plugin-svelte';
 import { terser } from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import alias from '@rollup/plugin-alias';
+import replace from '@rollup/plugin-replace';
+import pkg from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
+
+// Format date as MMMM DD, YYYY
+const formatDate = (date) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+};
+
+const buildDate = formatDate(new Date());
 
 function serve() {
   let server;
@@ -53,6 +63,14 @@ export default {
   },
 
   plugins: [
+    // Replace version and build date placeholders
+    replace({
+      preventAssignment: true,
+      values: {
+        __APP_VERSION__: pkg.version,
+        __BUILD_DATE__: buildDate,
+      },
+    }),
     alias({
       entries: [
         {
