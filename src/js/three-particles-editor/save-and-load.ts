@@ -2,7 +2,10 @@ import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
 import { isConfigV2 } from './config-util';
 import { convertToNewFormat } from './config-converter';
 import { showLegacyConfigModal } from './showLegacyConfigModal';
-import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
+import {
+  deepMerge,
+  patchObject,
+} from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
 import { setTerrain } from './world';
 
 const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {
@@ -81,11 +84,10 @@ export const loadParticleSystem = ({ config, particleSystemConfig, recreateParti
     skippedProperties: [],
     applyToFirstObject: true,
   });
-  patchObject(particleSystemConfig, config, {
+  deepMerge(particleSystemConfig, config, {
     skippedProperties: ['map'],
     applyToFirstObject: true,
   });
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
-
   recreateParticleSystem();
 };
