@@ -1,12 +1,8 @@
 <script>
   export let name, preview, config;
-  import Card, { PrimaryAction, Media, Content } from "@smui/card";
-  import Dialog, {
-    Title,
-    Content as DialogContent,
-    Actions,
-  } from "@smui/dialog";
-  import Button, { Icon, Label } from "@smui/button";
+  import Card, { PrimaryAction, Media, Content } from '@smui/card';
+  import Dialog, { Title, Content as DialogContent, Actions } from '@smui/dialog';
+  import Button, { Icon, Label } from '@smui/button';
 
   let open = false;
 
@@ -34,15 +30,9 @@
   </Card>
 </div>
 
-<Dialog
-  bind:open
-  aria-labelledby="simple-title"
-  aria-describedby="simple-content"
->
+<Dialog bind:open aria-labelledby="simple-title" aria-describedby="simple-content">
   <Title id="simple-title">Do you want to open this example - {name}?</Title>
-  <DialogContent id="simple-content"
-    >You will loose your current config.</DialogContent
-  >
+  <DialogContent id="simple-content">You will loose your current config.</DialogContent>
   <Actions>
     <Button>
       <Icon class="material-icons">close</Icon><Label>No</Label>
