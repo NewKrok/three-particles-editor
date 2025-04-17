@@ -1,4 +1,9 @@
-import { LifeTimeCurve, TimeMode } from '@newkrok/three-particles';
+import {
+  CurveFunctionId,
+  getCurveFunction,
+  LifeTimeCurve,
+  TimeMode,
+} from '@newkrok/three-particles';
 import {
   Constant,
   ParticleSystemConfig,
@@ -91,11 +96,13 @@ interface LegacyParticleSystemConfig {
   // Lifetime properties
   sizeOverLifetime?: {
     isActive?: boolean;
+    curveFunction?: CurveFunctionId;
     bezierPoints?: Array<{ x: number; y: number; percentage?: number }>;
   };
 
   opacityOverLifetime?: {
     isActive?: boolean;
+    curveFunction?: CurveFunctionId;
     bezierPoints?: Array<{ x: number; y: number; percentage?: number }>;
   };
 
@@ -246,40 +253,12 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
   // For sizeOverLifetime, handle both with and without isActive property
   if (oldConfig.sizeOverLifetime) {
     // Convert to the new format with LifetimeCurve
-    if (oldConfig.sizeOverLifetime.bezierPoints) {
-      // Process bezierPoints to ensure all points have percentage values
-      const processedBezierPoints = oldConfig.sizeOverLifetime.bezierPoints.map(
-        (point, index, array) => {
-          // If percentage is already defined, use it
-          if (point.percentage !== undefined) {
-            return { ...point };
-          }
-
-          // Otherwise calculate percentage based on position in array
-          // Find previous and next points with defined percentage
-          let prevPointIndex = index - 1;
-          while (prevPointIndex >= 0 && array[prevPointIndex].percentage === undefined) {
-            prevPointIndex--;
-          }
-
-          let nextPointIndex = index + 1;
-          while (nextPointIndex < array.length && array[nextPointIndex].percentage === undefined) {
-            nextPointIndex++;
-          }
-
-          const prevPoint = prevPointIndex >= 0 ? array[prevPointIndex] : { percentage: 0 };
-          const nextPoint =
-            nextPointIndex < array.length ? array[nextPointIndex] : { percentage: 1 };
-
-          // Linear interpolation between previous and next percentage values
-          const segmentSize = nextPointIndex - prevPointIndex;
-          const segmentPosition = index - prevPointIndex;
-          const percentage =
-            prevPoint.percentage +
-            (nextPoint.percentage - prevPoint.percentage) * (segmentPosition / segmentSize);
-          return { ...point, percentage };
-        }
-      );
+    if (oldConfig.sizeOverLifetime?.bezierPoints && !oldConfig.sizeOverLifetime?.curveFunction) {
+      // Take the bezier points directly from the original configuration
+      // Don't calculate new percentage values
+      const processedBezierPoints = oldConfig.sizeOverLifetime.bezierPoints.map((point) => {
+        return { ...point };
+      });
 
       newConfig.sizeOverLifetime = {
         // Only set isActive to true if it was explicitly set to true in the original config
@@ -288,6 +267,16 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         lifetimeCurve: {
           type: LifeTimeCurve.BEZIER,
           bezierPoints: processedBezierPoints,
+        },
+      };
+    } else if (oldConfig.sizeOverLifetime?.curveFunction) {
+      newConfig.sizeOverLifetime = {
+        // Only set isActive to true if it was explicitly set to true in the original config
+        // or if it wasn't specified at all (default to false in old API)
+        isActive: oldConfig.sizeOverLifetime.isActive ?? false,
+        lifetimeCurve: {
+          type: LifeTimeCurve.EASING,
+          curveFunction: getCurveFunction(oldConfig.sizeOverLifetime.curveFunction),
         },
       };
     } else if (!newConfig.sizeOverLifetime?.lifetimeCurve) {
@@ -310,40 +299,15 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
 
   if (oldConfig.opacityOverLifetime) {
     // Convert to the new format with LifetimeCurve
-    if (oldConfig.opacityOverLifetime.bezierPoints) {
-      // Process bezierPoints to ensure all points have percentage values
-      const processedBezierPoints = oldConfig.opacityOverLifetime.bezierPoints.map(
-        (point, index, array) => {
-          // If percentage is already defined, use it
-          if (point.percentage !== undefined) {
-            return { ...point };
-          }
-
-          // Otherwise calculate percentage based on position in array
-          // Find previous and next points with defined percentage
-          let prevPointIndex = index - 1;
-          while (prevPointIndex >= 0 && array[prevPointIndex].percentage === undefined) {
-            prevPointIndex--;
-          }
-
-          let nextPointIndex = index + 1;
-          while (nextPointIndex < array.length && array[nextPointIndex].percentage === undefined) {
-            nextPointIndex++;
-          }
-
-          const prevPoint = prevPointIndex >= 0 ? array[prevPointIndex] : { percentage: 0 };
-          const nextPoint =
-            nextPointIndex < array.length ? array[nextPointIndex] : { percentage: 1 };
-
-          // Linear interpolation between previous and next percentage values
-          const segmentSize = nextPointIndex - prevPointIndex;
-          const segmentPosition = index - prevPointIndex;
-          const percentage =
-            prevPoint.percentage +
-            (nextPoint.percentage - prevPoint.percentage) * (segmentPosition / segmentSize);
-          return { ...point, percentage };
-        }
-      );
+    if (
+      oldConfig.opacityOverLifetime?.bezierPoints &&
+      !oldConfig.opacityOverLifetime?.curveFunction
+    ) {
+      // Take the bezier points directly from the original configuration
+      // Don't calculate new percentage values
+      const processedBezierPoints = oldConfig.opacityOverLifetime.bezierPoints.map((point) => {
+        return { ...point };
+      });
 
       newConfig.opacityOverLifetime = {
         // Only set isActive to true if it was explicitly set to true in the original config
@@ -352,6 +316,16 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         lifetimeCurve: {
           type: LifeTimeCurve.BEZIER,
           bezierPoints: processedBezierPoints,
+        },
+      };
+    } else if (oldConfig.opacityOverLifetime?.curveFunction) {
+      newConfig.opacityOverLifetime = {
+        // Only set isActive to true if it was explicitly set to true in the original config
+        // or if it wasn't specified at all (default to false in old API)
+        isActive: oldConfig.opacityOverLifetime.isActive ?? false,
+        lifetimeCurve: {
+          type: LifeTimeCurve.EASING,
+          curveFunction: getCurveFunction(oldConfig.opacityOverLifetime.curveFunction),
         },
       };
     } else if (!newConfig.opacityOverLifetime?.lifetimeCurve) {
@@ -386,7 +360,6 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
       };
     }
   }
-
   // Handle textureSheetAnimation if it exists
   if (oldConfig.textureSheetAnimation) {
     // Create a new textureSheetAnimation object with proper type casting
@@ -448,6 +421,5 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
       }
     }
   }
-
   return newConfig;
 };
