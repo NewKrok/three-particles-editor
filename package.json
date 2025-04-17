@@ -51,6 +51,7 @@
     "rollup-plugin-css-only": "^4.5.2",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-svelte": "^7.1.6",
+    "sharp": "^0.34.1",
     "smui-theme": "^7.0.0-beta.16",
     "svelte": "^4.2.12",
     "svrollbar": "^0.12.0",
