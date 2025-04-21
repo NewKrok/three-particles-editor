@@ -10,11 +10,31 @@
   import 'prismjs/themes/prism.css';
   import 'prismjs/components/prism-json';
 
-  let lightTheme =
-    typeof window === 'undefined' || window.matchMedia('(prefers-color-scheme: light)').matches;
+  // Initialize theme from localStorage or system preference
+  let lightTheme = true;
+
+  // Function to get saved theme preference
+  const getSavedTheme = () => {
+    if (typeof window === 'undefined') return true;
+
+    const savedTheme = localStorage.getItem('threeParticlesEditorTheme');
+    if (savedTheme !== null) {
+      return savedTheme === 'light';
+    }
+
+    // Fall back to system preference if no saved preference
+    return window.matchMedia('(prefers-color-scheme: light)').matches;
+  };
 
   const switchTheme = () => {
     lightTheme = !lightTheme;
+
+    // Save theme preference to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('threeParticlesEditorTheme', lightTheme ? 'light' : 'dark');
+    }
+
+    // Update theme in the DOM
     let themeLink = document.head.querySelector('#theme');
     if (!themeLink) {
       themeLink = document.createElement('link');
@@ -64,7 +84,25 @@
   };
 
   onMount(() => {
-    // Nothing to initialize here as Prism is now properly imported
+    // Initialize theme from localStorage or system preference
+    const savedTheme = getSavedTheme();
+
+    // Only apply the theme if it's different from the current state
+    if (savedTheme !== lightTheme) {
+      lightTheme = savedTheme;
+
+      // Apply the theme without toggling
+      let themeLink = document.head.querySelector('#theme');
+      if (!themeLink) {
+        themeLink = document.createElement('link');
+        themeLink.rel = 'stylesheet';
+        themeLink.id = 'theme';
+      }
+      themeLink.href = `./build/static/smui${lightTheme ? '' : '-dark'}.css`;
+      document.head
+        .querySelector('link[href="./build/static/smui-dark.css"]')
+        ?.insertAdjacentElement('afterend', themeLink);
+    }
   });
 
   // Function to check if we're on a mobile device
