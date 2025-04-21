@@ -7,6 +7,7 @@ import {
   patchObject,
 } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
 import { setTerrain } from './world';
+import { showSnackbar } from '../stores/snackbar-store';
 
 export const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {
   const result = {};
@@ -90,4 +91,7 @@ export const loadParticleSystem = ({ config, particleSystemConfig, recreateParti
   });
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
   recreateParticleSystem();
+
+  // Show success notification
+  showSnackbar('Particle system successfully loaded');
 };
