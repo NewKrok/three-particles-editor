@@ -8,7 +8,7 @@ import {
 } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
 import { setTerrain } from './world';
 
-const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {
+export const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {
   const result = {};
   Object.keys(objectA).forEach((key) => {
     if (!config.skippedProperties || !config.skippedProperties.includes(key)) {
