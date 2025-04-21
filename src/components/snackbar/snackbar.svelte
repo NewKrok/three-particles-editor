@@ -1,15 +1,26 @@
 <script>
   import { snackbarStore } from '../../js/stores/snackbar-store';
 
-  // Variable to track visibility state
+  // Variables to track snackbar state
   let message = '';
   let timeout = 3000;
   let visible = false;
+  let type = 'default';
+
+  // Map of type to CSS class
+  const typeClasses = {
+    default: '',
+    success: 'snackbar-success',
+    error: 'snackbar-error',
+    warning: 'snackbar-warning',
+    info: 'snackbar-info',
+  };
 
   snackbarStore.subscribe((value) => {
     if (value) {
       message = value.message;
       timeout = value.timeout || 3000;
+      type = value.type || 'default';
       visible = true;
 
       // Auto-hide after timeout
@@ -24,7 +35,7 @@
   };
 </script>
 
-<div class="snackbar" class:visible>
+<div class="snackbar {typeClasses[type]}" class:visible>
   <div class="snackbar-content">
     <span class="snackbar-message">{message}</span>
     <button class="snackbar-dismiss" on:click={dismiss}>Dismiss</button>
@@ -50,6 +61,22 @@
       visibility 0.3s;
   }
 
+  .snackbar-success {
+    background-color: #4caf50;
+  }
+
+  .snackbar-error {
+    background-color: #f44336;
+  }
+
+  .snackbar-warning {
+    background-color: #ff9800;
+  }
+
+  .snackbar-info {
+    background-color: #2196f3;
+  }
+
   .snackbar.visible {
     opacity: 1;
     visibility: visible;
@@ -68,7 +95,7 @@
 
   .snackbar-dismiss {
     background-color: transparent;
-    color: #4caf50;
+    color: white;
     border: none;
     padding: 8px;
     cursor: pointer;

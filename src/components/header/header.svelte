@@ -4,6 +4,7 @@
   import AboutModal from '../about-modal/about-modal.svelte';
   import { getObjectDiff } from '../../js/three-particles-editor/save-and-load';
   import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
+  import { showSuccessSnackbar } from '../../js/stores/snackbar-store';
   import { onMount } from 'svelte';
   import Prism from 'prismjs';
   import 'prismjs/themes/prism.css';
@@ -59,6 +60,7 @@
 
   const copyToClipboard = () => {
     window.editor.copyToClipboard();
+    showSuccessSnackbar('Particle system configuration copied to clipboard');
   };
 
   onMount(() => {
