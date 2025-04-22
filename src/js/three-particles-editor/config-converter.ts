@@ -3,8 +3,6 @@ import {
   getCurveFunction,
   LifeTimeCurve,
   TimeMode,
-} from '@newkrok/three-particles';
-import {
   Constant,
   ParticleSystemConfig,
   RandomBetweenTwoConstants,
