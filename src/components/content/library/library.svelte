@@ -1,24 +1,15 @@
 <script>
-  import {
-    getTexture,
-    loadCustomAssets,
-  } from "./../../../js/three-particles-editor/assets.js";
-  import FileUploader from "./file-uploader.svelte";
-  import { Svroller } from "svrollbar";
-  import { Input } from "@smui/textfield";
-  import Paper from "@smui/paper";
-  import { Icon } from "@smui/common";
-  import LibraryItem from "./library-item.svelte";
-  import {
-    textureConfigs,
-    TextureId,
-  } from "./../../../js/three-particles-editor/texture-config.js";
+  import { getTexture, loadCustomAssets } from './../../../js/three-particles-editor/assets';
+  import FileUploader from './file-uploader.svelte';
+  import { Svroller } from 'svrollbar';
+  import { Input } from '@smui/textfield';
+  import Paper from '@smui/paper';
+  import { Icon } from '@smui/common';
+  import LibraryItem from './library-item.svelte';
+  import { textureConfigs, TextureId } from './../../../js/three-particles-editor/texture-config';
 
   const defaultList = Object.keys(TextureId)
-    .filter(
-      (key) =>
-        textureConfigs.find(({ id }) => id === TextureId[key]).isParticleTexture
-    )
+    .filter((key) => textureConfigs.find(({ id }) => id === TextureId[key])?.isParticleTexture)
     .map((key, index) => ({
       id: index,
       name: key,
@@ -26,16 +17,12 @@
       isDefault: true,
     }))
     .sort((a, b) => (a.name < b.name ? -1 : 1));
-  let rawList =
-    JSON.parse(localStorage.getItem("particle-system-editor/library")) || [];
+  let rawList = JSON.parse(localStorage.getItem('particle-system-editor/library')) || [];
   let list = rawList.concat(defaultList);
-  let filter = "";
+  let filter = '';
 
   const save = () => {
-    localStorage.setItem(
-      "particle-system-editor/library",
-      JSON.stringify(rawList)
-    );
+    localStorage.setItem('particle-system-editor/library', JSON.stringify(rawList));
     window.editor.updateAssets();
   };
 
@@ -70,8 +57,7 @@
   const rename = ({ id, name }) => {
     const currentEntry = rawList.find((entry) => entry.id === id);
     if (currentEntry) {
-      const particleSystemConfig =
-        window.editor.getCurrentParticleSystemConfig();
+      const particleSystemConfig = window.editor.getCurrentParticleSystemConfig();
       if (particleSystemConfig._editorData.textureId === currentEntry.name)
         particleSystemConfig._editorData.textureId = name;
       textureConfigs.forEach(
@@ -90,12 +76,7 @@
 <div class="head">
   <Paper class="solo-paper" elevation={6}>
     <Icon class="material-icons">search</Icon>
-    <Input
-      bind:value={filter}
-      on:keyup={handleKeyUp}
-      placeholder="Search"
-      class="solo-input"
-    />
+    <Input bind:value={filter} on:keyup={handleKeyUp} placeholder="Search" class="solo-input" />
   </Paper>
   <FileUploader {add} />
 </div>

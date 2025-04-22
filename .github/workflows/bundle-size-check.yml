@@ -1,0 +1,31 @@
+name: Bundle Size Check
+
+on:
+  pull_request:
+    branches:
+      - master
+      - v2.0.0
+
+jobs:
+  analyze-bundle:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Check bundle size
+      run: |
+        du -sh public/build/bundle.*
+        echo "Bundle size check completed"
