@@ -32,6 +32,21 @@
   let rawConfigData: any = null;
 
   /**
+   * Selected configuration for overwrite
+   */
+  let selectedConfig: SavedConfig | null = null;
+
+  /**
+   * Confirmation dialog state
+   */
+  let showConfirmDialog = false;
+
+  /**
+   * Confirmation dialog message
+   */
+  let confirmMessage = '';
+
+  /**
    * Recently saved configurations
    */
   type SavedConfig = {
@@ -110,16 +125,52 @@
   };
 
   /**
-   * Load a saved configuration
+   * Show confirmation dialog for overwriting a configuration
    */
-  const loadConfig = (config: SavedConfig): void => {
+  const showOverwriteConfirmation = (config: SavedConfig): void => {
+    selectedConfig = config;
+    confirmMessage = `Do you want to overwrite the configuration "${config.name}"?`;
+    showConfirmDialog = true;
+  };
+
+  /**
+   * Overwrite an existing configuration
+   */
+  const overwriteConfig = (): void => {
+    if (!selectedConfig) return;
+
     try {
-      window.editor.loadParticleSystemConfig(config.config);
-      showSuccessSnackbar(`Loaded configuration: ${config.name}`);
-      open = false;
+      const now = Date.now();
+      const updatedConfig: SavedConfig = {
+        ...selectedConfig,
+        config: rawConfigData,
+        updatedAt: now,
+      };
+
+      // Get existing configs
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      let savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+
+      // Replace the config with the updated one
+      savedConfigs = savedConfigs.map((config) =>
+        config.id === updatedConfig.id ? updatedConfig : config
+      );
+
+      // Save back to localStorage
+      localStorage.setItem('three-particles-saved-configs', JSON.stringify(savedConfigs));
+
+      // Refresh the list
+      loadSavedConfigs();
+
+      showSuccessSnackbar(`Configuration "${selectedConfig.name}" updated successfully`);
+      showConfirmDialog = false;
+      selectedConfig = null;
+      open = false; // Close the main save dialog
     } catch (error) {
-      // Log error and show error message
-      showErrorSnackbar('Failed to load configuration');
+      // Show error message
+      showErrorSnackbar('Failed to update configuration');
+      showConfirmDialog = false;
+      selectedConfig = null;
     }
   };
 
@@ -167,6 +218,27 @@
 </script>
 
 <Dialog bind:open aria-labelledby="save-dialog-title" aria-describedby="save-dialog-content">
+  <!-- Confirmation Dialog -->
+  {#if showConfirmDialog}
+    <Dialog
+      open={showConfirmDialog}
+      aria-labelledby="confirm-dialog-title"
+      aria-describedby="confirm-dialog-content"
+      scrimClickAction=""
+      escapeKeyAction=""
+    >
+      <Title id="confirm-dialog-title">Confirm Overwrite</Title>
+      <Content id="confirm-dialog-content">{confirmMessage}</Content>
+      <Actions>
+        <Button on:click={() => (showConfirmDialog = false)}>
+          <Label>Cancel</Label>
+        </Button>
+        <Button on:click={overwriteConfig}>
+          <Icon class="material-icons">save</Icon><Label>Overwrite</Label>
+        </Button>
+      </Actions>
+    </Dialog>
+  {/if}
   <Title id="save-dialog-title">Save Configuration</Title>
   <Content id="save-dialog-content">
     <div class="save-dialog-content">
@@ -193,9 +265,9 @@
               <button
                 type="button"
                 class="config-card"
-                on:click={() => loadConfig(config)}
-                on:keydown={(e) => e.key === 'Enter' && loadConfig(config)}
-                aria-label="Load configuration: {config.name}"
+                on:click={() => showOverwriteConfirmation(config)}
+                on:keydown={(e) => e.key === 'Enter' && showOverwriteConfirmation(config)}
+                aria-label="Select configuration to overwrite: {config.name}"
               >
                 <div class="config-card-content">
                   <div class="config-name">{config.name}</div>
