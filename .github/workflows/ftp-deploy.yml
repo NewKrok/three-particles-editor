@@ -9,6 +9,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+      deployments: write
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,19 +25,11 @@ jobs:
       
       - name: Create GitHub deployment
         id: deployment
-        uses: peter-evans/create-deployment@v3
+        uses: chrnorm/deployment-action@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           environment: production
           description: 'Deployment to production server'
-      
-      - name: Update deployment status (in_progress)
-        uses: peter-evans/deployment-status@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-          state: in_progress
-          description: 'Deployment in progress'
       
       - name: Install dependencies
         run: npm ci
@@ -54,19 +50,19 @@ jobs:
       
       - name: Update deployment status (success)
         if: success()
-        uses: peter-evans/deployment-status@v3
+        uses: chrnorm/deployment-status@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-          state: success
-          description: 'Deployment completed successfully'
           environment-url: ${{ secrets.DEPLOYMENT_URL }}
+          state: 'success'
+          description: 'Deployment completed successfully'
       
       - name: Update deployment status (failure)
         if: failure()
-        uses: peter-evans/deployment-status@v3
+        uses: chrnorm/deployment-status@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-          state: failure
+          state: 'failure'
           description: 'Deployment failed'
