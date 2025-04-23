@@ -19,6 +19,22 @@ jobs:
           node-version: '18'
           cache: 'npm'
       
+      - name: Create GitHub deployment
+        id: deployment
+        uses: peter-evans/create-deployment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: production
+          description: 'Deployment to production server'
+      
+      - name: Update deployment status (in_progress)
+        uses: peter-evans/deployment-status@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: in_progress
+          description: 'Deployment in progress'
+      
       - name: Install dependencies
         run: npm ci
       
@@ -26,6 +42,7 @@ jobs:
         run: npm run build
       
       - name: Deploy to FTP
+        id: ftp-deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -34,3 +51,22 @@ jobs:
           local-dir: ./public/
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           dangerous-clean-slate: false # Set to true if you want to delete all existing files at the remote location
+      
+      - name: Update deployment status (success)
+        if: success()
+        uses: peter-evans/deployment-status@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+          description: 'Deployment completed successfully'
+          environment-url: ${{ secrets.DEPLOYMENT_URL }}
+      
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: peter-evans/deployment-status@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: failure
+          description: 'Deployment failed'
