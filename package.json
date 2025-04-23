@@ -6,6 +6,7 @@
   "dependencies": {
     "@material/theme": "^14.0.0",
     "@newkrok/three-particles": "2.0.3",
+    "@smui/list": "^7.0.0",
     "@smui/snackbar": "^8.0.0-beta.3",
     "prismjs": "^1.30.0",
     "sass": "^1.86.3",

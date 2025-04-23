@@ -2,12 +2,14 @@
   // Save dialog component for the Three Particles Editor
   import Button, { Label, Icon } from '@smui/button';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
+  import Textfield from '@smui/textfield';
   import { getObjectDiff } from '../../js/three-particles-editor/save-and-load';
   import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
-  import { showSuccessSnackbar } from '../../js/stores/snackbar-store';
+  import { showSuccessSnackbar, showErrorSnackbar } from '../../js/stores/snackbar-store';
   import Prism from 'prismjs';
   import 'prismjs/themes/prism.css';
   import 'prismjs/components/prism-json';
+  import { onMount } from 'svelte';
 
   /**
    * Whether the save dialog is open
@@ -20,20 +22,126 @@
   let configContent = '';
 
   /**
+   * Configuration name for saving to localStorage
+   */
+  let configName = '';
+
+  /**
+   * Raw configuration data
+   */
+  let rawConfigData: any = null;
+
+  /**
+   * Recently saved configurations
+   */
+  type SavedConfig = {
+    id: string;
+    name: string;
+    config: any;
+    createdAt: number;
+    updatedAt: number;
+  };
+
+  let recentConfigs: SavedConfig[] = [];
+
+  /**
+   * Format date for display
+   */
+  const formatDate = (timestamp: number): string => {
+    return new Date(timestamp).toLocaleString();
+  };
+
+  /**
+   * Load saved configurations from localStorage
+   */
+  const loadSavedConfigs = (): void => {
+    try {
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      const allConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+      // Sort by updatedAt (newest first) and take the last 5
+      recentConfigs = allConfigs.sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 5);
+    } catch (error) {
+      // Reset configs on error
+      recentConfigs = [];
+    }
+  };
+
+  /**
+   * Save configuration to localStorage
+   */
+  const saveToLocalStorage = (): void => {
+    if (!configName.trim()) {
+      showErrorSnackbar('Please enter a name for the configuration');
+      return;
+    }
+
+    try {
+      const now = Date.now();
+      const configId = `config-${now}`;
+      const newConfig: SavedConfig = {
+        id: configId,
+        name: configName.trim(),
+        config: rawConfigData,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      // Get existing configs or initialize empty array
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      const savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+
+      // Add new config
+      savedConfigs.push(newConfig);
+
+      // Save back to localStorage
+      localStorage.setItem('three-particles-saved-configs', JSON.stringify(savedConfigs));
+
+      // Refresh the list
+      loadSavedConfigs();
+
+      // Clear the input field
+      configName = '';
+
+      showSuccessSnackbar('Configuration saved successfully');
+    } catch (error) {
+      // Log error and show error message
+      showErrorSnackbar('Failed to save configuration');
+    }
+  };
+
+  /**
+   * Load a saved configuration
+   */
+  const loadConfig = (config: SavedConfig): void => {
+    try {
+      window.editor.loadParticleSystemConfig(config.config);
+      showSuccessSnackbar(`Loaded configuration: ${config.name}`);
+      open = false;
+    } catch (error) {
+      // Log error and show error message
+      showErrorSnackbar('Failed to load configuration');
+    }
+  };
+
+  /**
    * Opens the save dialog and prepares the configuration content
    */
   export const openSaveDialog = () => {
-    const rawData = window.editor.getCurrentParticleSystemConfig();
+    rawConfigData = window.editor.getCurrentParticleSystemConfig();
     configContent = JSON.stringify(
       {
-        ...getObjectDiff(getDefaultParticleSystemConfig(), rawData, {
+        ...getObjectDiff(getDefaultParticleSystemConfig(), rawConfigData, {
           skippedProperties: ['map'],
         }),
-        _editorData: { ...rawData._editorData },
+        _editorData: { ...rawConfigData._editorData },
       },
       null,
       2
     ); // Pretty print with 2 spaces indentation
+
+    // Load saved configs when dialog opens
+    loadSavedConfigs();
+
     open = true;
 
     // Apply syntax highlighting after dialog opens
@@ -51,6 +159,11 @@
     window.editor.copyToClipboard();
     showSuccessSnackbar('Particle system configuration copied to clipboard');
   };
+
+  // Load saved configs on component mount
+  onMount(() => {
+    loadSavedConfigs();
+  });
 </script>
 
 <Dialog bind:open aria-labelledby="save-dialog-title" aria-describedby="save-dialog-content">
@@ -60,6 +173,46 @@
       <div class="code-container">
         <pre><code id="json-content" class="language-json">{configContent}</code></pre>
       </div>
+
+      <div class="save-form">
+        <Textfield
+          class="config-name-input"
+          bind:value={configName}
+          label="Configuration Name"
+          required
+        />
+      </div>
+
+      {#if recentConfigs.length > 0}
+        <div class="separator"></div>
+
+        <div class="recent-configs">
+          <h3>Recently saved configs</h3>
+          <div class="config-cards">
+            {#each recentConfigs as config}
+              <button
+                type="button"
+                class="config-card"
+                on:click={() => loadConfig(config)}
+                on:keydown={(e) => e.key === 'Enter' && loadConfig(config)}
+                aria-label="Load configuration: {config.name}"
+              >
+                <div class="config-card-content">
+                  <div class="config-name">{config.name}</div>
+                  <div class="config-dates">
+                    <div class="config-date">
+                      Created: {formatDate(config.createdAt)}
+                    </div>
+                    <div class="config-date">
+                      Modified: {formatDate(config.updatedAt)}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            {/each}
+          </div>
+        </div>
+      {/if}
     </div>
   </Content>
   <Actions>
@@ -68,6 +221,9 @@
     </Button>
     <Button on:click={copyToClipboard}>
       <Icon class="material-icons">file_copy</Icon><Label>Copy to Clipboard</Label>
+    </Button>
+    <Button on:click={saveToLocalStorage}>
+      <Icon class="material-icons">save</Icon><Label>Save to Local Storage</Label>
     </Button>
   </Actions>
 </Dialog>
@@ -80,11 +236,12 @@
   }
 
   .code-container {
-    max-height: 70vh;
+    max-height: 40vh;
     overflow: auto;
     border: 1px solid var(--border);
     border-radius: 4px;
     background-color: #f5f5f5;
+    margin-bottom: 16px;
   }
 
   :global(.dark-theme) .code-container {
@@ -104,5 +261,110 @@
   code {
     white-space: pre-wrap;
     word-break: break-word;
+  }
+
+  .save-form {
+    margin: 16px 0;
+  }
+
+  .config-name-input {
+    width: 100%;
+  }
+
+  .separator {
+    height: 1px;
+    background-color: var(--border, #ddd);
+    margin: 24px 0;
+    width: 100%;
+  }
+
+  :global(.dark-theme) .separator {
+    background-color: #444;
+  }
+
+  .recent-configs {
+    margin-top: 8px;
+  }
+
+  .recent-configs h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+
+  .config-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    max-height: 25vh;
+    overflow-y: auto;
+    padding: 4px;
+  }
+
+  .config-card {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+    overflow: hidden;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    padding: 0;
+    display: block;
+  }
+
+  :global(.dark-theme) .config-card {
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .config-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  :global(.dark-theme) .config-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .config-card-content {
+    padding: 12px;
+  }
+
+  .config-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+  }
+
+  .config-dates {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .config-date {
+    margin-bottom: 2px;
+    color: #666;
+  }
+
+  :global(.dark-theme) .config-name {
+    color: #ffffff;
+  }
+
+  :global(.dark-theme) .config-dates,
+  :global(.dark-theme) .config-date {
+    color: #b0b0b0;
   }
 </style>
