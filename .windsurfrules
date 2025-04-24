@@ -47,15 +47,26 @@
 - Each significant change must be in a separate commit.
 - The `master` branch contains the latest stable version.
 - **NEVER** use `--no-verify` when committing.
-
+- Use Semantic Release for automatic versioning and CHANGELOG generation.
+- Branch names should follow the pattern: `type/description` (e.g., `feat/particle-effect`, `fix/css-issue`).
+- Branch types should match conventional commit types: `feat/`, `fix/`, `docs/`, `refactor/`, etc.
+- Long-term development should use `release/next` branch.
+- Hotfixes should branch directly from `master` with `fix/` prefix.
 
 ## Build and Deployment
 - The contents of the `public/build` folder are not version controlled.
 - Static assets (e.g., images) are stored in the `src/assets` directory.
 - The development server runs using `sirv-cli` from the `public` folder.
+- The GitHub Actions workflow is used for FTP deployment to production.
+- Semantic Release runs before FTP deployment to update version and CHANGELOG.
+- The build process must include SMUI theme compilation steps.
 
 ## Dependencies
 - `@newkrok/three-particles`: latest version.
 - `three`: must match the version used by `@newkrok/three-particles`.
 - Use `sass` (not `node-sass`) for styling.
 - Use the **Svelte** framework for the user interface.
+
+## Testing
+- Write unit tests for utility functions
+- Test particle system configurations with different parameters
