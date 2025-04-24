@@ -3,6 +3,7 @@
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import AboutModal from '../about-modal/about-modal.svelte';
   import SaveDialog from '../save-dialog/save-dialog.svelte';
+  import { showSuccessSnackbar } from '../../js/stores/snackbar-store';
   import { onMount } from 'svelte';
 
   // Initialize theme from localStorage or system preference
@@ -58,6 +59,14 @@
     if (saveDialogComponent) {
       saveDialogComponent.openSaveDialog();
     }
+  };
+
+  /**
+   * Copies the current particle system configuration to clipboard
+   */
+  const copyToClipboard = () => {
+    window.editor.copyToClipboard();
+    showSuccessSnackbar('Particle system configuration copied to clipboard');
   };
 
   onMount(() => {
@@ -126,6 +135,9 @@
       <Button on:click={openSaveDialog} variant="raised">
         <Icon class="material-icons">save</Icon><Label>Save</Label>
       </Button>
+      <Button on:click={copyToClipboard} variant="raised">
+        <Icon class="material-icons">file_copy</Icon><Label>Copy</Label>
+      </Button>
       <Button on:click={window.editor.loadFromClipboard} variant="raised">
         <Icon class="material-icons">content_paste</Icon><Label>Paste</Label>
       </Button>
@@ -171,6 +183,16 @@
           >
             <span class="material-icons">save</span>
             <span>Save</span>
+          </button>
+          <button
+            class="menu-item"
+            on:click={() => {
+              copyToClipboard();
+              mobileMenuOpen = false;
+            }}
+          >
+            <span class="material-icons">file_copy</span>
+            <span>Copy</span>
           </button>
           <button
             class="menu-item"
