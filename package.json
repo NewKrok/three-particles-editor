@@ -15,7 +15,7 @@
     "three": "^0.175.0"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "npm run smui-theme-light && npm run smui-theme-dark && rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
     "prepare": "husky",
