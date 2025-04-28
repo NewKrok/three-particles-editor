@@ -7,6 +7,12 @@
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
 
+  // Focus action for automatically focusing input elements
+  const focus = (node: HTMLElement) => {
+    node.focus();
+    return {};
+  };
+
   // Initialize theme from localStorage or system preference
   let lightTheme = true;
 
@@ -53,6 +59,13 @@
   let configName = writable('Untitled');
   let lastModified = writable('');
 
+  // State for config name editing
+  let isEditingName = false;
+  let editedConfigName = '';
+
+  // Flag to prevent automatic updates from overwriting user edits
+  let userEditedName = false;
+
   const createNewRequest = () => (open = true);
   const createNew = () => {
     window.editor.createNew();
@@ -84,8 +97,11 @@
     try {
       const metadata = window.editor.getConfigMetadata();
       if (metadata) {
-        // Update config name
-        configName.set(metadata.name || 'Untitled');
+        // Only update the config name if the user hasn't edited it
+        if (!userEditedName) {
+          // Update config name
+          configName.set(metadata.name || 'Untitled');
+        }
 
         // Format the last modified date
         if (metadata.modifiedAt) {
@@ -98,6 +114,94 @@
     } catch (error) {
       // Silent error - we don't want to break the UI if metadata can't be updated
       // This could happen during initialization before the editor is fully loaded
+    }
+  };
+
+  /**
+   * Starts editing the configuration name
+   */
+  const startEditingName = () => {
+    editedConfigName = $configName;
+    isEditingName = true;
+  };
+
+  /**
+   * Saves the edited configuration name
+   */
+  const saveConfigName = () => {
+    if (editedConfigName.trim() !== '') {
+      // Update the config name in the store
+      configName.set(editedConfigName);
+
+      // Set the flag to prevent automatic updates from overwriting our change
+      userEditedName = true;
+
+      // Update the name in the editor's metadata and configuration
+      try {
+        if (window.editor) {
+          // Try all possible ways to update the name in the editor
+          // Use type safety with proper checks to avoid TypeScript errors
+
+          // 1. Try to update via the metadata (most reliable method)
+          if (typeof window.editor.getConfigMetadata === 'function') {
+            const metadata = window.editor.getConfigMetadata();
+            if (metadata && typeof metadata === 'object') {
+              // Use type assertion to avoid TypeScript errors
+              (metadata as any).name = editedConfigName;
+
+              // Try to save the updated metadata if possible
+              if (typeof (window.editor as any).setConfigMetadata === 'function') {
+                (window.editor as any).setConfigMetadata(metadata);
+              }
+            }
+          }
+
+          // 2. Try to access editor's internal config if available
+          const editorAny = window.editor as any;
+          if (editorAny.config && typeof editorAny.config === 'object') {
+            editorAny.config.name = editedConfigName;
+          }
+
+          // 3. Try other possible methods that might exist
+          if (
+            typeof editorAny.updateConfig === 'function' &&
+            typeof editorAny.getConfig === 'function'
+          ) {
+            try {
+              const config = editorAny.getConfig();
+              if (config && typeof config === 'object') {
+                config.name = editedConfigName;
+                editorAny.updateConfig(config);
+              }
+            } catch (e) {
+              // Silent error - this method might not work as expected
+            }
+          }
+
+          // 4. Try to save the configuration to persist changes
+          if (typeof editorAny.saveConfig === 'function') {
+            try {
+              editorAny.saveConfig();
+            } catch (e) {
+              // Silent error - this method might not exist
+            }
+          }
+        }
+      } catch (error) {
+        // Silent error - we don't want to break the UI if the update fails
+      }
+    }
+    isEditingName = false;
+  };
+
+  /**
+   * Handles key press events when editing the configuration name
+   */
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      saveConfigName();
+    } else if (event.key === 'Escape') {
+      isEditingName = false;
     }
   };
 
@@ -125,16 +229,30 @@
     // Initialize config info
     updateConfigInfo();
 
-    // Set up an interval to periodically check for config changes
+    // Set up an interval to update config info periodically
     const infoUpdateInterval = setInterval(updateConfigInfo, 2000);
+
+    // When a new config is created, reset the userEditedName flag
+    let originalCreateNew: Function | undefined;
+    if (window.editor && typeof window.editor.createNew === 'function') {
+      originalCreateNew = window.editor.createNew;
+      (window.editor as any).createNew = function (...args: any[]) {
+        userEditedName = false;
+        return originalCreateNew?.apply(this, args);
+      };
+    }
 
     return () => {
       // Clean up interval on component unmount
       clearInterval(infoUpdateInterval);
+
+      // Restore original method if we modified it
+      if (originalCreateNew && window.editor) {
+        (window.editor as any).createNew = originalCreateNew;
+      }
     };
   });
 
-  // Function to check if we're on a mobile device
   const checkMobile = () => {
     isMobile = window.innerWidth < 768;
   };
@@ -170,7 +288,32 @@
 
     <!-- Configuration info section -->
     <div class="config-info">
-      <div class="config-name" title="Current configuration name">{$configName}</div>
+      <div class="config-name-container">
+        {#if isEditingName}
+          <!-- Editable input field -->
+          <input
+            type="text"
+            class="config-name-input"
+            bind:value={editedConfigName}
+            on:blur={saveConfigName}
+            on:keydown={handleKeyPress}
+            aria-label="Edit configuration name"
+            use:focus
+          />
+        {:else}
+          <!-- Display mode with hover effect -->
+          <button
+            class="config-name-wrapper"
+            on:click={startEditingName}
+            on:keydown={(e) => e.key === 'Enter' && startEditingName()}
+            aria-label="Edit configuration name"
+            type="button"
+          >
+            <div class="config-name" title="Click to edit configuration name">{$configName}</div>
+            <span class="edit-icon material-icons">edit</span>
+          </button>
+        {/if}
+      </div>
       {#if $lastModified}
         <div class="last-modified" title="Last modified">{$lastModified}</div>
       {/if}
@@ -303,10 +446,57 @@
     padding-left: 4px;
   }
 
+  .config-name-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .config-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(255, 62, 0, 0.1);
+
+      .edit-icon {
+        opacity: 1;
+      }
+    }
+  }
+
   .config-name {
     font-weight: 500;
     font-size: 14px;
     color: var(--mdc-theme-primary, #ff3e00);
+  }
+
+  .edit-icon {
+    font-size: 16px;
+    color: var(--mdc-theme-primary, #ff3e00);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .config-name-input {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--mdc-theme-primary, #ff3e00);
+    background: transparent;
+    border: 1px solid var(--mdc-theme-primary, #ff3e00);
+    border-radius: 4px;
+    padding: 2px 4px;
+    outline: none;
+    width: 100%;
+    min-width: 120px;
   }
 
   .last-modified {
