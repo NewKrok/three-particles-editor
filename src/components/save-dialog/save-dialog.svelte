@@ -85,9 +85,26 @@
    * Save configuration to localStorage
    */
   const saveToLocalStorage = (): void => {
-    if (!configName.trim()) {
-      showErrorSnackbar('Please enter a name for the configuration');
-      return;
+    let nameToUse = configName.trim();
+
+    // If no name is provided, generate an "Untitled-X" name
+    if (!nameToUse) {
+      // Get existing configs to find the next available number
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      const savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+
+      // Find the highest Untitled-X number
+      let maxNumber = 0;
+      savedConfigs.forEach((config) => {
+        const match = config.name.match(/^Untitled-(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxNumber) maxNumber = num;
+        }
+      });
+
+      // Create new name with incremented number
+      nameToUse = `Untitled-${maxNumber + 1}`;
     }
 
     try {
@@ -95,7 +112,7 @@
       const configId = `config-${now}`;
       const newConfig: SavedConfig = {
         id: configId,
-        name: configName.trim(),
+        name: nameToUse,
         config: rawConfigData,
         createdAt: now,
         updatedAt: now,
