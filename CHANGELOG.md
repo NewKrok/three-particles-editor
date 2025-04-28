@@ -1,3 +1,14 @@
+# [2.2.0](https://github.com/NewKrok/three-particles-editor/compare/v2.1.0...v2.2.0) (2025-04-28)
+
+### Features
+
+- add automatic Untitled-X naming for unnamed configurations ([33cadff](https://github.com/NewKrok/three-particles-editor/commit/33cadff208fed5a1d03458ac3400488b154cb27a))
+- add delete functionality to config cards with confirmation dialog ([85345a3](https://github.com/NewKrok/three-particles-editor/commit/85345a3b13a5bc5edccfc1d9c83f851f9738d63f))
+- add editable configuration name with hover edit icon ([b4c5dcc](https://github.com/NewKrok/three-particles-editor/commit/b4c5dccae32241d9bdfee4bac1106a7b22460119))
+- add load dialog component for loading saved configurations ([6fffc78](https://github.com/NewKrok/three-particles-editor/commit/6fffc78dde2b80053e6a23d27f656d476478e0a9))
+- enhance configuration metadata and naming system ([33f2e79](https://github.com/NewKrok/three-particles-editor/commit/33f2e799e3ccebcb9f4d8c478df07d49f44e2901))
+- improve editable configuration name UX with larger input field ([639e804](https://github.com/NewKrok/three-particles-editor/commit/639e8046ff75fda02bbfc33cf1ee79307188c560))
+
 ## [1.0.1](https://github.com/NewKrok/three-particles-editor/compare/v1.0.0...v1.0.1) (2025-04-28)
 
 ### Bug Fixes
