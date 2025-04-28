@@ -186,6 +186,31 @@
   };
 
   /**
+   * Delete a configuration from localStorage
+   */
+  const deleteConfig = (configId: string): void => {
+    try {
+      // Get existing configs
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      const savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+
+      // Filter out the config to delete
+      const updatedConfigs = savedConfigs.filter((config) => config.id !== configId);
+
+      // Save back to localStorage
+      localStorage.setItem('three-particles-saved-configs', JSON.stringify(updatedConfigs));
+
+      // Refresh the list
+      loadSavedConfigs();
+
+      showSuccessSnackbar('Configuration deleted successfully');
+    } catch (error) {
+      // Show error message
+      showErrorSnackbar('Failed to delete configuration');
+    }
+  };
+
+  /**
    * Opens the save dialog and prepares the configuration content
    */
   export const openSaveDialog = () => {
@@ -273,7 +298,11 @@
           <h3>Recently saved configs</h3>
           <div class="config-cards">
             {#each recentConfigs as config}
-              <ConfigCard {config} onClick={() => showOverwriteConfirmation(config)} />
+              <ConfigCard
+                {config}
+                onClick={() => showOverwriteConfirmation(config)}
+                on:delete={({ detail }) => deleteConfig(detail.configId)}
+              />
             {/each}
           </div>
         </div>
