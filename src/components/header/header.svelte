@@ -3,6 +3,7 @@
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import AboutModal from '../about-modal/about-modal.svelte';
   import SaveDialog from '../save-dialog/save-dialog.svelte';
+  import LoadDialog from '../load-dialog/load-dialog.svelte';
   import { showSuccessSnackbar } from '../../js/stores/snackbar-store';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
@@ -54,6 +55,7 @@
   let aboutModalOpen = false;
   let mobileMenuOpen = false;
   let saveDialogOpen = false;
+  let loadDialogOpen = false;
 
   // Current configuration metadata
   let configName = writable('Untitled');
@@ -75,12 +77,22 @@
   // Reference to the SaveDialog component
   let saveDialogComponent;
 
+  // Reference to the LoadDialog component
+  let loadDialogComponent;
+
   // Function to open the save dialog
   const openSaveDialog = () => {
     if (saveDialogComponent) {
       saveDialogComponent.openSaveDialog();
       // Update config info after saving
       setTimeout(updateConfigInfo, 500);
+    }
+  };
+
+  // Function to open the load dialog
+  const openLoadDialog = () => {
+    if (loadDialogComponent) {
+      loadDialogComponent.openLoadDialog();
     }
   };
 
@@ -330,6 +342,9 @@
       <Button on:click={createNewRequest} variant="raised">
         <Icon class="material-icons">note_add</Icon><Label>New</Label>
       </Button>
+      <Button on:click={openLoadDialog} variant="raised">
+        <Icon class="material-icons">folder_open</Icon><Label>Load</Label>
+      </Button>
       <Button on:click={openSaveDialog} variant="raised">
         <Icon class="material-icons">save</Icon><Label>Save</Label>
       </Button>
@@ -355,6 +370,24 @@
       </button>
 
       <!-- Menu button -->
+      <button
+        type="button"
+        class="menu-item"
+        on:click={openLoadDialog}
+        on:keydown={(e) => e.key === 'Enter' && openLoadDialog()}
+        aria-label="Load configuration"
+      >
+        <Icon class="material-icons">folder_open</Icon> Load
+      </button>
+      <button
+        type="button"
+        class="menu-item"
+        on:click={openSaveDialog}
+        on:keydown={(e) => e.key === 'Enter' && openSaveDialog()}
+        aria-label="Save configuration"
+      >
+        <Icon class="material-icons">save</Icon> Save
+      </button>
       <button class="icon-button" on:click={toggleMobileMenu}>
         <span class="material-icons">menu</span>
       </button>
@@ -424,6 +457,8 @@
 <AboutModal bind:open={aboutModalOpen} />
 
 <SaveDialog bind:open={saveDialogOpen} bind:this={saveDialogComponent} />
+
+<LoadDialog bind:open={loadDialogOpen} bind:this={loadDialogComponent} />
 
 <style lang="scss">
   .wrapper {
