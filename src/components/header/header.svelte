@@ -5,6 +5,7 @@
   import SaveDialog from '../save-dialog/save-dialog.svelte';
   import { showSuccessSnackbar } from '../../js/stores/snackbar-store';
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
 
   // Initialize theme from localStorage or system preference
   let lightTheme = true;
@@ -48,8 +49,15 @@
   let mobileMenuOpen = false;
   let saveDialogOpen = false;
 
+  // Current configuration metadata
+  let configName = writable('Untitled');
+  let lastModified = writable('');
+
   const createNewRequest = () => (open = true);
-  const createNew = () => window.editor.createNew();
+  const createNew = () => {
+    window.editor.createNew();
+    updateConfigInfo();
+  };
 
   // Reference to the SaveDialog component
   let saveDialogComponent;
@@ -58,6 +66,8 @@
   const openSaveDialog = () => {
     if (saveDialogComponent) {
       saveDialogComponent.openSaveDialog();
+      // Update config info after saving
+      setTimeout(updateConfigInfo, 500);
     }
   };
 
@@ -67,6 +77,28 @@
   const copyToClipboard = () => {
     window.editor.copyToClipboard();
     showSuccessSnackbar('Particle system configuration copied to clipboard');
+  };
+
+  // Function to update configuration info in the header
+  const updateConfigInfo = () => {
+    try {
+      const metadata = window.editor.getConfigMetadata();
+      if (metadata) {
+        // Update config name
+        configName.set(metadata.name || 'Untitled');
+
+        // Format the last modified date
+        if (metadata.modifiedAt) {
+          const date = new Date(metadata.modifiedAt);
+          lastModified.set(date.toLocaleString());
+        } else {
+          lastModified.set('');
+        }
+      }
+    } catch (error) {
+      // Silent error - we don't want to break the UI if metadata can't be updated
+      // This could happen during initialization before the editor is fully loaded
+    }
   };
 
   onMount(() => {
@@ -89,6 +121,17 @@
         .querySelector('link[href="./build/static/smui-dark.css"]')
         ?.insertAdjacentElement('afterend', themeLink);
     }
+
+    // Initialize config info
+    updateConfigInfo();
+
+    // Set up an interval to periodically check for config changes
+    const infoUpdateInterval = setInterval(updateConfigInfo, 2000);
+
+    return () => {
+      // Clean up interval on component unmount
+      clearInterval(infoUpdateInterval);
+    };
   });
 
   // Function to check if we're on a mobile device
@@ -124,6 +167,14 @@
     >
       <img src="./assets/images/logo-colorful.png" alt="Three Particles Logo" class="logo" />
     </button>
+
+    <!-- Configuration info section -->
+    <div class="config-info">
+      <div class="config-name" title="Current configuration name">{$configName}</div>
+      {#if $lastModified}
+        <div class="last-modified" title="Last modified">{$lastModified}</div>
+      {/if}
+    </div>
   </div>
 
   {#if !isMobile}
@@ -242,6 +293,26 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .config-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 4px;
+  }
+
+  .config-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--mdc-theme-primary, #ff3e00);
+  }
+
+  .last-modified {
+    font-size: 12px;
+    color: var(--mdc-theme-text-secondary-on-background, #666);
+    opacity: 0.8;
   }
 
   .center-section {

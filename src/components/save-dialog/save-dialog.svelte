@@ -5,6 +5,7 @@
   import Textfield from '@smui/textfield';
   import { getObjectDiff } from '../../js/three-particles-editor/save-and-load';
   import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
+  import { generateDefaultName } from '../../js/utils/name-utils';
   import { showSuccessSnackbar, showErrorSnackbar } from '../../js/stores/snackbar-store';
   import Prism from 'prismjs';
   import 'prismjs/themes/prism.css';
@@ -56,6 +57,7 @@
     config: any;
     createdAt: number;
     updatedAt: number;
+    editorVersion?: string;
   };
 
   let recentConfigs: SavedConfig[] = [];
@@ -81,35 +83,26 @@
   const saveToLocalStorage = (): void => {
     let nameToUse = configName.trim();
 
-    // If no name is provided, generate an "Untitled-X" name
+    // If no name is provided, generate an "Untitled-X" name using the utility function
     if (!nameToUse) {
-      // Get existing configs to find the next available number
-      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
-      const savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
-
-      // Find the highest Untitled-X number
-      let maxNumber = 0;
-      savedConfigs.forEach((config) => {
-        const match = config.name.match(/^Untitled-(\d+)$/);
-        if (match) {
-          const num = parseInt(match[1], 10);
-          if (num > maxNumber) maxNumber = num;
-        }
-      });
-
-      // Create new name with incremented number
-      nameToUse = `Untitled-${maxNumber + 1}`;
+      nameToUse = generateDefaultName();
     }
 
     try {
-      const now = Date.now();
-      const configId = `config-${now}`;
+      // Update metadata in the config
+      window.editor.updateConfigMetadata(nameToUse);
+
+      // Get updated metadata
+      const metadata = window.editor.getConfigMetadata();
+
+      const configId = `config-${metadata.createdAt}`;
       const newConfig: SavedConfig = {
         id: configId,
         name: nameToUse,
         config: rawConfigData,
-        createdAt: now,
-        updatedAt: now,
+        createdAt: metadata.createdAt,
+        updatedAt: metadata.modifiedAt,
+        editorVersion: metadata.editorVersion,
       };
 
       // Get existing configs or initialize empty array
@@ -151,11 +144,17 @@
     if (!selectedConfig) return;
 
     try {
-      const now = Date.now();
+      // Update metadata in the config, preserving the name
+      window.editor.updateConfigMetadata(selectedConfig.name);
+
+      // Get updated metadata
+      const metadata = window.editor.getConfigMetadata();
+
       const updatedConfig: SavedConfig = {
         ...selectedConfig,
         config: rawConfigData,
-        updatedAt: now,
+        updatedAt: metadata.modifiedAt,
+        editorVersion: metadata.editorVersion,
       };
 
       // Get existing configs
@@ -215,6 +214,13 @@
    */
   export const openSaveDialog = () => {
     rawConfigData = window.editor.getCurrentParticleSystemConfig();
+
+    // Get metadata to pre-fill the config name
+    const metadata = window.editor.getConfigMetadata();
+    if (metadata && metadata.name) {
+      configName = metadata.name;
+    }
+
     configContent = JSON.stringify(
       {
         ...getObjectDiff(getDefaultParticleSystemConfig(), rawConfigData, {
