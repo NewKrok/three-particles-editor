@@ -5,11 +5,13 @@
   import Textfield from '@smui/textfield';
   import { getObjectDiff } from '../../js/three-particles-editor/save-and-load';
   import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
+  import { generateDefaultName } from '../../js/utils/name-utils';
   import { showSuccessSnackbar, showErrorSnackbar } from '../../js/stores/snackbar-store';
   import Prism from 'prismjs';
   import 'prismjs/themes/prism.css';
   import 'prismjs/components/prism-json';
   import { onMount } from 'svelte';
+  import ConfigCard from '../config-card/config-card.svelte';
 
   /**
    * Whether the save dialog is open
@@ -55,16 +57,10 @@
     config: any;
     createdAt: number;
     updatedAt: number;
+    editorVersion?: string;
   };
 
   let recentConfigs: SavedConfig[] = [];
-
-  /**
-   * Format date for display
-   */
-  const formatDate = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleString();
-  };
 
   /**
    * Load saved configurations from localStorage
@@ -85,20 +81,28 @@
    * Save configuration to localStorage
    */
   const saveToLocalStorage = (): void => {
-    if (!configName.trim()) {
-      showErrorSnackbar('Please enter a name for the configuration');
-      return;
+    let nameToUse = configName.trim();
+
+    // If no name is provided, generate an "Untitled-X" name using the utility function
+    if (!nameToUse) {
+      nameToUse = generateDefaultName();
     }
 
     try {
-      const now = Date.now();
-      const configId = `config-${now}`;
+      // Update metadata in the config
+      window.editor.updateConfigMetadata(nameToUse);
+
+      // Get updated metadata
+      const metadata = window.editor.getConfigMetadata();
+
+      const configId = `config-${metadata.createdAt}`;
       const newConfig: SavedConfig = {
         id: configId,
-        name: configName.trim(),
+        name: nameToUse,
         config: rawConfigData,
-        createdAt: now,
-        updatedAt: now,
+        createdAt: metadata.createdAt,
+        updatedAt: metadata.modifiedAt,
+        editorVersion: metadata.editorVersion,
       };
 
       // Get existing configs or initialize empty array
@@ -140,11 +144,17 @@
     if (!selectedConfig) return;
 
     try {
-      const now = Date.now();
+      // Update metadata in the config, preserving the name
+      window.editor.updateConfigMetadata(selectedConfig.name);
+
+      // Get updated metadata
+      const metadata = window.editor.getConfigMetadata();
+
       const updatedConfig: SavedConfig = {
         ...selectedConfig,
         config: rawConfigData,
-        updatedAt: now,
+        updatedAt: metadata.modifiedAt,
+        editorVersion: metadata.editorVersion,
       };
 
       // Get existing configs
@@ -175,10 +185,42 @@
   };
 
   /**
+   * Delete a configuration from localStorage
+   */
+  const deleteConfig = (configId: string): void => {
+    try {
+      // Get existing configs
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      const savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+
+      // Filter out the config to delete
+      const updatedConfigs = savedConfigs.filter((config) => config.id !== configId);
+
+      // Save back to localStorage
+      localStorage.setItem('three-particles-saved-configs', JSON.stringify(updatedConfigs));
+
+      // Refresh the list
+      loadSavedConfigs();
+
+      showSuccessSnackbar('Configuration deleted successfully');
+    } catch (error) {
+      // Show error message
+      showErrorSnackbar('Failed to delete configuration');
+    }
+  };
+
+  /**
    * Opens the save dialog and prepares the configuration content
    */
   export const openSaveDialog = () => {
     rawConfigData = window.editor.getCurrentParticleSystemConfig();
+
+    // Get metadata to pre-fill the config name
+    const metadata = window.editor.getConfigMetadata();
+    if (metadata && metadata.name) {
+      configName = metadata.name;
+    }
+
     configContent = JSON.stringify(
       {
         ...getObjectDiff(getDefaultParticleSystemConfig(), rawConfigData, {
@@ -262,25 +304,11 @@
           <h3>Recently saved configs</h3>
           <div class="config-cards">
             {#each recentConfigs as config}
-              <button
-                type="button"
-                class="config-card"
-                on:click={() => showOverwriteConfirmation(config)}
-                on:keydown={(e) => e.key === 'Enter' && showOverwriteConfirmation(config)}
-                aria-label="Select configuration to overwrite: {config.name}"
-              >
-                <div class="config-card-content">
-                  <div class="config-name">{config.name}</div>
-                  <div class="config-dates">
-                    <div class="config-date">
-                      Created: {formatDate(config.createdAt)}
-                    </div>
-                    <div class="config-date">
-                      Modified: {formatDate(config.updatedAt)}
-                    </div>
-                  </div>
-                </div>
-              </button>
+              <ConfigCard
+                {config}
+                onClick={() => showOverwriteConfirmation(config)}
+                on:delete={({ detail }) => deleteConfig(detail.configId)}
+              />
             {/each}
           </div>
         </div>
@@ -373,70 +401,5 @@
     max-height: 25vh;
     overflow-y: auto;
     padding: 4px;
-  }
-
-  .config-card {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
-    overflow: hidden;
-    width: 100%;
-    text-align: left;
-    font-family: inherit;
-    padding: 0;
-    display: block;
-  }
-
-  :global(.dark-theme) .config-card {
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  .config-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  :global(.dark-theme) .config-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  .config-card-content {
-    padding: 12px;
-  }
-
-  .config-name {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #333;
-  }
-
-  .config-dates {
-    font-size: 12px;
-    color: #666;
-  }
-
-  .config-date {
-    margin-bottom: 2px;
-    color: #666;
-  }
-
-  :global(.dark-theme) .config-name {
-    color: #ffffff;
-  }
-
-  :global(.dark-theme) .config-dates,
-  :global(.dark-theme) .config-date {
-    color: #b0b0b0;
   }
 </style>

@@ -36,6 +36,14 @@ import { createTextureSheetAnimationEntries } from './three-particles-editor/ent
 import { createTransformEntries } from './three-particles-editor/entries/transform-entries';
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
 import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
+import { generateDefaultName } from './utils/name-utils';
+
+type ConfigMetadata = {
+  name: string;
+  createdAt: number;
+  modifiedAt: number;
+  editorVersion: string;
+};
 
 type EditorData = {
   textureId: string;
@@ -55,6 +63,7 @@ type EditorData = {
     rotation?: string;
     rotationSpeed?: number;
   };
+  metadata?: ConfigMetadata;
 };
 
 type CycleData = {
@@ -65,14 +74,25 @@ type CycleData = {
   elapsed: number;
 };
 
+// Type for particle system
+type ParticleSystem = {
+  instance: THREE.Object3D;
+  dispose: () => void;
+};
+
 type ConfigEntry = {
   onReset?: () => void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onParticleSystemChange?: (particleSystem: any) => void;
+  onParticleSystemChange?: (particleSystem: ParticleSystem) => void;
   onAssetUpdate?: () => void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUpdate?: (cycleData: CycleData) => void;
 };
+
+// Current editor version - replaced during build process
+const EDITOR_VERSION = '__APP_VERSION__';
+
+// Using the generateDefaultName utility function from name-utils.ts
 
 const defaultEditorData: EditorData = {
   textureId: TextureId.POINT,
@@ -88,6 +108,12 @@ const defaultEditorData: EditorData = {
   terrain: {
     textureId: TextureId.WIREFRAME,
   },
+  metadata: {
+    name: 'Untitled-1', // Default name, will be updated in createNew()
+    createdAt: Date.now(),
+    modifiedAt: Date.now(),
+    editorVersion: EDITOR_VERSION,
+  },
 };
 
 const particleSystemConfig = {
@@ -102,12 +128,20 @@ const cycleData: CycleData = { pauseStartTime: 0, totalPauseTime: 0, now: 0, del
 
 let scene: THREE.Scene;
 let particleSystemContainer: Object3D;
-let particleSystem: any;
+let particleSystem: ParticleSystem | null = null;
 let clock: THREE.Clock;
 let isPaused = false;
 const configEntries: ConfigEntry[] = [];
 
 export const createNew = (): void => {
+  // Create new metadata with current timestamp and generated name
+  const newMetadata = {
+    name: generateDefaultName(),
+    createdAt: Date.now(),
+    modifiedAt: Date.now(),
+    editorVersion: EDITOR_VERSION,
+  };
+
   patchObject(particleSystemConfig._editorData, defaultEditorData, {
     skippedProperties: [],
     applyToFirstObject: true,
@@ -116,6 +150,10 @@ export const createNew = (): void => {
     skippedProperties: [],
     applyToFirstObject: true,
   });
+
+  // Update metadata
+  particleSystemConfig._editorData.metadata = newMetadata;
+
   setTerrain();
   recreateParticleSystem();
   configEntries.forEach(({ onReset }) => onReset && onReset());
@@ -314,17 +352,23 @@ const createPanel = (): void => {
   recreateParticleSystem();
 };
 
+// Type for particle system configuration
+type ParticleSystemConfig = Record<string, unknown> & {
+  _editorData: EditorData;
+};
+
 interface EditorInterface {
   createNew: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  load: (config: any) => void;
+  load: (config: ParticleSystemConfig) => void;
   loadFromClipboard: () => void;
   copyToClipboard: () => void;
   reset: () => void;
   play: () => void;
   pause: () => void;
   updateAssets: () => void;
-  getCurrentParticleSystemConfig: () => any;
+  getCurrentParticleSystemConfig: () => ParticleSystemConfig;
+  updateConfigMetadata: (name?: string) => ConfigMetadata;
+  getConfigMetadata: () => ConfigMetadata;
 }
 
 declare global {
@@ -335,7 +379,7 @@ declare global {
 
 window.editor = {
   createNew,
-  load: (config: any) => {
+  load: (config: ParticleSystemConfig) => {
     createNew();
     loadParticleSystem({
       config,
@@ -357,4 +401,36 @@ window.editor = {
   updateAssets: () =>
     configEntries.forEach(({ onAssetUpdate }) => onAssetUpdate && onAssetUpdate()),
   getCurrentParticleSystemConfig: () => particleSystemConfig,
+  updateConfigMetadata: (name?: string) => {
+    // Ensure metadata exists
+    if (!particleSystemConfig._editorData.metadata) {
+      particleSystemConfig._editorData.metadata = {
+        name: generateDefaultName(),
+        createdAt: Date.now(),
+        modifiedAt: Date.now(),
+        editorVersion: EDITOR_VERSION,
+      };
+    }
+
+    // Update modification time and name if provided
+    particleSystemConfig._editorData.metadata.modifiedAt = Date.now();
+    if (name) {
+      particleSystemConfig._editorData.metadata.name = name;
+    }
+
+    return particleSystemConfig._editorData.metadata;
+  },
+  getConfigMetadata: () => {
+    // Ensure metadata exists
+    if (!particleSystemConfig._editorData.metadata) {
+      particleSystemConfig._editorData.metadata = {
+        name: 'Untitled',
+        createdAt: Date.now(),
+        modifiedAt: Date.now(),
+        editorVersion: EDITOR_VERSION,
+      };
+    }
+
+    return particleSystemConfig._editorData.metadata;
+  },
 };

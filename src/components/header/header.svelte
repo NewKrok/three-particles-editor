@@ -3,8 +3,16 @@
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import AboutModal from '../about-modal/about-modal.svelte';
   import SaveDialog from '../save-dialog/save-dialog.svelte';
+  import LoadDialog from '../load-dialog/load-dialog.svelte';
   import { showSuccessSnackbar } from '../../js/stores/snackbar-store';
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
+
+  // Focus action for automatically focusing input elements
+  const focus = (node: HTMLElement) => {
+    node.focus();
+    return {};
+  };
 
   // Initialize theme from localStorage or system preference
   let lightTheme = true;
@@ -47,17 +55,44 @@
   let aboutModalOpen = false;
   let mobileMenuOpen = false;
   let saveDialogOpen = false;
+  let loadDialogOpen = false;
+
+  // Current configuration metadata
+  let configName = writable('Untitled');
+  let lastModified = writable('');
+
+  // State for config name editing
+  let isEditingName = false;
+  let editedConfigName = '';
+
+  // Flag to prevent automatic updates from overwriting user edits
+  let userEditedName = false;
 
   const createNewRequest = () => (open = true);
-  const createNew = () => window.editor.createNew();
+  const createNew = () => {
+    window.editor.createNew();
+    updateConfigInfo();
+  };
 
   // Reference to the SaveDialog component
   let saveDialogComponent;
+
+  // Reference to the LoadDialog component
+  let loadDialogComponent;
 
   // Function to open the save dialog
   const openSaveDialog = () => {
     if (saveDialogComponent) {
       saveDialogComponent.openSaveDialog();
+      // Update config info after saving
+      setTimeout(updateConfigInfo, 500);
+    }
+  };
+
+  // Function to open the load dialog
+  const openLoadDialog = () => {
+    if (loadDialogComponent) {
+      loadDialogComponent.openLoadDialog();
     }
   };
 
@@ -67,6 +102,119 @@
   const copyToClipboard = () => {
     window.editor.copyToClipboard();
     showSuccessSnackbar('Particle system configuration copied to clipboard');
+  };
+
+  // Function to update configuration info in the header
+  const updateConfigInfo = () => {
+    try {
+      const metadata = window.editor.getConfigMetadata();
+      if (metadata) {
+        // Only update the config name if the user hasn't edited it
+        if (!userEditedName) {
+          // Update config name
+          configName.set(metadata.name || 'Untitled');
+        }
+
+        // Format the last modified date
+        if (metadata.modifiedAt) {
+          const date = new Date(metadata.modifiedAt);
+          lastModified.set(date.toLocaleString());
+        } else {
+          lastModified.set('');
+        }
+      }
+    } catch (error) {
+      // Silent error - we don't want to break the UI if metadata can't be updated
+      // This could happen during initialization before the editor is fully loaded
+    }
+  };
+
+  /**
+   * Starts editing the configuration name
+   */
+  const startEditingName = () => {
+    editedConfigName = $configName;
+    isEditingName = true;
+  };
+
+  /**
+   * Saves the edited configuration name
+   */
+  const saveConfigName = () => {
+    if (editedConfigName.trim() !== '') {
+      // Update the config name in the store
+      configName.set(editedConfigName);
+
+      // Set the flag to prevent automatic updates from overwriting our change
+      userEditedName = true;
+
+      // Update the name in the editor's metadata and configuration
+      try {
+        if (window.editor) {
+          // Try all possible ways to update the name in the editor
+          // Use type safety with proper checks to avoid TypeScript errors
+
+          // 1. Try to update via the metadata (most reliable method)
+          if (typeof window.editor.getConfigMetadata === 'function') {
+            const metadata = window.editor.getConfigMetadata();
+            if (metadata && typeof metadata === 'object') {
+              // Use type assertion to avoid TypeScript errors
+              (metadata as any).name = editedConfigName;
+
+              // Try to save the updated metadata if possible
+              if (typeof (window.editor as any).setConfigMetadata === 'function') {
+                (window.editor as any).setConfigMetadata(metadata);
+              }
+            }
+          }
+
+          // 2. Try to access editor's internal config if available
+          const editorAny = window.editor as any;
+          if (editorAny.config && typeof editorAny.config === 'object') {
+            editorAny.config.name = editedConfigName;
+          }
+
+          // 3. Try other possible methods that might exist
+          if (
+            typeof editorAny.updateConfig === 'function' &&
+            typeof editorAny.getConfig === 'function'
+          ) {
+            try {
+              const config = editorAny.getConfig();
+              if (config && typeof config === 'object') {
+                config.name = editedConfigName;
+                editorAny.updateConfig(config);
+              }
+            } catch (e) {
+              // Silent error - this method might not work as expected
+            }
+          }
+
+          // 4. Try to save the configuration to persist changes
+          if (typeof editorAny.saveConfig === 'function') {
+            try {
+              editorAny.saveConfig();
+            } catch (e) {
+              // Silent error - this method might not exist
+            }
+          }
+        }
+      } catch (error) {
+        // Silent error - we don't want to break the UI if the update fails
+      }
+    }
+    isEditingName = false;
+  };
+
+  /**
+   * Handles key press events when editing the configuration name
+   */
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      saveConfigName();
+    } else if (event.key === 'Escape') {
+      isEditingName = false;
+    }
   };
 
   onMount(() => {
@@ -89,9 +237,34 @@
         .querySelector('link[href="./build/static/smui-dark.css"]')
         ?.insertAdjacentElement('afterend', themeLink);
     }
+
+    // Initialize config info
+    updateConfigInfo();
+
+    // Set up an interval to update config info periodically
+    const infoUpdateInterval = setInterval(updateConfigInfo, 2000);
+
+    // When a new config is created, reset the userEditedName flag
+    let originalCreateNew: Function | undefined;
+    if (window.editor && typeof window.editor.createNew === 'function') {
+      originalCreateNew = window.editor.createNew;
+      (window.editor as any).createNew = function (...args: any[]) {
+        userEditedName = false;
+        return originalCreateNew?.apply(this, args);
+      };
+    }
+
+    return () => {
+      // Clean up interval on component unmount
+      clearInterval(infoUpdateInterval);
+
+      // Restore original method if we modified it
+      if (originalCreateNew && window.editor) {
+        (window.editor as any).createNew = originalCreateNew;
+      }
+    };
   });
 
-  // Function to check if we're on a mobile device
   const checkMobile = () => {
     isMobile = window.innerWidth < 768;
   };
@@ -124,6 +297,43 @@
     >
       <img src="./assets/images/logo-colorful.png" alt="Three Particles Logo" class="logo" />
     </button>
+
+    <!-- Configuration info section -->
+    <div class="config-info">
+      <div class="config-name-container">
+        {#if isEditingName}
+          <!-- Editable input field with expanded container -->
+          <div class="config-name-edit-container">
+            <input
+              type="text"
+              class="config-name-input"
+              bind:value={editedConfigName}
+              on:blur={saveConfigName}
+              on:keydown={handleKeyPress}
+              aria-label="Edit configuration name"
+              use:focus
+              placeholder="Enter configuration name"
+              maxlength="50"
+            />
+          </div>
+        {:else}
+          <!-- Display mode with hover effect -->
+          <button
+            class="config-name-wrapper"
+            on:click={startEditingName}
+            on:keydown={(e) => e.key === 'Enter' && startEditingName()}
+            aria-label="Edit configuration name"
+            type="button"
+          >
+            <div class="config-name" title="Click to edit configuration name">{$configName}</div>
+            <span class="edit-icon material-icons">edit</span>
+          </button>
+        {/if}
+      </div>
+      {#if $lastModified}
+        <div class="last-modified" title="Last modified">{$lastModified}</div>
+      {/if}
+    </div>
   </div>
 
   {#if !isMobile}
@@ -131,6 +341,9 @@
     <div class="center-section">
       <Button on:click={createNewRequest} variant="raised">
         <Icon class="material-icons">note_add</Icon><Label>New</Label>
+      </Button>
+      <Button on:click={openLoadDialog} variant="raised">
+        <Icon class="material-icons">folder_open</Icon><Label>Load</Label>
       </Button>
       <Button on:click={openSaveDialog} variant="raised">
         <Icon class="material-icons">save</Icon><Label>Save</Label>
@@ -157,6 +370,24 @@
       </button>
 
       <!-- Menu button -->
+      <button
+        type="button"
+        class="menu-item"
+        on:click={openLoadDialog}
+        on:keydown={(e) => e.key === 'Enter' && openLoadDialog()}
+        aria-label="Load configuration"
+      >
+        <Icon class="material-icons">folder_open</Icon> Load
+      </button>
+      <button
+        type="button"
+        class="menu-item"
+        on:click={openSaveDialog}
+        on:keydown={(e) => e.key === 'Enter' && openSaveDialog()}
+        aria-label="Save configuration"
+      >
+        <Icon class="material-icons">save</Icon> Save
+      </button>
       <button class="icon-button" on:click={toggleMobileMenu}>
         <span class="material-icons">menu</span>
       </button>
@@ -227,6 +458,8 @@
 
 <SaveDialog bind:open={saveDialogOpen} bind:this={saveDialogComponent} />
 
+<LoadDialog bind:open={loadDialogOpen} bind:this={loadDialogComponent} />
+
 <style lang="scss">
   .wrapper {
     width: 100%;
@@ -242,6 +475,88 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .config-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 4px;
+  }
+
+  .config-name-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .config-name-edit-container {
+    position: absolute;
+    top: -12px;
+    left: -10px;
+    z-index: 20;
+    min-width: 200px;
+  }
+
+  .config-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba(255, 62, 0, 0.1);
+
+      .edit-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  .config-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--mdc-theme-primary, #ff3e00);
+  }
+
+  .edit-icon {
+    font-size: 16px;
+    color: var(--mdc-theme-primary, #ff3e00);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .config-name-input {
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--mdc-theme-primary, #ff3e00);
+    background: var(--mdc-theme-surface, #fff);
+    border: 1px solid var(--mdc-theme-primary, #ff3e00);
+    border-radius: 4px;
+    padding: 8px 10px;
+    outline: none;
+    width: 100%;
+    min-width: 240px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+
+    &:focus {
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .last-modified {
+    font-size: 12px;
+    color: var(--mdc-theme-text-secondary-on-background, #666);
+    opacity: 0.8;
   }
 
   .center-section {
