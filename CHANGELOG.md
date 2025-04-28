@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/NewKrok/three-particles-editor/compare/v1.0.0...v1.0.1) (2025-04-28)
+
+### Bug Fixes
+
+- improve semantic-release configuration and workflow ([19b30a4](https://github.com/NewKrok/three-particles-editor/commit/19b30a440840eb867c7489802ef5be1251d87db1))
+
 # 1.0.0 (2025-04-24)
 
 ### Bug Fixes
