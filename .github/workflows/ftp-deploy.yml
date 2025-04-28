@@ -40,8 +40,10 @@ jobs:
       
       - name: Semantic Release
         env:
+          # Explicit token with write permissions
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: npx semantic-release --no-ci
       
       - name: Build project
         run: npm run build
