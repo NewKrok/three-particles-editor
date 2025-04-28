@@ -290,16 +290,20 @@
     <div class="config-info">
       <div class="config-name-container">
         {#if isEditingName}
-          <!-- Editable input field -->
-          <input
-            type="text"
-            class="config-name-input"
-            bind:value={editedConfigName}
-            on:blur={saveConfigName}
-            on:keydown={handleKeyPress}
-            aria-label="Edit configuration name"
-            use:focus
-          />
+          <!-- Editable input field with expanded container -->
+          <div class="config-name-edit-container">
+            <input
+              type="text"
+              class="config-name-input"
+              bind:value={editedConfigName}
+              on:blur={saveConfigName}
+              on:keydown={handleKeyPress}
+              aria-label="Edit configuration name"
+              use:focus
+              placeholder="Enter configuration name"
+              maxlength="50"
+            />
+          </div>
         {:else}
           <!-- Display mode with hover effect -->
           <button
@@ -450,6 +454,15 @@
     position: relative;
     display: flex;
     align-items: center;
+    z-index: 10;
+  }
+
+  .config-name-edit-container {
+    position: absolute;
+    top: -12px;
+    left: -10px;
+    z-index: 20;
+    min-width: 200px;
   }
 
   .config-name-wrapper {
@@ -488,15 +501,21 @@
 
   .config-name-input {
     font-weight: 500;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--mdc-theme-primary, #ff3e00);
-    background: transparent;
+    background: var(--mdc-theme-surface, #fff);
     border: 1px solid var(--mdc-theme-primary, #ff3e00);
     border-radius: 4px;
-    padding: 2px 4px;
+    padding: 8px 10px;
     outline: none;
     width: 100%;
-    min-width: 120px;
+    min-width: 240px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+
+    &:focus {
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
   }
 
   .last-modified {
