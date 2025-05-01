@@ -122,6 +122,7 @@
       configName = '';
 
       showSuccessSnackbar('Configuration saved successfully');
+      open = false; // Close the dialog after saving
     } catch (error) {
       // Log error and show error message
       showErrorSnackbar('Failed to save configuration');
@@ -294,6 +295,7 @@
           bind:value={configName}
           label="Configuration Name"
           required
+          on:keydown={(e) => e.key === 'Enter' && saveToLocalStorage()}
         />
       </div>
 
@@ -320,10 +322,10 @@
       <Icon class="material-icons">close</Icon><Label>Close</Label>
     </Button>
     <Button on:click={copyToClipboard}>
-      <Icon class="material-icons">file_copy</Icon><Label>Copy to Clipboard</Label>
+      <Icon class="material-icons">file_copy</Icon><Label>Copy</Label>
     </Button>
     <Button on:click={saveToLocalStorage}>
-      <Icon class="material-icons">save</Icon><Label>Save to Local Storage</Label>
+      <Icon class="material-icons">save</Icon><Label>Save</Label>
     </Button>
   </Actions>
 </Dialog>
