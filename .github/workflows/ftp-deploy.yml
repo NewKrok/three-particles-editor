@@ -39,11 +39,23 @@ jobs:
         run: npm ci
       
       - name: Semantic Release
+        id: semantic-release
         env:
           # Explicit token with write permissions
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --no-ci
+        run: |
+          npx semantic-release --no-ci
+          # Store the new version for later use
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      
+      - name: Update version placeholders
+        run: |
+          # Replace version and build date placeholders in files
+          find ./src -type f -name "*.svelte" -exec sed -i "s/__APP_VERSION__/${{ env.VERSION }}/g" {} \;
+          find ./src -type f -name "*.svelte" -exec sed -i "s/__BUILD_DATE__/${{ env.BUILD_DATE }}/g" {} \;
       
       - name: Build project
         run: npm run build
