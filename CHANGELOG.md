@@ -1,3 +1,9 @@
+## [2.2.1](https://github.com/NewKrok/three-particles-editor/compare/v2.2.0...v2.2.1) (2025-05-01)
+
+### Bug Fixes
+
+- update GitHub workflow to replace version placeholders before build ([b95bfba](https://github.com/NewKrok/three-particles-editor/commit/b95bfbaa188b85b39ef39d2f37a9952f3794e36a))
+
 # [2.2.0](https://github.com/NewKrok/three-particles-editor/compare/v2.1.0...v2.2.0) (2025-04-28)
 
 ### Features
