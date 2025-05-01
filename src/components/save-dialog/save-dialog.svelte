@@ -213,6 +213,72 @@
   /**
    * Opens the save dialog and prepares the configuration content
    */
+  /**
+   * Quick save function that saves the current configuration without opening the dialog
+   * This is used for the direct Save button in the header
+   */
+  export const quickSave = (): void => {
+    // Get the current configuration
+    const currentConfig = window.editor.getCurrentParticleSystemConfig();
+
+    // Get metadata to use the current name
+    const metadata = window.editor.getConfigMetadata();
+    const nameToUse = metadata?.name || generateDefaultName();
+
+    try {
+      // Update metadata in the config
+      window.editor.updateConfigMetadata(nameToUse);
+
+      // Get updated metadata after the update
+      const updatedMetadata = window.editor.getConfigMetadata();
+
+      // Check if this is an existing config that should be updated
+      const savedConfigsStr = localStorage.getItem('three-particles-saved-configs');
+      const savedConfigs: SavedConfig[] = savedConfigsStr ? JSON.parse(savedConfigsStr) : [];
+
+      // Look for an existing config with the same name
+      const existingConfigIndex = savedConfigs.findIndex((config) => config.name === nameToUse);
+
+      if (existingConfigIndex >= 0) {
+        // Update existing config
+        const existingConfig = savedConfigs[existingConfigIndex];
+        savedConfigs[existingConfigIndex] = {
+          ...existingConfig,
+          config: currentConfig,
+          updatedAt: updatedMetadata.modifiedAt,
+          editorVersion: updatedMetadata.editorVersion,
+        };
+
+        // Save back to localStorage
+        localStorage.setItem('three-particles-saved-configs', JSON.stringify(savedConfigs));
+
+        showSuccessSnackbar(`Configuration "${nameToUse}" updated successfully`);
+      } else {
+        // Create a new config
+        const configId = `config-${updatedMetadata.createdAt}`;
+        const newConfig: SavedConfig = {
+          id: configId,
+          name: nameToUse,
+          config: currentConfig,
+          createdAt: updatedMetadata.createdAt,
+          updatedAt: updatedMetadata.modifiedAt,
+          editorVersion: updatedMetadata.editorVersion,
+        };
+
+        // Add new config to the array
+        savedConfigs.push(newConfig);
+
+        // Save back to localStorage
+        localStorage.setItem('three-particles-saved-configs', JSON.stringify(savedConfigs));
+
+        showSuccessSnackbar(`Configuration "${nameToUse}" saved successfully`);
+      }
+    } catch (error) {
+      // Log error and show error message
+      showErrorSnackbar('Failed to save configuration');
+    }
+  };
+
   export const openSaveDialog = () => {
     rawConfigData = window.editor.getCurrentParticleSystemConfig();
 
