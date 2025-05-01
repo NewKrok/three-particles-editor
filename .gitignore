@@ -41,6 +41,3 @@ lerna-debug.log*
 
 # Coverage directory used by tools like istanbul
 coverage/
-
-# Webp files (to be committed separately)
-*.webp

@@ -1,6 +1,3 @@
-const SMOKE_2 =
-  '{"duration":0.36,"startLifetime":{"min":0.94,"max":5.88},"startSpeed":{"min":0,"max":0},"startSize":{"min":34.19,"max":42.42},"startRotation":{"min":-360,"max":360},"simulationSpace":"WORLD","maxParticles":150,"emission":{"rateOverTime":0,"rateOverDistance":8},"shape":{"shape":"CONE","cone":{"angle":16.8097,"radius":0.1},"rectangle":{"scale":{"x":0.5,"y":1.8}}},"renderer":{"blending":"THREE.AdditiveBlending"},"sizeOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0.245,"percentage":0},{"x":0.1666,"y":0.4116},{"x":0.3766,"y":0.2182},{"x":0.5433,"y":0.385,"percentage":0.5433},{"x":0.7099,"y":0.5516},{"x":0.8333,"y":0.8333},{"x":1,"y":1,"percentage":1}]},"opacityOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":1,"percentage":0},{"x":0.1666,"y":0.8333},{"x":0.3333,"y":0.6666},{"x":0.5,"y":0.5,"percentage":0.5},{"x":0.6666,"y":0.3332},{"x":0.8333,"y":0.1665},{"x":1,"y":0,"percentage":1}]},"rotationOverLifetime":{"isActive":true,"min":-17,"max":11.7},"noise":{"isActive":true,"strength":0.3,"positionAmount":0.103},"_editorData":{"textureId":"CLOUD","simulation":{"movements":"INFINITE_SYMBOL","movementSpeed":3.9,"rotation":"FOLLOW_THE_MOVEMENT","rotationSpeed":0},"showLocalAxes":true,"showWorldAxes":false,"frustumCulled":true,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1}}}';
-
 const COLLECT_ITEM =
   '{"transform":{"rotation":{"x":-90}},"duration":0.2,"looping":false,"startLifetime":{"min":0.3,"max":0.8},"startSpeed":{"min":0.5},"startSize":{"min":0.1,"max":1.5},"startColor":{"min":{"r":0.596078431372549,"g":0.08235294117647059,"b":0.9372549019607843},"max":{"g":0,"b":0.8666666666666667}},"maxParticles":30,"emission":{"rateOverTime":200},"shape":{"sphere":{"radius":0.4},"cone":{"angle":17.5967,"radius":0.1}},"renderer":{"blending":"THREE.NormalBlending"},"velocityOverLifetime":{"isActive":true,"orbital":{"y":{"max":5}}},"sizeOverLifetime":{"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":0.3333,"y":0},{"x":0.1666,"y":1},{"x":0.5,"y":1,"percentage":0.5},{"x":0.8333,"y":1},{"x":0.6666,"y":0},{"x":1,"y":0,"percentage":1}]},"opacityOverLifetime":{"isActive":true,"bezierPoints":[{"x":0,"y":0,"percentage":0},{"x":0,"y":1},{"x":0,"y":1},{"x":0.5,"y":1,"percentage":0.5},{"x":1,"y":1},{"x":1,"y":1},{"x":1,"y":0,"percentage":1}]},"_editorData":{"textureId":"POINT","simulation":{"movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1},"showLocalAxes":false,"showWorldAxes":false,"frustumCulled":true,"terrain":{"textureId":"WIREFRAME","movements":"DISABLED","movementSpeed":1,"rotation":"DISABLED","rotationSpeed":1}}}';
 
@@ -67,8 +64,6 @@ const SMOKE =
 export const particleExamples = [
   {
     name: 'Smoke 2',
-    preview: './assets/examples/effects/smoke-2.webp',
-    config: SMOKE_2,
   },
   {
     name: 'Collect Item',
