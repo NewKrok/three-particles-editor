@@ -3,6 +3,9 @@
   import TabBar from '@smui/tab-bar';
   import Examples from '../examples/examples.svelte';
   import Library from '../library/library.svelte';
+  import { onMount } from 'svelte';
+
+  const STORAGE_KEY = 'leftPanelCollapsed';
 
   const tabs = [
     {
@@ -19,9 +22,31 @@
   // Panel state - exported to allow binding from parent components
   export let isCollapsed: boolean = false;
 
-  // Toggle panel collapsed state
+  // Load saved state on component mount
+  onMount(() => {
+    try {
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      if (savedState !== null) {
+        isCollapsed = savedState === 'true';
+      }
+    } catch (error) {
+      console.error('Failed to load panel state from localStorage:', error);
+    }
+  });
+
+  // Toggle panel collapsed state and save to localStorage
   const togglePanel = (): void => {
     isCollapsed = !isCollapsed;
+    saveState();
+  };
+
+  // Save panel state to localStorage
+  const saveState = (): void => {
+    try {
+      localStorage.setItem(STORAGE_KEY, isCollapsed.toString());
+    } catch (error) {
+      console.error('Failed to save panel state to localStorage:', error);
+    }
   };
 </script>
 
@@ -53,11 +78,13 @@
         on:click={() => {
           active = tab;
           isCollapsed = false;
+          saveState();
         }}
         on:keydown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             active = tab;
             isCollapsed = false;
+            saveState();
           }
         }}
       >
