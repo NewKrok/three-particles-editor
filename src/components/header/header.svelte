@@ -80,10 +80,19 @@
   // Reference to the LoadDialog component
   let loadDialogComponent;
 
-  // Function to open the save dialog
+  // Function to open the save dialog (Save As)
   const openSaveDialog = () => {
     if (saveDialogComponent) {
       saveDialogComponent.openSaveDialog();
+      // Update config info after saving
+      setTimeout(updateConfigInfo, 500);
+    }
+  };
+
+  // Function to directly save the configuration without opening the dialog
+  const quickSave = () => {
+    if (saveDialogComponent) {
+      saveDialogComponent.quickSave();
       // Update config info after saving
       setTimeout(updateConfigInfo, 500);
     }
@@ -345,8 +354,11 @@
       <Button on:click={openLoadDialog} variant="raised">
         <Icon class="material-icons">folder_open</Icon><Label>Load</Label>
       </Button>
-      <Button on:click={openSaveDialog} variant="raised">
+      <Button on:click={quickSave} variant="raised">
         <Icon class="material-icons">save</Icon><Label>Save</Label>
+      </Button>
+      <Button on:click={openSaveDialog} variant="raised">
+        <Icon class="material-icons">save_as</Icon><Label>Save As</Label>
       </Button>
       <Button on:click={copyToClipboard} variant="raised">
         <Icon class="material-icons">file_copy</Icon><Label>Copy</Label>
@@ -382,11 +394,20 @@
       <button
         type="button"
         class="menu-item"
-        on:click={openSaveDialog}
-        on:keydown={(e) => e.key === 'Enter' && openSaveDialog()}
+        on:click={quickSave}
+        on:keydown={(e) => e.key === 'Enter' && quickSave()}
         aria-label="Save configuration"
       >
         <Icon class="material-icons">save</Icon> Save
+      </button>
+      <button
+        type="button"
+        class="menu-item"
+        on:click={openSaveDialog}
+        on:keydown={(e) => e.key === 'Enter' && openSaveDialog()}
+        aria-label="Save configuration as"
+      >
+        <Icon class="material-icons">save_as</Icon> Save As
       </button>
       <button class="icon-button" on:click={toggleMobileMenu}>
         <span class="material-icons">menu</span>
@@ -408,12 +429,22 @@
           <button
             class="menu-item"
             on:click={() => {
-              openSaveDialog();
+              quickSave();
               mobileMenuOpen = false;
             }}
           >
             <span class="material-icons">save</span>
             <span>Save</span>
+          </button>
+          <button
+            class="menu-item"
+            on:click={() => {
+              openSaveDialog();
+              mobileMenuOpen = false;
+            }}
+          >
+            <span class="material-icons">save_as</span>
+            <span>Save As</span>
           </button>
           <button
             class="menu-item"

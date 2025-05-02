@@ -1,15 +1,25 @@
 <script>
-  export let name, preview, config;
+  export let { name, preview = null, config = null } = {};
   import Card, { PrimaryAction, Media, Content } from '@smui/card';
   import Dialog, { Title, Content as DialogContent, Actions } from '@smui/dialog';
   import Button, { Icon, Label } from '@smui/button';
+  import { toUrlFriendlyString } from '../../../js/utils/name-utils';
 
   let open = false;
 
   const loadRequest = () => (open = true);
 
   const load = () => {
-    window.editor.load(JSON.parse(config));
+    if (!config) {
+      const nameAsKey = toUrlFriendlyString(name);
+      fetch('./examples/' + nameAsKey + '/config.json')
+        .then((response) => response.json())
+        .then((data) => {
+          window.editor.load(data);
+        });
+    } else {
+      window.editor.load(JSON.parse(config));
+    }
   };
 </script>
 
@@ -19,7 +29,9 @@
       <Media
         class="card-media-16x9"
         aspectRatio="16x9"
-        style={`background-image: url(${preview})`}
+        style={`background-image: url(${
+          preview ?? './examples/' + toUrlFriendlyString(name) + '/preview.webp'
+        })`}
       />
       <Content class="mdc-typography--body2">
         <h4 class="mdc-typography--headline6" style="margin: 0;">
