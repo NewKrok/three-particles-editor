@@ -1,3 +1,12 @@
+# [2.3.0](https://github.com/NewKrok/three-particles-editor/compare/v2.2.1...v2.3.0) (2025-05-02)
+
+### Features
+
+- add separate Save and Save As buttons to header ([28bc9aa](https://github.com/NewKrok/three-particles-editor/commit/28bc9aa3e39c682b192228866b1ca9fc70604907))
+- implement collapsible left sidebar panel ([b2bed46](https://github.com/NewKrok/three-particles-editor/commit/b2bed46cd10a0c1add7591e47c172792d13e0332))
+- improve save dialog usability with keyboard support and concise labels ([006fb3a](https://github.com/NewKrok/three-particles-editor/commit/006fb3a8927e5915f4ef14834cc2462cec62391c))
+- save left panel collapsed state to localStorage ([af90376](https://github.com/NewKrok/three-particles-editor/commit/af90376c8c7197e5da5916eb5f6e6aec913e3cab))
+
 ## [2.2.1](https://github.com/NewKrok/three-particles-editor/compare/v2.2.0...v2.2.1) (2025-05-01)
 
 ### Bug Fixes
