@@ -56,6 +56,8 @@ jobs:
           # Replace version and build date placeholders in files
           find ./src -type f -name "*.svelte" -exec sed -i "s/__APP_VERSION__/${{ env.VERSION }}/g" {} \;
           find ./src -type f -name "*.svelte" -exec sed -i "s/__BUILD_DATE__/${{ env.BUILD_DATE }}/g" {} \;
+          # Replace Google Analytics ID placeholder in index.html
+          sed -i "s/__GOOGLE_TAG_ID__/${{ secrets.GOOGLE_TAG_ID }}/g" ./public/index.html
       
       - name: Build project
         run: npm run build
