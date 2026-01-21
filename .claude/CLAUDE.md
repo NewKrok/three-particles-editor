@@ -1,125 +1,130 @@
-# Three Particles Editor - Projekt dokumentáció
+# Three Particles Editor - Project Documentation
 
-## Projekt célja
+## Project Purpose
 
-Ez egy **particle system editor** ThreeJS-hez, Unity stílusban megvalósítva. Az editor kifejezetten a [@newkrok/three-particles](https://github.com/NewKrok/three-particles) npm csomaghoz készült, amely egy komplex konfigurációs fájlt vár paraméterként. Mivel a részecske rendszer konfigurációs fájlja kézzel nehezen szerkeszthető, ezt az editort fejlesztették ki a vizuális szerkesztés megkönnyítésére.
+This is a **particle system editor** for ThreeJS, implemented in Unity style. The editor is specifically designed for the [@newkrok/three-particles](https://github.com/NewKrok/three-particles) npm package, which expects a complex configuration file as a parameter. Since the particle system configuration file is difficult to edit manually, this editor was developed to facilitate visual editing.
 
-**Főbb jellemzők:**
-- Vizuális particle effect editor ThreeJS-hez
-- Unity particle rendszerre építkezik (koncepció és működés)
-- JSON alapú konfiguráció export/import
-- Real-time preview és szerkesztés
-- Game developerek számára készült
+**Key Features:**
 
-## Technológiai stack
+- Visual particle effect editor for ThreeJS
+- Built on Unity particle system concepts and behavior
+- JSON-based configuration export/import
+- Real-time preview and editing
+- Designed for game developers
 
-### Core technológiák
-- **ThreeJS** (v0.175.0) - 3D renderelés és particle rendszer
-- **Svelte** (v4.2.12) - UI keretrendszer
-- **TypeScript** (v5.8.3) - Típusos JavaScript
+## Technology Stack
+
+### Core Technologies
+
+- **ThreeJS** (v0.175.0) - 3D rendering and particle system
+- **Svelte** (v4.2.12) - UI framework
+- **TypeScript** (v5.8.3) - Typed JavaScript
 - **Rollup** (v2.79.1) - Bundle tool
 
-### Fő függőségek
-- `@newkrok/three-particles` (v2.0.3) - A particle rendszer motor
-- `@newkrok/three-utils` - Utility függvények
-- `lil-gui` - GUI panel a paraméter szerkesztéshez
-- `prismjs` - Szintaxis kiemelés (konfiguráció megjelenítéshez)
+### Main Dependencies
 
-### UI könyvtárak
-- **SMUI** (Svelte Material UI) komponensek:
+- `@newkrok/three-particles` (v2.0.3) - The particle system engine
+- `@newkrok/three-utils` - Utility functions
+- `lil-gui` - GUI panel for parameter editing
+- `prismjs` - Syntax highlighting (for configuration display)
+
+### UI Libraries
+
+- **SMUI** (Svelte Material UI) components:
   - Button, Card, Dialog, TextField, Tab, List, Snackbar
 - **Material Theme** (@material/theme)
 - **svrollbar** - Custom scrollbar
 
-### Dev tools
-- ESLint + Prettier - Kód formázás
-- Husky + lint-staged - Pre-commit hooks
-- Jest + ts-jest - Tesztelés
-- Semantic-release - Automatikus verziózás
+### Dev Tools
 
-## Projekt struktúra
+- ESLint + Prettier - Code formatting
+- Husky + lint-staged - Pre-commit hooks
+- Jest + ts-jest - Testing
+- Semantic-release - Automatic versioning
+
+## Project Structure
 
 ```
 three-particles-editor/
 ├── src/
 │   ├── js/
-│   │   ├── three-particles-editor/        # Core editor logika
-│   │   │   ├── entries/                   # Konfiguráció szekciók
-│   │   │   │   ├── general-entries.ts     # Általános beállítások
-│   │   │   │   ├── emission-entries.ts    # Kibocsátás paraméterek
-│   │   │   │   ├── shape-entries.ts       # Emitter alakzatok
+│   │   ├── three-particles-editor/        # Core editor logic
+│   │   │   ├── entries/                   # Configuration sections
+│   │   │   │   ├── general-entries.ts     # General settings
+│   │   │   │   ├── emission-entries.ts    # Emission parameters
+│   │   │   │   ├── shape-entries.ts       # Emitter shapes
 │   │   │   │   ├── velocity-over-lifetime-entries.ts
 │   │   │   │   ├── color-over-lifetime-entries.ts
 │   │   │   │   ├── opacity-over-lifetime-entries.ts
 │   │   │   │   ├── size-over-lifetime-entries.ts
 │   │   │   │   ├── rotation-over-lifetime-entries.ts
-│   │   │   │   ├── noise-entries.ts       # Noise alapú animáció
+│   │   │   │   ├── noise-entries.ts       # Noise-based animation
 │   │   │   │   ├── texture-sheet-animation-entries.ts
-│   │   │   │   ├── renderer-entries.ts    # Rendering beállítások
-│   │   │   │   ├── transform-entries.ts   # Pozíció, rotáció, skála
-│   │   │   │   └── helper-entries.ts      # Debug és helper eszközök
-│   │   │   ├── curve-editor/              # Bezier görbe szerkesztő
+│   │   │   │   ├── renderer-entries.ts    # Rendering settings
+│   │   │   │   ├── transform-entries.ts   # Position, rotation, scale
+│   │   │   │   └── helper-entries.ts      # Debug and helper tools
+│   │   │   ├── curve-editor/              # Bezier curve editor
 │   │   │   │   ├── curve-editor.ts
 │   │   │   │   └── predefined-bezier-curve-config.ts
 │   │   │   ├── world.ts                   # ThreeJS scene setup
-│   │   │   ├── assets.ts                  # Textúra és asset kezelés
-│   │   │   ├── texture-config.ts          # Textúra konfigurációk
-│   │   │   ├── config-converter.ts        # Legacy konfig konverzió
-│   │   │   ├── config-util.ts             # Konfig utility-k
-│   │   │   ├── save-and-load.ts           # Mentés/betöltés logika
-│   │   │   └── showLegacyConfigModal.ts   # Legacy konfig kezelés
-│   │   ├── stores/                        # Svelte store-ok
-│   │   │   └── snackbar-store.ts          # Snackbar állapot
-│   │   ├── utils/                         # Utility funkciók
-│   │   │   └── name-utils.ts              # Fájlnév generálás
-│   │   └── three-particles-editor.ts      # Fő editor entry point
-│   ├── components/                        # Svelte komponensek
-│   │   ├── header/                        # Felső navigáció
-│   │   ├── content/                       # Fő tartalom terület
-│   │   │   ├── control-panel/             # Vezérlő gombok
-│   │   │   ├── left-side/                 # Bal oldali panel
-│   │   │   ├── library/                   # Textúra könyvtár
-│   │   │   └── examples/                  # Példa konfigurációk
-│   │   ├── config-card/                   # Konfiguráció card
-│   │   ├── save-dialog/                   # Mentés dialog
-│   │   ├── load-dialog/                   # Betöltés dialog
-│   │   ├── legacy-config-modal/           # Legacy konfig modal
+│   │   │   ├── assets.ts                  # Texture and asset management
+│   │   │   ├── texture-config.ts          # Texture configurations
+│   │   │   ├── config-converter.ts        # Legacy config conversion
+│   │   │   ├── config-util.ts             # Config utilities
+│   │   │   ├── save-and-load.ts           # Save/load logic
+│   │   │   └── showLegacyConfigModal.ts   # Legacy config handling
+│   │   ├── stores/                        # Svelte stores
+│   │   │   └── snackbar-store.ts          # Snackbar state
+│   │   ├── utils/                         # Utility functions
+│   │   │   └── name-utils.ts              # Filename generation
+│   │   └── three-particles-editor.ts      # Main editor entry point
+│   ├── components/                        # Svelte components
+│   │   ├── header/                        # Top navigation
+│   │   ├── content/                       # Main content area
+│   │   │   ├── control-panel/             # Control buttons
+│   │   │   ├── left-side/                 # Left panel
+│   │   │   ├── library/                   # Texture library
+│   │   │   └── examples/                  # Example configurations
+│   │   ├── config-card/                   # Configuration card
+│   │   ├── save-dialog/                   # Save dialog
+│   │   ├── load-dialog/                   # Load dialog
+│   │   ├── legacy-config-modal/           # Legacy config modal
 │   │   ├── about-modal/                   # About modal
-│   │   └── snackbar/                      # Értesítések
-│   ├── theme/                             # SMUI téma fájlok
-│   └── App.svelte                         # Fő app komponens
+│   │   └── snackbar/                      # Notifications
+│   ├── theme/                             # SMUI theme files
+│   └── App.svelte                         # Main app component
 ├── public/
-│   ├── assets/                            # Statikus asset-ek
-│   ├── examples/                          # Példa JSON konfigok
-│   ├── favicon/                           # Favicon fájlok
-│   ├── lib/                               # Külső library-k
-│   ├── global.css                         # Globális stílusok
+│   ├── assets/                            # Static assets
+│   ├── examples/                          # Example JSON configs
+│   ├── favicon/                           # Favicon files
+│   ├── lib/                               # External libraries
+│   ├── global.css                         # Global styles
 │   └── index.html                         # HTML entry point
 └── scripts/
-    └── compile-theme.js                   # SMUI téma fordító
+    └── compile-theme.js                   # SMUI theme compiler
 ```
 
-## Architektúra
+## Architecture
 
-### Editor inicializálás folyamata
+### Editor Initialization Flow
 
-1. **App.svelte** betöltődik és meghívja a `createParticleSystemEditor('#three-particles-editor')`
-2. **ThreeJS scene** létrehozása ([world.ts](src/js/three-particles-editor/world.ts))
+1. **App.svelte** loads and calls `createParticleSystemEditor('#three-particles-editor')`
+2. **ThreeJS scene** creation ([world.ts](src/js/three-particles-editor/world.ts))
    - WebGL renderer setup
    - Orbit controls
    - Stats panel
    - Ground plane mesh
-3. **Asset betöltés** ([assets.ts](src/js/three-particles-editor/assets.ts))
-   - Beépített textúrák
-   - LocalStorage-ból custom textúrák
-4. **GUI panel létrehozása** (lil-gui)
-   - Minden konfiguráció szekció regisztrálása (entries)
-5. **Particle system létrehozása**
-6. **Animation loop** indítása
+3. **Asset loading** ([assets.ts](src/js/three-particles-editor/assets.ts))
+   - Built-in textures
+   - Custom textures from LocalStorage
+4. **GUI panel creation** (lil-gui)
+   - Registration of all configuration sections (entries)
+5. **Particle system creation**
+6. **Animation loop** start
 
-### Konfiguráció rendszer
+### Configuration System
 
-A particle system konfigurációja egy nagy JavaScript objektum, amely tartalmazza:
+The particle system configuration is a large JavaScript object that contains:
 
 ```typescript
 {
@@ -152,123 +157,125 @@ A particle system konfigurációja egy nagy JavaScript objektum, amely tartalmaz
 }
 ```
 
-### Entry rendszer
+### Entry System
 
-Minden konfiguráció szekció ([entries/](src/js/three-particles-editor/entries)) egy `ConfigEntry` objektumot ad vissza:
+Each configuration section ([entries/](src/js/three-particles-editor/entries)) returns a `ConfigEntry` object:
 
 ```typescript
 type ConfigEntry = {
-  onReset?: () => void;                          // Új konfiguráció létrehozásakor
-  onParticleSystemChange?: (ps) => void;         // Particle system újra létrehozásakor
-  onAssetUpdate?: () => void;                    // Asset frissítéskor
-  onUpdate?: (cycleData) => void;                // Minden frame-ben
+  onReset?: () => void; // When creating a new configuration
+  onParticleSystemChange?: (ps) => void; // When particle system is recreated
+  onAssetUpdate?: () => void; // On asset update
+  onUpdate?: (cycleData) => void; // Every frame
 };
 ```
 
-### Particle System életciklus
+### Particle System Lifecycle
 
-1. **Létrehozás**: `createParticleSystem(config)` - @newkrok/three-particles alapján
-2. **Frissítés**: `updateParticleSystems(cycleData)` - Minden frame-ben
-3. **Újralétrehozás**: Konfiguráció változásakor teljes dispose + újra létrehozás
-4. **Dispose**: Memória felszabadítás GPU objektumok tisztítása
+1. **Creation**: `createParticleSystem(config)` - Based on @newkrok/three-particles
+2. **Update**: `updateParticleSystems(cycleData)` - Every frame
+3. **Recreation**: Complete dispose + recreation on configuration change
+4. **Dispose**: Memory cleanup and GPU object cleanup
 
-### Mentés/Betöltés
+### Save/Load
 
-- **LocalStorage**: Konfigurációk lokális mentése
-- **Clipboard**: JSON konfiguráció másolása/beillesztése
-- **Fájl export/import**: JSON fájl letöltése/feltöltése
+- **LocalStorage**: Local configuration storage
+- **Clipboard**: JSON configuration copy/paste
+- **File export/import**: JSON file download/upload
 - **Metadata tracking**:
-  - Konfiguráció név
-  - Létrehozás/módosítás időbélyegek
-  - Editor verzió
+  - Configuration name
+  - Creation/modification timestamps
+  - Editor version
 
-### Legacy konfiguráció konverzió
+### Legacy Configuration Conversion
 
-A [config-converter.ts](src/js/three-particles-editor/config-converter.ts) kezeli a régebbi formátumú konfigurációk automatikus frissítését az új formátumra.
+The [config-converter.ts](src/js/three-particles-editor/config-converter.ts) handles automatic updates of older format configurations to the new format.
 
-## Fontos koncepciók
+## Key Concepts
 
-### 1. Unity-like módulok
+### 1. Unity-like Modules
 
-Az editor modularitása a Unity particle rendszerre épít:
-- **General**: Alapvető beállítások (duration, looping, max particles)
-- **Emission**: Részecskék kibocsátása (rate, bursts)
-- **Shape**: Emitter alakzatok (cone, sphere, box, circle, edge)
-- **Velocity Over Lifetime**: Sebesség animáció
-- **Color/Opacity/Size/Rotation Over Lifetime**: Tulajdonság animációk
-- **Noise**: Turbulencia hatások
-- **Texture Sheet Animation**: Sprite sheet animáció
-- **Renderer**: Rendering beállítások (material, blending)
+The editor's modularity is built on the Unity particle system:
+
+- **General**: Basic settings (duration, looping, max particles)
+- **Emission**: Particle emission (rate, bursts)
+- **Shape**: Emitter shapes (cone, sphere, box, circle, edge)
+- **Velocity Over Lifetime**: Velocity animation
+- **Color/Opacity/Size/Rotation Over Lifetime**: Property animations
+- **Noise**: Turbulence effects
+- **Texture Sheet Animation**: Sprite sheet animation
+- **Renderer**: Rendering settings (material, blending)
 
 ### 2. Curve Editor
 
-Bezier görbék szerkesztése az animációs értékekhez (pl. opacity/size over lifetime). Predefined preset-ekkel.
+Editing Bezier curves for animation values (e.g., opacity/size over lifetime). With predefined presets.
 
-### 3. Simulation módok
+### 3. Simulation Modes
 
-Helper funkciók a teszteléshez:
-- **Movement simulations**: Emitter mozgatása (circular, pendulum, etc.)
-- **Rotation simulations**: Emitter forgatása
-- **Axes**: Local/world tengelyek megjelenítése
+Helper functions for testing:
 
-### 4. Custom textúrák
+- **Movement simulations**: Emitter movement (circular, pendulum, etc.)
+- **Rotation simulations**: Emitter rotation
+- **Axes**: Local/world axes display
 
-Felhasználók saját textúrákat tölthetnek fel, amelyek LocalStorage-ban tárolódnak és újrafelhasználhatók.
+### 4. Custom Textures
 
-## Fejlesztési workflow
+Users can upload their own textures, which are stored in LocalStorage and can be reused.
 
-### Parancsok
+## Development Workflow
+
+### Commands
 
 ```bash
 npm run dev              # Development mode (watch + hot reload)
 npm run build            # Production build
 npm start                # Serve production build
-npm run lint             # ESLint ellenőrzés
-npm run format           # Prettier formázás
-npm test                 # Jest tesztek futtatása
+npm run lint             # ESLint check
+npm run format           # Prettier formatting
+npm test                 # Run Jest tests
 npm run release          # Semantic release (CI)
 ```
 
-### Build folyamat
+### Build Process
 
-1. **SMUI theme fordítás**: Light és dark témák generálása
+1. **SMUI theme compilation**: Generate light and dark themes
 2. **Rollup build**: TypeScript → JavaScript, Svelte → JavaScript
-3. **Output**: `public/build/` mappa
+3. **Output**: `public/build/` folder
 
-### Git hooks
+### Git Hooks
 
-- **Pre-commit**: lint-staged → ESLint + Prettier automatikus javítás
+- **Pre-commit**: lint-staged → ESLint + Prettier automatic fixes
 
-### Verziózás
+### Versioning
 
-Semantic-release automatikusan verzióz és generál CHANGELOG-ot a conventional commits alapján.
+Semantic-release automatically versions and generates CHANGELOG based on conventional commits.
 
 ## API (window.editor)
 
-Az editor globális API-t biztosít a `window.editor` objektumon keresztül:
+The editor provides a global API through the `window.editor` object:
 
 ```typescript
 window.editor = {
-  createNew: () => void,                              // Új konfig létrehozása
-  load: (config) => void,                             // Konfig betöltése
-  loadFromClipboard: () => void,                      // Betöltés vágólapról
-  copyToClipboard: () => void,                        // Másolás vágólapra
-  reset: () => void,                                  // Particle system újraindítása
-  play: () => void,                                   // Lejátszás folytatása
-  pause: () => void,                                  // Lejátszás szüneteltetése
-  updateAssets: () => void,                           // Asset-ek frissítése
-  getCurrentParticleSystemConfig: () => config,       // Aktuális konfig lekérése
-  updateConfigMetadata: (name?) => metadata,          // Metadata frissítése
-  getConfigMetadata: () => metadata                   // Metadata lekérése
+  createNew: () => void,                              // Create new config
+  load: (config) => void,                             // Load config
+  loadFromClipboard: () => void,                      // Load from clipboard
+  copyToClipboard: () => void,                        // Copy to clipboard
+  reset: () => void,                                  // Restart particle system
+  play: () => void,                                   // Resume playback
+  pause: () => void,                                  // Pause playback
+  updateAssets: () => void,                           // Update assets
+  getCurrentParticleSystemConfig: () => config,       // Get current config
+  updateConfigMetadata: (name?) => metadata,          // Update metadata
+  getConfigMetadata: () => metadata                   // Get metadata
 };
 ```
 
-## Kapcsolódó projektek
+## Related Projects
 
-- **[@newkrok/three-particles](https://github.com/NewKrok/three-particles)**: A particle rendszer motor
-- **Unity Particle System**: Inspiráció és referencia
+- **[@newkrok/three-particles](https://github.com/NewKrok/three-particles)**: The particle system engine
+- **Unity Particle System**: Inspiration and reference
 
-## Live demo
+## Live Demo
 
 [https://newkrok.com/three-particles-editor/index.html](https://newkrok.com/three-particles-editor/index.html)
 
@@ -278,44 +285,44 @@ window.editor = {
 
 ---
 
-## Fejlesztési megjegyzések
+## Development Notes
 
-### Gyakori feladatok
+### Common Tasks
 
-1. **Új konfiguráció property hozzáadása**:
-   - Frissíteni kell a megfelelő `entries/*.ts` fájlt
-   - Hozzáadni a `getDefaultParticleSystemConfig()` default értékéhez
-   - Tesztelni a particle system viselkedését
+1. **Adding a new configuration property**:
+   - Update the appropriate `entries/*.ts` file
+   - Add to `getDefaultParticleSystemConfig()` default values
+   - Test particle system behavior
 
-2. **Új textúra hozzáadása**:
-   - `texture-config.ts`: Új TextureId enum érték
-   - `assets.ts`: Textúra betöltési logika
-   - `public/assets/`: Textúra fájl
+2. **Adding a new texture**:
+   - `texture-config.ts`: New TextureId enum value
+   - `assets.ts`: Texture loading logic
+   - `public/assets/`: Texture file
 
-3. **UI komponens módosítása**:
-   - Svelte komponensek: `src/components/`
-   - SMUI komponenseket használni
-   - Responsive dizájn figyelembembevétele
+3. **Modifying UI component**:
+   - Svelte components: `src/components/`
+   - Use SMUI components
+   - Consider responsive design
 
-4. **Legacy konfiguráció konverzió**:
-   - `config-converter.ts`: Konverziós logika
-   - Visszafelé kompatibilitás megőrzése
+4. **Legacy configuration conversion**:
+   - `config-converter.ts`: Conversion logic
+   - Maintain backward compatibility
 
-### Figyelendő dolgok
+### Things to Watch Out For
 
-- **Performance**: Nagy részecskeszám esetén FPS csökkenés
-- **Memory leaks**: Particle system dispose helyes kezelése
-- **Browser compatibility**: WebGL support ellenőrzése
-- **LocalStorage limit**: Nagy textúrák esetén quota exceeded
+- **Performance**: FPS drops with high particle counts
+- **Memory leaks**: Proper particle system dispose handling
+- **Browser compatibility**: Check WebGL support
+- **LocalStorage limit**: Quota exceeded with large textures
 
-### Tesztelés
+### Testing
 
-- Unit tesztek: Jest (`src/**/__tests__/*.test.ts`)
-- Manuális tesztek: Különböző böngészőkön és eszközökön
+- Unit tests: Jest (`src/**/__tests__/*.test.ts`)
+- Manual tests: Different browsers and devices
 - Performance profiling: ThreeJS stats panel
 
 ---
 
-**Utolsó frissítés:** 2026-01-21
-**Editor verzió:** 2.3.0
-**@newkrok/three-particles verzió:** 2.0.3
+**Last updated:** 2026-01-21
+**Editor version:** 2.3.0
+**@newkrok/three-particles version:** 2.0.3
