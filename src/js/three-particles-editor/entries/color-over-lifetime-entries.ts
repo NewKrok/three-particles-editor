@@ -1,9 +1,11 @@
-import { createMinMaxColorFolderEntry } from './entry-helpers';
-import { Color } from 'three';
+import { setCurveEditorPositions, setCurveEditorTarget } from '../curve-editor/curve-editor';
+import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
+import type { ParticleSystemConfig } from '@newkrok/three-particles';
+import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 
 type ColorOverLifetimeEntriesParams = {
-  parentFolder: any;
-  particleSystemConfig: any;
+  parentFolder: GUI;
+  particleSystemConfig: ParticleSystemConfig;
   recreateParticleSystem: () => void;
 };
 
@@ -15,36 +17,78 @@ export const createColorOverLifeTimeEntries = ({
   const folder = parentFolder.addFolder('Color over lifetime');
   folder.close();
 
-  // Ensure the colorOverLifetime object exists and has the correct structure for v2.0.2
+  // Ensure the colorOverLifetime object exists and has the correct structure
   if (!particleSystemConfig.colorOverLifetime) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const defaultBezierCurve: any = {
+      type: 'BEZIER',
+      scale: 1,
+      bezierPoints: [
+        { x: 0, y: 1, percentage: 0 },
+        { x: 1, y: 1, percentage: 1 },
+      ],
+    };
+
     particleSystemConfig.colorOverLifetime = {
       isActive: false,
-    };
-  }
-
-  // Ensure gradient is properly initialized
-  if (!particleSystemConfig.colorOverLifetime.gradient) {
-    particleSystemConfig.colorOverLifetime.gradient = {
-      min: new Color(1, 1, 1),
-      max: new Color(1, 1, 1),
+      r: defaultBezierCurve,
+      g: { ...defaultBezierCurve },
+      b: { ...defaultBezierCurve },
     };
   }
 
   folder
     .add(particleSystemConfig.colorOverLifetime, 'isActive')
-    .onChange((v: boolean) => {
-      particleSystemConfig.looping = v;
-      recreateParticleSystem();
-    })
+    .onChange(recreateParticleSystem)
     .listen();
 
-  createMinMaxColorFolderEntry({
-    particleSystemConfig,
-    recreateParticleSystem,
-    parentFolder: folder,
-    rootPropertyName: 'colorOverLifetime',
-    propertyName: 'gradient',
-  });
+  // Helper function to create curve UI for a color channel
+  const createChannelCurveUI = (channelName: 'r' | 'g' | 'b', displayName: string) => {
+    const channelFolder = folder.addFolder(displayName);
+    channelFolder.close();
+
+    // Use the createLifetimeCurveFolderEntry helper to create UI for the lifetimeCurve
+    createLifetimeCurveFolderEntry({
+      particleSystemConfig,
+      recreateParticleSystem,
+      parentFolder: channelFolder,
+      rootPropertyName: 'colorOverLifetime',
+      propertyName: channelName,
+    });
+
+    channelFolder
+      .add(
+        {
+          editCurve: (): void => {
+            setCurveEditorTarget(particleSystemConfig.colorOverLifetime[channelName]);
+            recreateParticleSystem();
+          },
+        },
+        'editCurve'
+      )
+      .name('Apply curve');
+
+    channelFolder
+      .add(
+        {
+          loadCurve: (): void => {
+            const lifetimeCurve = particleSystemConfig.colorOverLifetime[channelName];
+            if (lifetimeCurve.type === 'BEZIER' && 'bezierPoints' in lifetimeCurve) {
+              setCurveEditorPositions({
+                bezierPoints: lifetimeCurve.bezierPoints,
+              });
+            }
+          },
+        },
+        'loadCurve'
+      )
+      .name('Edit curve');
+  };
+
+  // Create UI for each color channel
+  createChannelCurveUI('r', 'Red channel');
+  createChannelCurveUI('g', 'Green channel');
+  createChannelCurveUI('b', 'Blue channel');
 
   return {};
 };

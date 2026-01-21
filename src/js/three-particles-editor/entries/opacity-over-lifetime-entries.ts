@@ -21,6 +21,7 @@ export const createOpacityOverLifeTimeEntries = ({
 
   // Ensure the opacityOverLifetime object exists and has the correct structure for v2.0.2
   if (!particleSystemConfig.opacityOverLifetime) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     particleSystemConfig.opacityOverLifetime = {
       isActive: false,
       lifetimeCurve: {
@@ -29,7 +30,7 @@ export const createOpacityOverLifeTimeEntries = ({
           { x: 0, y: 0, percentage: 0 },
           { x: 1, y: 1, percentage: 1 },
         ],
-      },
+      } as any,
     };
   }
 

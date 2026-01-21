@@ -22,6 +22,7 @@ export const createSizeOverLifeTimeEntries = ({
 
   // Ensure the sizeOverLifetime object exists and has the correct structure for v2.0.2
   if (!particleSystemConfig.sizeOverLifetime) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     particleSystemConfig.sizeOverLifetime = {
       isActive: false,
       lifetimeCurve: {
@@ -30,7 +31,7 @@ export const createSizeOverLifeTimeEntries = ({
           { x: 0, y: 0, percentage: 0 },
           { x: 1, y: 1, percentage: 1 },
         ],
-      },
+      } as any,
     };
   }
 

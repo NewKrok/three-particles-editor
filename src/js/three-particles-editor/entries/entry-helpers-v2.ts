@@ -235,12 +235,21 @@ export const createLifetimeCurveFolderEntry = ({
 
   const propertyReference = propertyContainer[propertyName];
 
-  // Add UI controls for the curve type
-  // Use string literals instead of enum values to avoid 'const' enum issues
-  folder
-    .add(propertyReference, 'type', ['BEZIER', 'EASING'])
-    .onChange(() => recreateParticleSystem())
-    .listen();
+  // Note: EASING type is not supported in the editor because curve functions
+  // cannot be serialized to JSON. Only BEZIER curves are supported.
+  // The type field is kept for compatibility but is read-only and always set to BEZIER.
+
+  // Ensure the curve is always BEZIER type
+  if (propertyReference.type !== 'BEZIER' || !propertyReference.bezierPoints) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (propertyReference as any).type = 'BEZIER';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (propertyReference as any).bezierPoints = [
+      { x: 0, y: 0, percentage: 0 },
+      { x: 1, y: 1, percentage: 1 },
+    ];
+    delete propertyReference.curveFunction;
+  }
 
   // Add scale control if it exists
   if ('scale' in propertyReference) {
