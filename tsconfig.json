@@ -3,6 +3,7 @@
     "target": "es2018",
     "module": "esnext",
     "moduleResolution": "node",
+    "verbatimModuleSyntax": true,
     "strict": false,
     "noImplicitAny": false,
     "strictNullChecks": false,

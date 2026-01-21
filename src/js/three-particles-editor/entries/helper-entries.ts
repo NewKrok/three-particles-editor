@@ -2,8 +2,8 @@ import * as THREE from 'three';
 
 import { TextureId } from '../texture-config';
 import { setTerrain } from '../world';
-import { ParticleSystem, ParticleSystemConfig } from '@newkrok/three-particles/dist';
-import GUI from '@types/three/examples/jsm/libs/lil-gui.module.min';
+import type { ParticleSystem, ParticleSystemConfig } from '@newkrok/three-particles';
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 
 const worldAxesHelper = new THREE.AxesHelper(5);
 const localAxesHelper = new THREE.AxesHelper(1);

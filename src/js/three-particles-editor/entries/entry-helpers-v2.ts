@@ -1,4 +1,4 @@
-import {
+import type {
   Constant,
   LifetimeCurve,
   RandomBetweenTwoConstants,

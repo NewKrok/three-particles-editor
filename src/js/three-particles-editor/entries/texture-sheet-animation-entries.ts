@@ -1,6 +1,7 @@
 import { createMinMaxFloatFolderEntry, createVector2FolderEntry } from './entry-helpers';
 
-import { TimeMode, RandomBetweenTwoConstants } from '@newkrok/three-particles';
+import type { RandomBetweenTwoConstants } from '@newkrok/three-particles';
+// TimeMode is a const enum, using string literals directly
 
 let timeModeControllers: any[] = [];
 let lastInitedTimeMode: string | null = null;
@@ -24,7 +25,7 @@ const createEntriesByTimeMode = ({
   lastInitedTimeMode = particleSystemConfig.textureSheetAnimation.timeMode;
   destroyTimeModeControllers();
   switch (particleSystemConfig.textureSheetAnimation.timeMode) {
-    case TimeMode.FPS:
+    case 'FPS':
       timeModeControllers.push(
         folder
           .add(particleSystemConfig.textureSheetAnimation, 'fps', 0, 60, 1)
@@ -85,7 +86,7 @@ export const createTextureSheetAnimationEntries = ({
   });
 
   folder
-    .add(particleSystemConfig.textureSheetAnimation, 'timeMode', [TimeMode.LIFETIME, TimeMode.FPS])
+    .add(particleSystemConfig.textureSheetAnimation, 'timeMode', ['LIFETIME', 'FPS'])
     .onChange(() => {
       createEntriesByTimeMode({
         folder,

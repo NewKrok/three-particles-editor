@@ -3,8 +3,6 @@ import {
   createMinMaxFloatFolderEntry,
 } from "./entry-helpers-v2";
 
-import { SimulationSpace } from "@newkrok/three-particles";
-
 type GeneralEntriesParams = {
   parentFolder: any;
   particleSystemConfig: any;
@@ -102,8 +100,8 @@ export const createGeneralEntries = ({
 
   folder
     .add(particleSystemConfig, "simulationSpace", [
-      SimulationSpace.LOCAL,
-      SimulationSpace.WORLD,
+      'LOCAL',
+      'WORLD',
     ])
     .onChange(recreateParticleSystem)
     .listen();

@@ -35,8 +35,10 @@ import { createSizeOverLifeTimeEntries } from './three-particles-editor/entries/
 import { createTextureSheetAnimationEntries } from './three-particles-editor/entries/texture-sheet-animation-entries';
 import { createTransformEntries } from './three-particles-editor/entries/transform-entries';
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
-import { patchObject } from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
+import { ObjectUtils } from '@newkrok/three-utils';
 import { generateDefaultName } from './utils/name-utils';
+
+const { patchObject } = ObjectUtils;
 
 type ConfigMetadata = {
   name: string;

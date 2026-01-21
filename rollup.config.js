@@ -4,11 +4,13 @@ import css from 'rollup-plugin-css-only';
 import livereload from 'rollup-plugin-livereload';
 import resolve from '@rollup/plugin-node-resolve';
 import svelte from 'rollup-plugin-svelte';
-import { terser } from '@rollup/plugin-terser';
-import typescript from '@rollup/plugin-typescript';
-import alias from '@rollup/plugin-alias';
+import terser from '@rollup/plugin-terser';
+import esbuild from 'rollup-plugin-esbuild';
 import replace from '@rollup/plugin-replace';
-import pkg from './package.json';
+import { readFileSync } from 'fs';
+import { spawn } from 'child_process';
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -30,10 +32,7 @@ function serve() {
   return {
     writeBundle() {
       if (server) return;
-      // ESLint: @typescript-eslint/no-require-imports
-      // Since this is a config file, this error can be ignored
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+      server = spawn('npm', ['run', 'start', '--', '--dev'], {
         stdio: ['ignore', 'inherit', 'inherit'],
         shell: true,
       });
@@ -71,20 +70,29 @@ export default {
         __BUILD_DATE__: buildDate,
       },
     }),
-    alias({
-      entries: [
-        {
-          find: '@newkrok/three-particles',
-          replacement: 'node_modules/@newkrok/three-particles/dist/index.js',
-        },
-      ],
+
+    // Add TypeScript support with esbuild
+    esbuild({
+      include: /\.[jt]sx?$/,
+      exclude: /node_modules/,
+      sourceMap: !production,
+      minify: false,
+      target: 'es2018',
+      tsconfig: './tsconfig.json',
+      loaders: {
+        '.json': 'json',
+      },
     }),
+
     svelte({
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production,
       },
       preprocess: autoPreprocess({
+        typescript: {
+          tsconfigFile: './tsconfig.json',
+        },
         scss: {
           /** options */
         },
@@ -104,15 +112,9 @@ export default {
       dedupe: ['svelte', 'three'],
       exportConditions: ['svelte', 'module', 'import', 'default'],
       mainFields: ['module', 'main', 'browser'],
-      extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx'],
+      extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx', '.json', '.svelte'],
     }),
     commonjs(),
-
-    // Add TypeScript support
-    typescript({
-      sourceMap: !production,
-      inlineSources: !production,
-    }),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
@@ -124,7 +126,7 @@ export default {
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
-    production && terser,
+    production && terser(),
   ],
   watch: {
     clearScreen: false,

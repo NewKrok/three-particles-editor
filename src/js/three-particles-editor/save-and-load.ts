@@ -2,11 +2,10 @@ import { getDefaultParticleSystemConfig } from '@newkrok/three-particles';
 import { isConfigV2 } from './config-util';
 import { convertToNewFormat } from './config-converter';
 import { showLegacyConfigModal } from './showLegacyConfigModal';
-import {
-  deepMerge,
-  patchObject,
-} from '@newkrok/three-utils/src/js/newkrok/three-utils/object-utils.js';
+import { ObjectUtils } from '@newkrok/three-utils';
 import { setTerrain } from './world';
+
+const { deepMerge, patchObject } = ObjectUtils;
 import { showSuccessSnackbar } from '../stores/snackbar-store';
 
 export const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {

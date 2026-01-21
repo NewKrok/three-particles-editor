@@ -1,7 +1,6 @@
 import {
   CurveFunctionId,
   getCurveFunction,
-  LifeTimeCurve,
   TimeMode,
   Constant,
   ParticleSystemConfig,
@@ -263,7 +262,7 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         // or if it wasn't specified at all (default to false in old API)
         isActive: oldConfig.sizeOverLifetime.isActive ?? false,
         lifetimeCurve: {
-          type: LifeTimeCurve.BEZIER,
+          type: 'BEZIER',
           bezierPoints: processedBezierPoints,
         },
       };
@@ -273,7 +272,7 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         // or if it wasn't specified at all (default to false in old API)
         isActive: oldConfig.sizeOverLifetime.isActive ?? false,
         lifetimeCurve: {
-          type: LifeTimeCurve.EASING,
+          type: 'EASING',
           curveFunction: getCurveFunction(oldConfig.sizeOverLifetime.curveFunction),
         },
       };
@@ -284,7 +283,7 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         // or if it wasn't specified at all (default to false in old API)
         isActive: oldConfig.sizeOverLifetime.isActive ?? false,
         lifetimeCurve: {
-          type: LifeTimeCurve.BEZIER,
+          type: 'BEZIER',
           // Default curve that matches the old API behavior
           bezierPoints: [
             { x: 0, y: 0, percentage: 0 },
@@ -312,7 +311,7 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         // or if it wasn't specified at all (default to false in old API)
         isActive: oldConfig.opacityOverLifetime.isActive ?? false,
         lifetimeCurve: {
-          type: LifeTimeCurve.BEZIER,
+          type: 'BEZIER',
           bezierPoints: processedBezierPoints,
         },
       };
@@ -322,7 +321,7 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         // or if it wasn't specified at all (default to false in old API)
         isActive: oldConfig.opacityOverLifetime.isActive ?? false,
         lifetimeCurve: {
-          type: LifeTimeCurve.EASING,
+          type: 'EASING',
           curveFunction: getCurveFunction(oldConfig.opacityOverLifetime.curveFunction),
         },
       };
@@ -333,7 +332,7 @@ export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): Parti
         // or if it wasn't specified at all (default to false in old API)
         isActive: oldConfig.opacityOverLifetime.isActive ?? false,
         lifetimeCurve: {
-          type: LifeTimeCurve.BEZIER,
+          type: 'BEZIER',
           // Default curve that matches the old API behavior
           bezierPoints: [
             { x: 0, y: 0, percentage: 0 },

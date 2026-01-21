@@ -1,4 +1,4 @@
-import { EmitFrom, Shape } from "@newkrok/three-particles";
+// EmitFrom and Shape are const enums, using string literals directly
 import {
   createVector2FolderEntry,
   createVector3FolderEntry,
@@ -29,11 +29,11 @@ export const createShapeEntries = ({
 
   folder
     .add(particleSystemConfig.shape, "shape", [
-      Shape.SPHERE,
-      Shape.CONE,
-      Shape.BOX,
-      Shape.CIRCLE,
-      Shape.RECTANGLE,
+      'SPHERE',
+      'CONE',
+      'BOX',
+      'CIRCLE',
+      'RECTANGLE',
     ])
     .listen()
     .onChange(() =>
@@ -71,7 +71,7 @@ const createEntriesByShape = ({
   lastInitedShape = particleSystemConfig.shape.shape;
   destroyShapeControllers();
   switch (particleSystemConfig.shape.shape) {
-    case Shape.SPHERE:
+    case 'SPHERE':
       createShapeSphereEntries({
         folder,
         particleSystemConfig,
@@ -79,7 +79,7 @@ const createEntriesByShape = ({
       });
       break;
 
-    case Shape.CONE:
+    case 'CONE':
       createShapeConeEntries({
         folder,
         particleSystemConfig,
@@ -87,7 +87,7 @@ const createEntriesByShape = ({
       });
       break;
 
-    case Shape.BOX:
+    case 'BOX':
       createShapeBoxEntries({
         folder,
         particleSystemConfig,
@@ -95,7 +95,7 @@ const createEntriesByShape = ({
       });
       break;
 
-    case Shape.CIRCLE:
+    case 'CIRCLE':
       createShapeCircleEntries({
         folder,
         particleSystemConfig,
@@ -103,7 +103,7 @@ const createEntriesByShape = ({
       });
       break;
 
-    case Shape.RECTANGLE:
+    case 'RECTANGLE':
       createShapeRectangleEntries({
         folder,
         particleSystemConfig,
@@ -181,9 +181,9 @@ const createShapeBoxEntries = ({
   shapeControllers.push(
     folder
       .add(particleSystemConfig.shape.box, "emitFrom", [
-        EmitFrom.VOLUME,
-        EmitFrom.SHELL,
-        EmitFrom.EDGE,
+        'VOLUME',
+        'SHELL',
+        'EDGE',
       ])
       .onChange(recreateParticleSystem)
       .listen()

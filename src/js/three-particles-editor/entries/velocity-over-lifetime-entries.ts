@@ -1,5 +1,5 @@
 import { createMinMaxFloatFolderEntry } from './entry-helpers';
-import { RandomBetweenTwoConstants } from '@newkrok/three-particles';
+import type { RandomBetweenTwoConstants } from '@newkrok/three-particles';
 
 type VelocityOverLifeTimeEntriesParams = {
   parentFolder: any;
