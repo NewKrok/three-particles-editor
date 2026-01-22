@@ -23,11 +23,10 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { Object3D } from 'three';
 import { TextureId } from './three-particles-editor/texture-config';
 import { createCurveEditor } from './three-particles-editor/curve-editor/curve-editor';
-import { createColorOverLifeTimeEntries } from './three-particles-editor/entries/color-over-lifetime-entries';
+import { createGradientEditorEntries } from './three-particles-editor/entries/gradient-editor-entries';
 import { createEmissionEntries } from './three-particles-editor/entries/emission-entries';
 import { createGeneralEntries } from './three-particles-editor/entries/general-entries';
 import { createNoiseEntries } from './three-particles-editor/entries/noise-entries';
-import { createOpacityOverLifeTimeEntries } from './three-particles-editor/entries/opacity-over-lifetime-entries';
 import { createRendererEntries } from './three-particles-editor/entries/renderer-entries';
 import { createRotationOverLifeTimeEntries } from './three-particles-editor/entries/rotation-over-lifetime-entries';
 import { createShapeEntries } from './three-particles-editor/entries/shape-entries';
@@ -45,6 +44,16 @@ type ConfigMetadata = {
   createdAt: number;
   modifiedAt: number;
   editorVersion: string;
+};
+
+type GradientStop = {
+  position: number;
+  color: {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+  };
 };
 
 type EditorData = {
@@ -65,6 +74,7 @@ type EditorData = {
     rotation?: string;
     rotationSpeed?: number;
   };
+  gradientStops?: GradientStop[];
   metadata?: ConfigMetadata;
 };
 
@@ -110,6 +120,10 @@ const defaultEditorData: EditorData = {
   terrain: {
     textureId: TextureId.WIREFRAME,
   },
+  gradientStops: [
+    { position: 0, color: { r: 255, g: 255, b: 255, a: 255 } },
+    { position: 1, color: { r: 255, g: 255, b: 255, a: 0 } },
+  ],
   metadata: {
     name: 'Untitled-1', // Default name, will be updated in createNew()
     createdAt: Date.now(),
@@ -302,14 +316,7 @@ const createPanel = (): void => {
     })
   );
   configEntries.push(
-    createColorOverLifeTimeEntries({
-      parentFolder: panel,
-      particleSystemConfig,
-      recreateParticleSystem,
-    })
-  );
-  configEntries.push(
-    createOpacityOverLifeTimeEntries({
+    createGradientEditorEntries({
       parentFolder: panel,
       particleSystemConfig,
       recreateParticleSystem,

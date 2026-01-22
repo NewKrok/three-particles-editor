@@ -21,6 +21,27 @@
       <div class="curve-editor__predefined-list" />
     </div>
   </div>
+  <div class="gradient-editor-modal" style="display: none;">
+    <div class="gradient-editor-modal__backdrop"></div>
+    <div class="gradient-editor-modal__content">
+      <div class="gradient-editor-modal__header">
+        <h2>Gradient Editor</h2>
+        <button class="gradient-editor-modal__close">×</button>
+      </div>
+      <div class="gradient-editor-modal__body">
+        <div class="gradient-editor-wrapper">
+          <canvas class="gradient-editor-canvas"></canvas>
+        </div>
+        <div class="gradient-editor-info">
+          <p>Click on the gradient bar to add stops</p>
+          <p>Double-click a stop to edit color</p>
+          <p>Right-click a stop to delete (except first/last)</p>
+          <p>Drag stops to reposition</p>
+        </div>
+        <div class="gradient-editor-presets"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style lang="scss">
