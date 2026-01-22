@@ -1,3 +1,26 @@
+# [2.4.0](https://github.com/NewKrok/three-particles-editor/compare/v2.3.0...v2.4.0) (2026-01-22)
+
+### Bug Fixes
+
+- add missing keys to Svelte each blocks ([eb39b96](https://github.com/NewKrok/three-particles-editor/commit/eb39b963bb6a1ffbfdc84fc60df9e1c14c7ef1ec))
+- add missing type fields to particle system examples ([18c9188](https://github.com/NewKrok/three-particles-editor/commit/18c91888895beb8e97ca1c6efd36d27d9ce7910d))
+- convert CommonJS config files to ES modules for compatibility ([de80d6e](https://github.com/NewKrok/three-particles-editor/commit/de80d6e59f6002b399cdf1c5fcaaeaef2a3db680))
+- handle undefined config in example search filter ([02f0305](https://github.com/NewKrok/three-particles-editor/commit/02f0305288ae5969fd463c60330206247697831f))
+- improve gradient editor marker positioning and drag constraints ([2537e19](https://github.com/NewKrok/three-particles-editor/commit/2537e19274b6698462c3e80941879ea5f74abf20))
+- improve legacy config detection using editorVersion metadata ([3acea59](https://github.com/NewKrok/three-particles-editor/commit/3acea598221db7bbd6b212e532f63c543b7b11c4))
+- upgrade Node.js version to 20 in CI workflows ([2bc757c](https://github.com/NewKrok/three-particles-editor/commit/2bc757c0286b977c5655226f59bddd607b5cb5df))
+- upgrade Node.js version to 22 for semantic-release compatibility ([81c340a](https://github.com/NewKrok/three-particles-editor/commit/81c340a70f2b2b665c4f65584ab4addc5eb90355))
+
+### Features
+
+- add 12 new gradient presets for diverse visual effects ([854b02e](https://github.com/NewKrok/three-particles-editor/commit/854b02eaec961d81003333e1c2dffc7fb5496b4d))
+- add gradient preset management with visual previews ([6d1b5bd](https://github.com/NewKrok/three-particles-editor/commit/6d1b5bd612115004d69d9b002451e4de6e0604ed))
+- add Ko-fi support button for project donations ([55130ab](https://github.com/NewKrok/three-particles-editor/commit/55130ab6ac74b9dad7b8b0bc9c85a8daa64cf32c))
+- add new Feathers particle effect example ([ddbe8b2](https://github.com/NewKrok/three-particles-editor/commit/ddbe8b2d268671dc1a1bce4216200de8cf903e2a))
+- implement color over lifetime with three independent RGB channels ([98b0f19](https://github.com/NewKrok/three-particles-editor/commit/98b0f19ac096eb8e25b6437c94023dcbfca87f48))
+- implement unified gradient editor for color and opacity over lifetime ([1952f78](https://github.com/NewKrok/three-particles-editor/commit/1952f78643eea24881f3469fc2b8bb09e44d6b61))
+- integrate Google Analytics with dynamic configuration ([0f29e85](https://github.com/NewKrok/three-particles-editor/commit/0f29e85a0bcf5a1ef3365a097da3651109c01f31))
+
 # [2.3.0](https://github.com/NewKrok/three-particles-editor/compare/v2.2.1...v2.3.0) (2025-05-02)
 
 ### Features
