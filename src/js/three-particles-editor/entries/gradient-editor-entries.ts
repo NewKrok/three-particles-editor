@@ -9,7 +9,6 @@ import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
 import {
   createGradientEditor,
   setGradientStops,
-  getGradientStops,
 } from '../gradient-editor/gradient-editor';
 import {
   gradientToBezierCurves,
@@ -178,21 +177,6 @@ export const createGradientEditorEntries = ({
       'openEditor'
     )
     .name('Edit Gradient');
-
-  // Apply button - updates the particle system from current gradient
-  folder
-    .add(
-      {
-        apply: (): void => {
-          const currentStops = getGradientStops();
-          editorData.gradientStops = currentStops;
-          updateBeziersFromGradient(particleSystemConfig, currentStops);
-          recreateParticleSystem();
-        },
-      },
-      'apply'
-    )
-    .name('Apply Changes');
 
   // Reset to default gradient
   folder

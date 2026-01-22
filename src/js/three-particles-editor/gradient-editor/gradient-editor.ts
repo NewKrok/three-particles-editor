@@ -354,8 +354,11 @@ export const createGradientEditor = (
 
   // Close button functionality
   const closeButton = document.querySelector('.gradient-editor-modal__close');
-  const backdrop = document.querySelector('.gradient-editor-modal__backdrop');
+  const infoButton = document.querySelector('.gradient-editor-modal__info');
+  const infoPanel = document.querySelector('.gradient-editor-info') as HTMLElement;
   const modal = document.querySelector('.gradient-editor-modal') as HTMLElement;
+  const modalContent = document.querySelector('.gradient-editor-modal__content') as HTMLElement;
+  const modalHeader = document.querySelector('.gradient-editor-modal__header') as HTMLElement;
 
   const closeModal = () => {
     if (modal) {
@@ -363,12 +366,65 @@ export const createGradientEditor = (
     }
   };
 
+  const toggleInfo = () => {
+    if (infoPanel) {
+      infoPanel.style.display = infoPanel.style.display === 'none' ? 'block' : 'none';
+    }
+  };
+
   if (closeButton) {
     closeButton.addEventListener('click', closeModal);
   }
 
-  if (backdrop) {
-    backdrop.addEventListener('click', closeModal);
+  if (infoButton) {
+    infoButton.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent drag from starting
+      toggleInfo();
+    });
+  }
+
+  // Draggable modal functionality
+  let isDragging = false;
+  let currentX = 0;
+  let currentY = 0;
+  let initialX = 0;
+  let initialY = 0;
+
+  const onDragStart = (e: MouseEvent) => {
+    if (e.target === modalHeader || modalHeader.contains(e.target as Node)) {
+      // Don't start drag if clicking on close or info button
+      const target = e.target as HTMLElement;
+      if (
+        target.classList.contains('gradient-editor-modal__close') ||
+        target.classList.contains('gradient-editor-modal__info')
+      ) {
+        return;
+      }
+
+      isDragging = true;
+      initialX = e.clientX - currentX;
+      initialY = e.clientY - currentY;
+    }
+  };
+
+  const onDrag = (e: MouseEvent) => {
+    if (isDragging && modalContent) {
+      e.preventDefault();
+      currentX = e.clientX - initialX;
+      currentY = e.clientY - initialY;
+
+      modalContent.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px))`;
+    }
+  };
+
+  const onDragEnd = () => {
+    isDragging = false;
+  };
+
+  if (modalHeader) {
+    modalHeader.addEventListener('mousedown', onDragStart);
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('mouseup', onDragEnd);
   }
 
   createPresetButtons();

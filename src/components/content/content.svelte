@@ -22,17 +22,19 @@
     </div>
   </div>
   <div class="gradient-editor-modal" style="display: none;">
-    <div class="gradient-editor-modal__backdrop"></div>
     <div class="gradient-editor-modal__content">
       <div class="gradient-editor-modal__header">
         <h2>Gradient Editor</h2>
-        <button class="gradient-editor-modal__close">×</button>
+        <div class="gradient-editor-modal__header-buttons">
+          <button class="gradient-editor-modal__info" title="Toggle controls info">?</button>
+          <button class="gradient-editor-modal__close">×</button>
+        </div>
       </div>
       <div class="gradient-editor-modal__body">
         <div class="gradient-editor-wrapper">
           <canvas class="gradient-editor-canvas"></canvas>
         </div>
-        <div class="gradient-editor-info">
+        <div class="gradient-editor-info" style="display: none;">
           <p>Click on the gradient bar to add stops</p>
           <p>Double-click a stop to edit color</p>
           <p>Right-click a stop to delete (except first/last)</p>
