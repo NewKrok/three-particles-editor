@@ -4,7 +4,11 @@
       "Bash(npm outdated:*)",
       "Bash(npm update:*)",
       "Bash(npm install)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(node scripts/convert-smoke-2.mjs:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

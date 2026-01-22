@@ -1,0 +1,140 @@
+{
+  "startDelay": { "min": 0, "max": 0 },
+  "startLifetime": { "min": 4.23, "max": 7.52 },
+  "startSpeed": { "min": 0.11, "max": 1.21 },
+  "startSize": { "min": 2.2, "max": 4.03 },
+  "startOpacity": { "min": 1, "max": 1 },
+  "startRotation": { "min": -360, "max": 360 },
+  "maxParticles": 48,
+  "shape": { "shape": "CONE", "cone": { "angle": 0 } },
+  "renderer": { "blending": "THREE.NormalBlending" },
+  "velocityOverLifetime": {
+    "linear": {
+      "x": { "min": 0, "max": 0 },
+      "y": { "min": 0, "max": 0 },
+      "z": { "min": 0, "max": 0 }
+    },
+    "orbital": {
+      "x": { "min": 0, "max": 0 },
+      "y": { "min": 0, "max": 0 },
+      "z": { "min": 0, "max": 0 }
+    }
+  },
+  "sizeOverLifetime": {
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 1, "y": 1, "percentage": 1 }
+      ]
+    }
+  },
+  "colorOverLifetime": {
+    "isActive": true,
+    "r": {
+      "bezierPoints": [
+        { "x": 0, "y": 0.7843137254901961, "percentage": 0 },
+        { "x": 0.06666666666666667, "y": 0.7843137254901961 },
+        { "x": 0.13333333333333336, "y": 0.5882352941176471 },
+        { "x": 0.2, "y": 0.5882352941176471, "percentage": 0.2 },
+        { "x": 0.3, "y": 0.5882352941176471 },
+        { "x": 0.4, "y": 0.39215686274509803 },
+        { "x": 0.5, "y": 0.39215686274509803, "percentage": 0.5 },
+        { "x": 0.6, "y": 0.39215686274509803 },
+        { "x": 0.7000000000000001, "y": 0.19607843137254902 },
+        { "x": 0.8, "y": 0.19607843137254902, "percentage": 0.8 },
+        { "x": 0.8666666666666667, "y": 0.19607843137254902 },
+        { "x": 0.9333333333333333, "y": 0 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    },
+    "g": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.06666666666666667, "y": 1 },
+        { "x": 0.13333333333333336, "y": 1 },
+        { "x": 0.2, "y": 1, "percentage": 0.2 },
+        { "x": 0.3, "y": 1 },
+        { "x": 0.4, "y": 0.7843137254901961 },
+        { "x": 0.5, "y": 0.7843137254901961, "percentage": 0.5 },
+        { "x": 0.6, "y": 0.7843137254901961 },
+        { "x": 0.7000000000000001, "y": 0.5882352941176471 },
+        { "x": 0.8, "y": 0.5882352941176471, "percentage": 0.8 },
+        { "x": 0.8666666666666667, "y": 0.5882352941176471 },
+        { "x": 0.9333333333333333, "y": 0.39215686274509803 },
+        { "x": 1, "y": 0.39215686274509803, "percentage": 1 }
+      ]
+    },
+    "b": {
+      "bezierPoints": [
+        { "x": 0, "y": 0.39215686274509803, "percentage": 0 },
+        { "x": 0.06666666666666667, "y": 0.39215686274509803 },
+        { "x": 0.13333333333333336, "y": 0.19607843137254902 },
+        { "x": 0.2, "y": 0.19607843137254902, "percentage": 0.2 },
+        { "x": 0.3, "y": 0.19607843137254902 },
+        { "x": 0.4, "y": 0 },
+        { "x": 0.5, "y": 0, "percentage": 0.5 },
+        { "x": 0.6, "y": 0 },
+        { "x": 0.7000000000000001, "y": 0 },
+        { "x": 0.8, "y": 0, "percentage": 0.8 },
+        { "x": 0.8666666666666667, "y": 0 },
+        { "x": 0.9333333333333333, "y": 0 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 0.06666666666666667, "y": 0 },
+        { "x": 0.13333333333333336, "y": 0.7843137254901961 },
+        { "x": 0.2, "y": 0.7843137254901961, "percentage": 0.2 },
+        { "x": 0.3, "y": 0.7843137254901961 },
+        { "x": 0.4, "y": 1 },
+        { "x": 0.5, "y": 1, "percentage": 0.5 },
+        { "x": 0.6, "y": 1 },
+        { "x": 0.7000000000000001, "y": 0.5882352941176471 },
+        { "x": 0.8, "y": 0.5882352941176471, "percentage": 0.8 },
+        { "x": 0.8666666666666667, "y": 0.5882352941176471 },
+        { "x": 0.9333333333333333, "y": 0 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "rotationOverLifetime": { "isActive": true, "min": -74.4, "max": 69.2 },
+  "noise": { "isActive": true, "useRandomOffset": true, "strength": 0.39, "positionAmount": 0.453 },
+  "textureSheetAnimation": { "startFrame": { "min": 0, "max": 0 } },
+  "_editorData": {
+    "textureId": "FEATHER",
+    "simulation": {
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "frustumCulled": true,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "gradientStops": [
+      { "position": 0, "color": { "r": 200, "g": 255, "b": 100, "a": 0 } },
+      { "position": 0.2, "color": { "r": 150, "g": 255, "b": 50, "a": 200 } },
+      { "position": 0.5, "color": { "r": 100, "g": 200, "b": 0, "a": 255 } },
+      { "position": 0.8, "color": { "r": 50, "g": 150, "b": 0, "a": 150 } },
+      { "position": 1, "color": { "r": 0, "g": 100, "b": 0, "a": 0 } }
+    ],
+    "metadata": {
+      "name": "Untitled-1",
+      "createdAt": 1769123535436,
+      "modifiedAt": 1769123904848,
+      "editorVersion": "2.1.0"
+    }
+  }
+}
