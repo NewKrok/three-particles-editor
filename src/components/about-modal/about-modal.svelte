@@ -2,6 +2,7 @@
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label } from '@smui/button';
   import Paper from '@smui/paper';
+  import KofiButton from '../ko-fi-button/ko-fi-button.svelte';
 
   export let open = false;
 </script>
@@ -52,6 +53,15 @@
           >
         </p>
       </div>
+
+      <div class="support-section">
+        <h3>Support This Project</h3>
+        <p>
+          If you find this editor useful, consider supporting its development! Your support helps
+          maintain and improve this tool for the community.
+        </p>
+        <KofiButton fullWidth={true} utmCampaign="about_modal" />
+      </div>
     </Paper>
   </Content>
   <Actions>
@@ -93,6 +103,24 @@
         &:hover {
           text-decoration: underline;
         }
+      }
+    }
+
+    .support-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+      h3 {
+        color: #ff3e00;
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      p {
+        margin-bottom: 12px;
+        font-size: 14px;
       }
     }
   }

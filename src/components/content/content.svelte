@@ -1,6 +1,7 @@
 <script lang="ts">
   import ControlPanel from './control-panel/control-panel.svelte';
   import LeftSide from './left-side/left-side.svelte';
+  import KofiButton from '../ko-fi-button/ko-fi-button.svelte';
 
   // Track the left panel's collapsed state
   let isLeftPanelCollapsed: boolean = false;
@@ -11,6 +12,7 @@
   <div class="stats" class:collapsed={isLeftPanelCollapsed} />
   <LeftSide bind:isCollapsed={isLeftPanelCollapsed} />
   <ControlPanel />
+  <KofiButton floating={true} />
   <div class="right-panel">
     <div class="curve-editor">
       <div class="curve-editor__title">Bezier curve editor</div>
