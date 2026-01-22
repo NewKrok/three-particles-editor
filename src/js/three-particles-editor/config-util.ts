@@ -11,6 +11,17 @@
 export const isConfigV2 = (config: any): boolean => {
   if (!config) return false;
 
+  // First, check for explicit version information in metadata
+  // If editorVersion is present and >= 2.0.0, it's definitely v2.x
+  if (config._editorData?.metadata?.editorVersion) {
+    const version = config._editorData.metadata.editorVersion;
+    // Parse major version number (e.g., "2.3.0" -> 2)
+    const majorVersion = parseInt(version.split('.')[0], 10);
+    if (majorVersion >= 2) {
+      return true;
+    }
+  }
+
   // The key difference between v1.x and v2.x configs is how lifetime curves are handled
   // In v1.x, bezierPoints are directly in sizeOverLifetime/opacityOverLifetime
   // In v2.x, they are inside a lifetimeCurve object with a type property
