@@ -371,7 +371,7 @@
         <div class="recent-configs">
           <h3>Recently saved configs</h3>
           <div class="config-cards">
-            {#each recentConfigs as config}
+            {#each recentConfigs as config (config.id)}
               <ConfigCard
                 {config}
                 onClick={() => showOverwriteConfirmation(config)}

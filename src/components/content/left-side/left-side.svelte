@@ -69,7 +69,7 @@
 
   <!-- Collapsed panel with tab icons only -->
   <div class="collapsed-tabs">
-    {#each tabs as tab}
+    {#each tabs as tab (tab.index)}
       <button
         type="button"
         class="collapsed-tab-icon"

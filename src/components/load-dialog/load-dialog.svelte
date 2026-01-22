@@ -175,7 +175,7 @@
         <div class="saved-configs">
           <h3>Saved configurations</h3>
           <div class="config-cards">
-            {#each savedConfigs as config}
+            {#each savedConfigs as config (config.id)}
               <ConfigCard
                 {config}
                 onClick={() => showLoadConfirmation(config)}
