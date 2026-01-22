@@ -25,6 +25,13 @@ let selectedStop: HTMLElement | null = null;
 let onChangeCallback: ((stops: GradientStop[]) => void) | null = null;
 
 /**
+ * Gets the actual displayed width of the gradient canvas
+ */
+const getDisplayWidth = (): number => {
+  return gradientCanvas?.clientWidth || EDITOR_SIZE.width;
+};
+
+/**
  * Creates a gradient stop handle element
  */
 const createStopHandle = (stop: GradientStop, index: number): HTMLElement => {
@@ -38,8 +45,35 @@ const createStopHandle = (stop: GradientStop, index: number): HTMLElement => {
   handle.style.cursor = index === 0 || index === currentStops.length - 1 ? 'default' : 'move';
   handle.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
   handle.style.backgroundColor = `rgba(${stop.color.r}, ${stop.color.g}, ${stop.color.b}, ${stop.color.a / 255})`;
-  handle.style.left = `${stop.position * EDITOR_SIZE.width - STOP_HANDLE_SIZE / 2}px`;
-  handle.style.top = `${GRADIENT_BAR_HEIGHT}px`;
+
+  // Position edge stops at the exact edges, middle stops centered on their position
+  if (!gradientCanvas || !wrapper) return handle;
+
+  const canvasRect = gradientCanvas.getBoundingClientRect();
+  const wrapperRect = wrapper.getBoundingClientRect();
+  const displayWidth = canvasRect.width;
+
+  // Calculate padding offset (canvas position relative to wrapper)
+  const paddingLeft = canvasRect.left - wrapperRect.left;
+
+  let leftPosition: number;
+  if (index === 0) {
+    // First stop: align to left edge of canvas
+    leftPosition = paddingLeft;
+  } else if (index === currentStops.length - 1) {
+    // Last stop: align to right edge of canvas
+    leftPosition = paddingLeft + displayWidth - STOP_HANDLE_SIZE;
+  } else {
+    // Middle stops: center on position
+    leftPosition = paddingLeft + stop.position * displayWidth - STOP_HANDLE_SIZE / 2;
+  }
+
+  handle.style.left = `${leftPosition}px`;
+  // Position below the gradient bar, accounting for padding
+  const paddingTop = canvasRect.top - wrapperRect.top;
+  const displayHeight = canvasRect.height;
+  // Add a small gap (4px) between the gradient bar and the handle
+  handle.style.top = `${paddingTop + displayHeight + 4}px`;
   handle.dataset.index = index.toString();
 
   // Drag functionality (only for middle stops)
@@ -198,11 +232,12 @@ const onStopMouseDown = (e: MouseEvent): void => {
  * Mouse move handler for dragging stops
  */
 const onStopMouseMove = (e: MouseEvent): void => {
-  if (!selectedStop || !wrapper) return;
+  if (!selectedStop || !gradientCanvas) return;
 
-  const rect = wrapper.getBoundingClientRect();
-  let x = e.clientX - rect.left;
-  x = Math.max(0, Math.min(EDITOR_SIZE.width, x));
+  const canvasRect = gradientCanvas.getBoundingClientRect();
+  const displayWidth = canvasRect.width;
+  let x = e.clientX - canvasRect.left;
+  x = Math.max(0, Math.min(displayWidth, x));
 
   const index = parseInt(selectedStop.dataset.index || '0', 10);
 
@@ -211,7 +246,28 @@ const onStopMouseMove = (e: MouseEvent): void => {
     return;
   }
 
-  const position = x / EDITOR_SIZE.width;
+  let position = x / displayWidth;
+
+  // Calculate exact margin based on handle positioning:
+  // - Left edge stop: left edge at paddingLeft (0px relative to canvas)
+  //   Its center is at: paddingLeft + STOP_HANDLE_SIZE / 2
+  // - Right edge stop: right edge at paddingLeft + displayWidth - STOP_HANDLE_SIZE
+  //   Its center is at: paddingLeft + displayWidth - STOP_HANDLE_SIZE / 2
+  // - Middle stops are centered on their position: position * displayWidth - STOP_HANDLE_SIZE / 2
+  //
+  // For middle stop to just touch left edge stop center:
+  //   position * displayWidth = STOP_HANDLE_SIZE / 2
+  //   position = STOP_HANDLE_SIZE / (2 * displayWidth)
+  //
+  // For middle stop to just touch right edge stop center:
+  //   position * displayWidth = displayWidth - STOP_HANDLE_SIZE / 2
+  //   position = 1 - STOP_HANDLE_SIZE / (2 * displayWidth)
+
+  const minMargin = STOP_HANDLE_SIZE / (2 * displayWidth);
+
+  // Clamp position to prevent overlap with edge stops
+  position = Math.max(minMargin, Math.min(1 - minMargin, position));
+
   currentStops[index].position = position;
 
   // Sort stops by position
@@ -415,7 +471,8 @@ export const createGradientEditor = (
   gradientCanvas.addEventListener('click', (e) => {
     const rect = gradientCanvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const position = x / EDITOR_SIZE.width;
+    const displayWidth = getDisplayWidth();
+    const position = x / displayWidth;
     addStopAt(position);
   });
 
