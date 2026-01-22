@@ -14,7 +14,7 @@
     list = particleExamples.filter(
       ({ name, config }) =>
         name.toLowerCase().includes(filter.toLowerCase()) ||
-        config.toLowerCase().includes(filter.toLowerCase())
+        (config && config.toLowerCase().includes(filter.toLowerCase()))
     );
   };
 </script>
