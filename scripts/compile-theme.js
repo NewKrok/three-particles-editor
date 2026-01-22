@@ -3,9 +3,9 @@
  * Uses the modern Sass API to avoid deprecation warnings
  */
 
-const fs = require('fs');
-const path = require('path');
-const sass = require('sass');
+import fs from 'fs';
+import path from 'path';
+import * as sass from 'sass';
 
 // Ensure the output directory exists
 const ensureDirectoryExists = (dirPath) => {
@@ -51,6 +51,7 @@ const createTempSmuiFile = (themeFile, isDark) => {
 
 // Compile a Sass file to CSS
 const compileTheme = (inputThemeDir, outputCssFile, isDark = false) => {
+  // eslint-disable-next-line no-console
   console.log(`Compiling SMUI Theme${isDark ? ' (Dark)' : ''}...`);
 
   // Determine the input file path
@@ -72,13 +73,14 @@ const compileTheme = (inputThemeDir, outputCssFile, isDark = false) => {
     // Write the CSS to the output file
     fs.writeFileSync(outputCssFile, result.css);
 
+    // eslint-disable-next-line no-console
     console.log(`Writing CSS to ${outputCssFile}...`);
 
     // Clean up the temporary file
     fs.unlinkSync(tempFile);
     try {
       fs.rmdirSync(path.dirname(tempFile));
-    } catch (e) {
+    } catch {
       // Ignore if directory is not empty
     }
   } catch (error) {
