@@ -6,6 +6,7 @@
  */
 
 import type { GradientStop } from './gradient-to-bezier';
+import type { GradientPreset } from './default-gradients';
 import { defaultGradients } from './default-gradients';
 
 type Size = {
@@ -16,6 +17,7 @@ type Size = {
 const EDITOR_SIZE: Size = { width: 400, height: 60 };
 const GRADIENT_BAR_HEIGHT = 40;
 const STOP_HANDLE_SIZE = 16;
+const CUSTOM_PRESETS_STORAGE_KEY = 'three-particles-editor-custom-gradients';
 
 let wrapper: HTMLElement | null = null;
 let gradientCanvas: HTMLCanvasElement | null = null;
@@ -581,6 +583,239 @@ export const getGradientStops = (): GradientStop[] => {
 };
 
 /**
+ * Load custom presets from LocalStorage
+ */
+const loadCustomPresets = (): GradientPreset[] => {
+  try {
+    const stored = localStorage.getItem(CUSTOM_PRESETS_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Failed to load custom presets:', error);
+    return [];
+  }
+};
+
+/**
+ * Save custom presets to LocalStorage
+ */
+const saveCustomPresets = (presets: GradientPreset[]): void => {
+  try {
+    localStorage.setItem(CUSTOM_PRESETS_STORAGE_KEY, JSON.stringify(presets));
+  } catch (error) {
+    console.error('Failed to save custom presets:', error);
+  }
+};
+
+/**
+ * Saves the current gradient as a custom preset
+ */
+const saveCurrentAsPreset = (): void => {
+  const name = prompt('Enter a name for this gradient preset:');
+  if (!name || name.trim() === '') return;
+
+  const customPresets = loadCustomPresets();
+
+  // Check if name already exists
+  const existingIndex = customPresets.findIndex((p) => p.name === name.trim());
+  if (existingIndex !== -1) {
+    if (!confirm(`A preset named "${name.trim()}" already exists. Overwrite it?`)) {
+      return;
+    }
+    customPresets.splice(existingIndex, 1);
+  }
+
+  const newPreset: GradientPreset = {
+    name: name.trim(),
+    stops: [...currentStops],
+  };
+
+  customPresets.unshift(newPreset);
+  saveCustomPresets(customPresets);
+  createPresetButtons();
+};
+
+/**
+ * Deletes a custom preset
+ */
+const deleteCustomPreset = (name: string): void => {
+  if (!confirm(`Delete preset "${name}"?`)) return;
+
+  const customPresets = loadCustomPresets();
+  const filtered = customPresets.filter((p) => p.name !== name);
+  saveCustomPresets(filtered);
+  createPresetButtons();
+};
+
+/**
+ * Generates a gradient preview canvas for a given set of stops
+ */
+const generateGradientPreview = (
+  stops: GradientStop[],
+  width: number = 80,
+  height: number = 30
+): string => {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+
+  // Create checkerboard background (to show alpha)
+  const checkSize = 4;
+  for (let y = 0; y < height; y += checkSize) {
+    for (let x = 0; x < width; x += checkSize) {
+      if ((x / checkSize + y / checkSize) % 2 === 0) {
+        ctx.fillStyle = '#ccc';
+      } else {
+        ctx.fillStyle = '#999';
+      }
+      ctx.fillRect(x, y, checkSize, checkSize);
+    }
+  }
+
+  // Create gradient
+  const gradient = ctx.createLinearGradient(0, 0, width, 0);
+
+  // Sort stops and add to gradient
+  const sortedStops = [...stops].sort((a, b) => a.position - b.position);
+  sortedStops.forEach((stop) => {
+    gradient.addColorStop(
+      stop.position,
+      `rgba(${stop.color.r}, ${stop.color.g}, ${stop.color.b}, ${stop.color.a / 255})`
+    );
+  });
+
+  // Draw gradient
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  // Draw border
+  ctx.strokeStyle = '#666';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0, 0, width, height);
+
+  return canvas.toDataURL();
+};
+
+/**
+ * Creates a preset button element
+ */
+const createPresetButton = (preset: GradientPreset, isCustom: boolean = false): HTMLElement => {
+  const buttonWrapper = document.createElement('div');
+  buttonWrapper.style.cssText = 'position: relative;';
+
+  const button = document.createElement('button');
+  button.className = 'gradient-preset-button';
+  button.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    margin: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 2px solid ${isCustom ? '#4a9eff' : '#666'};
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    transition: all 0.15s;
+    min-width: 70px;
+    position: relative;
+  `;
+
+  // Create preview image
+  const previewImg = document.createElement('img');
+  previewImg.src = generateGradientPreview(preset.stops, 60, 20);
+  previewImg.style.cssText = `
+    width: 60px;
+    height: 20px;
+    border-radius: 2px;
+    display: block;
+  `;
+
+  // Create name label
+  const nameLabel = document.createElement('span');
+  nameLabel.textContent = preset.name;
+  nameLabel.style.cssText = `
+    font-size: 9px;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  `;
+
+  button.appendChild(previewImg);
+  button.appendChild(nameLabel);
+
+  button.addEventListener('click', () => {
+    setGradientStops(preset.stops);
+    notifyChange();
+  });
+
+  button.addEventListener('mouseenter', () => {
+    button.style.borderColor = isCustom ? '#6bb3ff' : '#888';
+    button.style.background = '#3a3a3a';
+    button.style.transform = 'translateY(-1px)';
+  });
+
+  button.addEventListener('mouseleave', () => {
+    button.style.borderColor = isCustom ? '#4a9eff' : '#666';
+    button.style.background = '#333';
+    button.style.transform = 'translateY(0)';
+  });
+
+  buttonWrapper.appendChild(button);
+
+  // Add delete button for custom presets
+  if (isCustom) {
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '×';
+    deleteBtn.className = 'gradient-preset-delete';
+    deleteBtn.style.cssText = `
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 18px;
+      height: 18px;
+      border: none;
+      background: #ff4444;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 10;
+    `;
+
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteCustomPreset(preset.name);
+    });
+
+    buttonWrapper.addEventListener('mouseenter', () => {
+      deleteBtn.style.opacity = '1';
+    });
+
+    buttonWrapper.addEventListener('mouseleave', () => {
+      deleteBtn.style.opacity = '0';
+    });
+
+    buttonWrapper.appendChild(deleteBtn);
+  }
+
+  return buttonWrapper;
+};
+
+/**
  * Creates preset gradient buttons
  */
 const createPresetButtons = (): void => {
@@ -589,26 +824,57 @@ const createPresetButtons = (): void => {
 
   presetContainer.innerHTML = '';
 
+  // Load custom presets
+  const customPresets = loadCustomPresets();
+
+  // Add save current button
+  const saveButton = document.createElement('button');
+  saveButton.className = 'gradient-preset-button gradient-save-button';
+  saveButton.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px;
+    margin: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 2px dashed #4a9eff;
+    background: #2a2a2a;
+    color: #4a9eff;
+    border-radius: 4px;
+    transition: all 0.15s;
+    min-width: 70px;
+    min-height: 56px;
+    font-weight: bold;
+  `;
+  saveButton.innerHTML =
+    '<span style="font-size: 20px;">+</span><span style="font-size: 9px;">Save Current</span>';
+
+  saveButton.addEventListener('click', saveCurrentAsPreset);
+
+  saveButton.addEventListener('mouseenter', () => {
+    saveButton.style.borderColor = '#6bb3ff';
+    saveButton.style.background = '#333';
+  });
+
+  saveButton.addEventListener('mouseleave', () => {
+    saveButton.style.borderColor = '#4a9eff';
+    saveButton.style.background = '#2a2a2a';
+  });
+
+  presetContainer.appendChild(saveButton);
+
+  // Add custom presets first
+  customPresets.forEach((preset) => {
+    const button = createPresetButton(preset, true);
+    presetContainer.appendChild(button);
+  });
+
+  // Add default presets
   defaultGradients.forEach((preset) => {
-    const button = document.createElement('button');
-    button.className = 'gradient-preset-button';
-    button.textContent = preset.name;
-    button.style.cssText = `
-      padding: 4px 8px;
-      margin: 2px;
-      font-size: 11px;
-      cursor: pointer;
-      border: 1px solid #666;
-      background: #333;
-      color: #fff;
-      border-radius: 3px;
-    `;
-
-    button.addEventListener('click', () => {
-      setGradientStops(preset.stops);
-      notifyChange();
-    });
-
+    const button = createPresetButton(preset, false);
     presetContainer.appendChild(button);
   });
 };
