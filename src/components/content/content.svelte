@@ -35,10 +35,10 @@
           <canvas class="gradient-editor-canvas"></canvas>
         </div>
         <div class="gradient-editor-info" style="display: none;">
-          <p>Click on the gradient bar to add stops</p>
-          <p>Double-click a stop to edit color</p>
-          <p>Right-click a stop to delete (except first/last)</p>
-          <p>Drag stops to reposition</p>
+          <p><strong>Click</strong> on the gradient bar to add new color stops</p>
+          <p><strong>Double-click</strong> a stop to edit color and opacity</p>
+          <p><strong>Drag</strong> middle stops to reposition (first/last are fixed)</p>
+          <p><strong>Right-click</strong> a stop to delete (except first/last)</p>
         </div>
         <div class="gradient-editor-presets"></div>
       </div>

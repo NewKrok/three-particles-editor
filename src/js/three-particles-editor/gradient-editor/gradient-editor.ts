@@ -8,11 +8,6 @@
 import type { GradientStop } from './gradient-to-bezier';
 import { defaultGradients } from './default-gradients';
 
-type Position = {
-  left: number;
-  top: number;
-};
-
 type Size = {
   width: number;
   height: number;
@@ -40,17 +35,19 @@ const createStopHandle = (stop: GradientStop, index: number): HTMLElement => {
   handle.style.height = `${STOP_HANDLE_SIZE}px`;
   handle.style.borderRadius = '50%';
   handle.style.border = '2px solid white';
-  handle.style.cursor = 'pointer';
+  handle.style.cursor = index === 0 || index === currentStops.length - 1 ? 'default' : 'move';
   handle.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
   handle.style.backgroundColor = `rgba(${stop.color.r}, ${stop.color.g}, ${stop.color.b}, ${stop.color.a / 255})`;
   handle.style.left = `${stop.position * EDITOR_SIZE.width - STOP_HANDLE_SIZE / 2}px`;
   handle.style.top = `${GRADIENT_BAR_HEIGHT}px`;
   handle.dataset.index = index.toString();
 
-  // Drag functionality
-  handle.addEventListener('mousedown', onStopMouseDown);
+  // Drag functionality (only for middle stops)
+  if (index !== 0 && index !== currentStops.length - 1) {
+    handle.addEventListener('mousedown', onStopMouseDown);
+  }
 
-  // Double click to edit color
+  // Double click to edit color (all stops can be edited)
   handle.addEventListener('dblclick', () => openColorPicker(index));
 
   // Right click to delete (if not first or last)
@@ -65,46 +62,110 @@ const createStopHandle = (stop: GradientStop, index: number): HTMLElement => {
 };
 
 /**
- * Opens a color picker for a specific stop
+ * Opens a compact inline color picker for a specific stop
  */
 const openColorPicker = (index: number): void => {
   const stop = currentStops[index];
-  if (!stop) return;
+  if (!stop || !wrapper) return;
 
-  // Create a temporary color input
+  // Remove any existing color picker
+  const existingPicker = wrapper.querySelector('.gradient-color-picker');
+  if (existingPicker) {
+    existingPicker.remove();
+  }
+
+  // Create inline color picker
+  const picker = document.createElement('div');
+  picker.className = 'gradient-color-picker';
+  picker.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: ${GRADIENT_BAR_HEIGHT + STOP_HANDLE_SIZE + 10}px;
+    transform: translateX(-50%);
+    background: #2a2a2a;
+    border: 2px solid #444;
+    border-radius: 6px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    min-width: 200px;
+  `;
+
+  // Color input with label
+  const colorRow = document.createElement('div');
+  colorRow.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px;';
+
+  const colorLabel = document.createElement('label');
+  colorLabel.textContent = 'Color:';
+  colorLabel.style.cssText = 'color: #fff; font-size: 11px; min-width: 50px;';
+
   const colorInput = document.createElement('input');
   colorInput.type = 'color';
-  const hexColor = rgbToHex(stop.color.r, stop.color.g, stop.color.b);
-  colorInput.value = hexColor;
+  colorInput.value = rgbToHex(stop.color.r, stop.color.g, stop.color.b);
+  colorInput.style.cssText = `
+    flex: 1;
+    height: 32px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+  `;
 
-  colorInput.addEventListener('change', (e) => {
-    const target = e.target as HTMLInputElement;
-    const rgb = hexToRgb(target.value);
+  colorRow.appendChild(colorLabel);
+  colorRow.appendChild(colorInput);
+
+  // Opacity slider with label
+  const opacityRow = document.createElement('div');
+  opacityRow.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+
+  const opacityLabel = document.createElement('label');
+  opacityLabel.textContent = `Opacity: ${Math.round((stop.color.a / 255) * 100)}%`;
+  opacityLabel.style.cssText = 'color: #fff; font-size: 11px; min-width: 80px;';
+
+  const opacityInput = document.createElement('input');
+  opacityInput.type = 'range';
+  opacityInput.min = '0';
+  opacityInput.max = '255';
+  opacityInput.value = stop.color.a.toString();
+  opacityInput.style.cssText = 'flex: 1;';
+
+  opacityRow.appendChild(opacityLabel);
+  opacityRow.appendChild(opacityInput);
+
+  picker.appendChild(colorRow);
+  picker.appendChild(opacityRow);
+
+  // Update color on change
+  const updateColor = () => {
+    const rgb = hexToRgb(colorInput.value);
     if (rgb) {
       stop.color.r = rgb.r;
       stop.color.g = rgb.g;
       stop.color.b = rgb.b;
+      stop.color.a = parseInt(opacityInput.value);
+      opacityLabel.textContent = `Opacity: ${Math.round((stop.color.a / 255) * 100)}%`;
       renderGradient();
       renderStopHandles();
       notifyChange();
     }
-  });
+  };
 
-  colorInput.click();
+  colorInput.addEventListener('input', updateColor);
+  opacityInput.addEventListener('input', updateColor);
 
-  // Also prompt for alpha
+  wrapper.appendChild(picker);
+
+  // Close picker when clicking outside
+  const closePickerOnClickOutside = (e: MouseEvent) => {
+    if (!picker.contains(e.target as Node)) {
+      picker.remove();
+      document.removeEventListener('mousedown', closePickerOnClickOutside);
+    }
+  };
+
+  // Add click outside listener after a short delay to prevent immediate closing
   setTimeout(() => {
-    const alphaInput = prompt(
-      `Enter alpha value (0-255) for this stop:`,
-      stop.color.a.toString()
-    );
-    if (alphaInput !== null) {
-      const alpha = Math.max(0, Math.min(255, parseInt(alphaInput, 10) || 255));
-      stop.color.a = alpha;
-      renderGradient();
-      renderStopHandles();
-      notifyChange();
-    }
+    document.addEventListener('mousedown', closePickerOnClickOutside);
   }, 100);
 };
 
@@ -336,11 +397,17 @@ export const createGradientEditor = (
   gradientCanvas.height = GRADIENT_BAR_HEIGHT;
   gradientCtx = gradientCanvas.getContext('2d');
 
-  // Set initial stops
+  // Set initial stops and ensure first/last are at 0 and 1
   currentStops = initialStops || [
     { position: 0, color: { r: 255, g: 255, b: 255, a: 255 } },
     { position: 1, color: { r: 255, g: 255, b: 255, a: 0 } },
   ];
+
+  // Ensure first and last positions are exactly 0 and 1
+  if (currentStops.length > 0) {
+    currentStops[0].position = 0;
+    currentStops[currentStops.length - 1].position = 1;
+  }
 
   onChangeCallback = onChange || null;
 
@@ -438,6 +505,13 @@ export const createGradientEditor = (
  */
 export const setGradientStops = (stops: GradientStop[]): void => {
   currentStops = [...stops];
+
+  // Ensure first and last positions are exactly 0 and 1
+  if (currentStops.length > 0) {
+    currentStops[0].position = 0;
+    currentStops[currentStops.length - 1].position = 1;
+  }
+
   renderGradient();
   renderStopHandles();
 };
