@@ -108,4 +108,113 @@ export const defaultGradients: GradientPreset[] = [
       { position: 1, color: { r: 100, g: 0, b: 0, a: 0 } },
     ],
   },
+  {
+    name: 'Lava',
+    stops: [
+      { position: 0, color: { r: 255, g: 255, b: 100, a: 255 } },
+      { position: 0.2, color: { r: 255, g: 150, b: 0, a: 255 } },
+      { position: 0.5, color: { r: 200, g: 50, b: 0, a: 255 } },
+      { position: 0.8, color: { r: 100, g: 0, b: 0, a: 200 } },
+      { position: 1, color: { r: 50, g: 0, b: 0, a: 0 } },
+    ],
+  },
+  {
+    name: 'Aurora Borealis',
+    stops: [
+      { position: 0, color: { r: 0, g: 255, b: 150, a: 0 } },
+      { position: 0.25, color: { r: 50, g: 255, b: 200, a: 200 } },
+      { position: 0.5, color: { r: 100, g: 200, b: 255, a: 255 } },
+      { position: 0.75, color: { r: 150, g: 100, b: 255, a: 200 } },
+      { position: 1, color: { r: 100, g: 50, b: 200, a: 0 } },
+    ],
+  },
+  {
+    name: 'Neon Glow',
+    stops: [
+      { position: 0, color: { r: 255, g: 0, b: 255, a: 255 } },
+      { position: 0.3, color: { r: 255, g: 50, b: 200, a: 255 } },
+      { position: 0.7, color: { r: 200, g: 0, b: 255, a: 200 } },
+      { position: 1, color: { r: 150, g: 0, b: 200, a: 0 } },
+    ],
+  },
+  {
+    name: 'Gold',
+    stops: [
+      { position: 0, color: { r: 255, g: 255, b: 200, a: 255 } },
+      { position: 0.3, color: { r: 255, g: 215, b: 0, a: 255 } },
+      { position: 0.6, color: { r: 218, g: 165, b: 32, a: 255 } },
+      { position: 0.8, color: { r: 184, g: 134, b: 11, a: 200 } },
+      { position: 1, color: { r: 150, g: 100, b: 0, a: 0 } },
+    ],
+  },
+  {
+    name: 'Silver',
+    stops: [
+      { position: 0, color: { r: 255, g: 255, b: 255, a: 255 } },
+      { position: 0.3, color: { r: 220, g: 220, b: 220, a: 255 } },
+      { position: 0.6, color: { r: 192, g: 192, b: 192, a: 255 } },
+      { position: 0.8, color: { r: 150, g: 150, b: 150, a: 200 } },
+      { position: 1, color: { r: 100, g: 100, b: 100, a: 0 } },
+    ],
+  },
+  {
+    name: 'Sunset',
+    stops: [
+      { position: 0, color: { r: 255, g: 255, b: 150, a: 255 } },
+      { position: 0.3, color: { r: 255, g: 180, b: 100, a: 255 } },
+      { position: 0.6, color: { r: 255, g: 100, b: 100, a: 255 } },
+      { position: 0.8, color: { r: 200, g: 50, b: 150, a: 200 } },
+      { position: 1, color: { r: 100, g: 0, b: 100, a: 0 } },
+    ],
+  },
+  {
+    name: 'Ocean Waves',
+    stops: [
+      { position: 0, color: { r: 200, g: 240, b: 255, a: 0 } },
+      { position: 0.3, color: { r: 100, g: 200, b: 255, a: 200 } },
+      { position: 0.6, color: { r: 0, g: 150, b: 200, a: 255 } },
+      { position: 0.8, color: { r: 0, g: 100, b: 150, a: 200 } },
+      { position: 1, color: { r: 0, g: 50, b: 100, a: 0 } },
+    ],
+  },
+  {
+    name: 'Ember Fade',
+    stops: [
+      { position: 0, color: { r: 255, g: 150, b: 0, a: 255 } },
+      { position: 0.3, color: { r: 255, g: 100, b: 0, a: 255 } },
+      { position: 0.6, color: { r: 200, g: 50, b: 0, a: 200 } },
+      { position: 0.8, color: { r: 150, g: 0, b: 0, a: 100 } },
+      { position: 1, color: { r: 50, g: 0, b: 0, a: 0 } },
+    ],
+  },
+  {
+    name: 'Holy Light',
+    stops: [
+      { position: 0, color: { r: 255, g: 255, b: 255, a: 255 } },
+      { position: 0.3, color: { r: 255, g: 255, b: 200, a: 255 } },
+      { position: 0.6, color: { r: 255, g: 240, b: 150, a: 200 } },
+      { position: 0.8, color: { r: 255, g: 220, b: 100, a: 100 } },
+      { position: 1, color: { r: 255, g: 200, b: 50, a: 0 } },
+    ],
+  },
+  {
+    name: 'Dark Energy',
+    stops: [
+      { position: 0, color: { r: 150, g: 0, b: 150, a: 255 } },
+      { position: 0.3, color: { r: 100, g: 0, b: 100, a: 255 } },
+      { position: 0.6, color: { r: 50, g: 0, b: 80, a: 200 } },
+      { position: 0.8, color: { r: 30, g: 0, b: 50, a: 150 } },
+      { position: 1, color: { r: 0, g: 0, b: 0, a: 0 } },
+    ],
+  },
+  {
+    name: 'Plasma',
+    stops: [
+      { position: 0, color: { r: 255, g: 100, b: 255, a: 255 } },
+      { position: 0.25, color: { r: 200, g: 50, b: 255, a: 255 } },
+      { position: 0.5, color: { r: 100, g: 100, b: 255, a: 255 } },
+      { position: 0.75, color: { r: 50, g: 150, b: 255, a: 200 } },
+      { position: 1, color: { r: 0, g: 100, b: 200, a: 0 } },
+    ],
+  },
 ];
