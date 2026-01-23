@@ -38,47 +38,13 @@ canvas {
   user-select: none;
 }
 
-.right-panel {
-  font-weight: 600;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  overflow: hidden;
-  font-size: 11px;
-  width: 310px;
-}
+/* Removed: .right-panel - curve editor is now modal-based */
 
 .lil-gui.root {
   max-height: calc(100% - 290px);
 }
 
-.curve-editor {
-  background: #222;
-  border: 1px solid #333;
-  padding: 5px;
-  position: relative;
-}
-
-.curve-editor__title {
-  color: #fff;
-  margin-bottom: 5px;
-  user-select: none;
-}
-
-.curve-editor__content {
-  line-height: 0;
-  position: relative;
-}
-
-.curve-editor__canvas {
-  width: 300px;
-  height: 200px;
-}
+/* Old fixed-position curve editor styles removed - now using modal */
 
 .draggable-points {
   width: 300px;
@@ -113,27 +79,7 @@ canvas {
   transform: translate(5px, 5px);
 }
 
-.curve-editor__predefined-list {
-  display: flex;
-  max-width: 100%;
-  gap: 4px;
-  margin-top: 15px;
-}
-
-.curve-editor__predefined-entry {
-  cursor: pointer;
-  border: 1px solid #ffffff55;
-  flex: 1;
-  height: 43px;
-  background-color: #000;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.curve-editor__predefined-entry:hover {
-  border: 1px solid #ffffff;
-}
+/* Old preset list styles removed - now using modal with new button-based presets */
 
 /* Gradient Editor Modal */
 .gradient-editor-modal {
@@ -332,5 +278,197 @@ canvas {
 }
 
 .gradient-preset-delete:hover {
+  background: #ff6666;
+}
+
+/* Bezier Editor Modal */
+.bezier-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.bezier-editor-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  pointer-events: auto;
+}
+
+.bezier-editor-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  cursor: move;
+  user-select: none;
+}
+
+.bezier-editor-modal__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.bezier-editor-modal__header-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.bezier-editor-modal__info,
+.bezier-editor-modal__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.bezier-editor-modal__info {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bezier-editor-modal__close {
+  font-size: 28px;
+}
+
+.bezier-editor-modal__info:hover,
+.bezier-editor-modal__close:hover {
+  background: #444;
+}
+
+.bezier-editor-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bezier-editor__content {
+  position: relative;
+  width: 100%;
+  background: #1a1a1a;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bezier-editor__canvas {
+  display: block;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a1a;
+}
+
+.bezier-editor-info {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.bezier-editor-info p {
+  margin: 4px 0;
+}
+
+.bezier-editor-info strong {
+  color: #4a9eff;
+}
+
+.bezier-editor-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 6px;
+  border: 1px solid #444;
+}
+
+.bezier-preset-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  border: 2px solid #666;
+  background: #333;
+  color: #fff;
+  border-radius: 4px;
+  transition: all 0.15s;
+  min-width: 70px;
+}
+
+.bezier-preset-button:hover {
+  background: #3a3a3a;
+  border-color: #888;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bezier-preset-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.bezier-save-button:hover {
+  background: #333 !important;
+  border-color: #6bb3ff !important;
+}
+
+.bezier-preset-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.bezier-preset-delete:hover {
   background: #ff6666;
 }

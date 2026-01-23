@@ -1,4 +1,4 @@
-import { setCurveEditorPositions, setCurveEditorTarget } from '../curve-editor/curve-editor';
+import { setCurveEditorTarget, openBezierEditorModal } from '../curve-editor/curve-editor';
 
 import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
 import type { ParticleSystemConfig } from '@newkrok/three-particles';
@@ -22,7 +22,6 @@ export const createSizeOverLifeTimeEntries = ({
 
   // Ensure the sizeOverLifetime object exists and has the correct structure for v2.0.2
   if (!particleSystemConfig.sizeOverLifetime) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     particleSystemConfig.sizeOverLifetime = {
       isActive: false,
       lifetimeCurve: {
@@ -53,32 +52,24 @@ export const createSizeOverLifeTimeEntries = ({
     .add(
       {
         editCurve: (): void => {
-          // Update to use lifetimeCurve instead of curveFunction
-          setCurveEditorTarget(particleSystemConfig.sizeOverLifetime.lifetimeCurve);
-          recreateParticleSystem();
+          const lifetimeCurve = particleSystemConfig.sizeOverLifetime.lifetimeCurve;
+          openBezierEditorModal(lifetimeCurve);
+
+          // Set up callback to update when modal is used
+          const updateInterval = setInterval(() => {
+            const modal = document.querySelector('.bezier-editor-modal') as HTMLElement;
+            if (!modal || modal.style.display === 'none') {
+              clearInterval(updateInterval);
+            } else {
+              setCurveEditorTarget(lifetimeCurve);
+              recreateParticleSystem();
+            }
+          }, 100);
         },
       },
       'editCurve'
     )
-    .name('Apply curve');
-
-  folder
-    .add(
-      {
-        loadCurve: (): void => {
-          // Ensure bezierPoints is available for setCurveEditorPositions
-          // Type assertion is necessary because LifetimeCurve can be either BezierCurve or EasingCurve
-          const lifetimeCurve = particleSystemConfig.sizeOverLifetime.lifetimeCurve;
-          if (lifetimeCurve.type === 'BEZIER' && 'bezierPoints' in lifetimeCurve) {
-            setCurveEditorPositions({
-              bezierPoints: lifetimeCurve.bezierPoints,
-            });
-          }
-        },
-      },
-      'loadCurve'
-    )
-    .name('Edit curve');
+    .name('Edit Curve');
 
   return {};
 };

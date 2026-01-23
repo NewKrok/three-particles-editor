@@ -1,4 +1,4 @@
-import { setCurveEditorPositions, setCurveEditorTarget } from '../curve-editor/curve-editor';
+import { setCurveEditorTarget, openBezierEditorModal } from '../curve-editor/curve-editor';
 import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
 import type { ParticleSystemConfig } from '@newkrok/three-particles';
 import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
@@ -19,7 +19,6 @@ export const createColorOverLifeTimeEntries = ({
 
   // Ensure the colorOverLifetime object exists and has the correct structure
   if (!particleSystemConfig.colorOverLifetime) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const defaultBezierCurve: any = {
       type: 'BEZIER',
       scale: 1,
@@ -60,29 +59,24 @@ export const createColorOverLifeTimeEntries = ({
       .add(
         {
           editCurve: (): void => {
-            setCurveEditorTarget(particleSystemConfig.colorOverLifetime[channelName]);
-            recreateParticleSystem();
+            const lifetimeCurve = particleSystemConfig.colorOverLifetime[channelName];
+            openBezierEditorModal(lifetimeCurve);
+
+            // Set up callback to update when modal is used
+            const updateInterval = setInterval(() => {
+              const modal = document.querySelector('.bezier-editor-modal') as HTMLElement;
+              if (!modal || modal.style.display === 'none') {
+                clearInterval(updateInterval);
+              } else {
+                setCurveEditorTarget(lifetimeCurve);
+                recreateParticleSystem();
+              }
+            }, 100);
           },
         },
         'editCurve'
       )
-      .name('Apply curve');
-
-    channelFolder
-      .add(
-        {
-          loadCurve: (): void => {
-            const lifetimeCurve = particleSystemConfig.colorOverLifetime[channelName];
-            if (lifetimeCurve.type === 'BEZIER' && 'bezierPoints' in lifetimeCurve) {
-              setCurveEditorPositions({
-                bezierPoints: lifetimeCurve.bezierPoints,
-              });
-            }
-          },
-        },
-        'loadCurve'
-      )
-      .name('Edit curve');
+      .name('Edit Curve');
   };
 
   // Create UI for each color channel
