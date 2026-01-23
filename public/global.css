@@ -197,15 +197,21 @@ canvas {
 }
 
 .gradient-editor-info {
-  background: #333;
-  border-radius: 4px;
-  padding: 10px;
-  font-size: 11px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
   color: #aaa;
+  line-height: 1.6;
 }
 
 .gradient-editor-info p {
   margin: 4px 0;
+}
+
+.gradient-editor-info strong {
+  color: #4a9eff;
 }
 
 .gradient-editor-presets {
