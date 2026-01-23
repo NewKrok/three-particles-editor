@@ -48,6 +48,7 @@ let ctx: CanvasRenderingContext2D | null = null;
 let selectedPoint: HTMLElement | null = null;
 let affectedControlPoint: HTMLElement | null = null;
 let currentTarget: { bezierPoints?: BezierPoint[]; type?: string } | null = null;
+let onChangeCallback: (() => void) | null = null;
 
 const getPosition = (target: HTMLElement): Position => ({
   left: parseFloat(target.style.left.replace('px', '')),
@@ -101,6 +102,7 @@ const updateSelectedPoint = (e: MouseEvent): void => {
     }
 
     render();
+    notifyChange();
   }
 };
 
@@ -214,6 +216,8 @@ const setupModalControls = (): void => {
   const closeModal = () => {
     if (modal) {
       modal.style.display = 'none';
+      // Clear the onChange callback when modal is closed
+      onChangeCallback = null;
     }
   };
 
@@ -285,10 +289,13 @@ const setupModalControls = (): void => {
 /**
  * Opens the bezier editor modal
  */
-export const openBezierEditorModal = (target?: {
-  bezierPoints?: BezierPoint[];
-  type?: string;
-}): void => {
+export const openBezierEditorModal = (
+  target?: {
+    bezierPoints?: BezierPoint[];
+    type?: string;
+  },
+  onChange?: () => void
+): void => {
   const modal = document.querySelector('.bezier-editor-modal') as HTMLElement;
   if (!modal) return;
 
@@ -303,6 +310,19 @@ export const openBezierEditorModal = (target?: {
     if (target.bezierPoints && target.bezierPoints.length > 0) {
       setCurveEditorPositions({ bezierPoints: target.bezierPoints });
     }
+  }
+
+  // Store the onChange callback for real-time updates
+  onChangeCallback = onChange || null;
+};
+
+/**
+ * Notifies the change callback
+ */
+const notifyChange = (): void => {
+  if (onChangeCallback && currentTarget) {
+    setCurveEditorTarget(currentTarget);
+    onChangeCallback();
   }
 };
 
@@ -751,6 +771,7 @@ const createPresetButton = ({
     if (currentTarget) {
       setCurveEditorTarget(currentTarget);
     }
+    notifyChange();
   });
 
   button.addEventListener('mouseenter', () => {

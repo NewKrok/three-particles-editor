@@ -1,4 +1,4 @@
-import { setCurveEditorTarget, openBezierEditorModal } from '../curve-editor/curve-editor';
+import { openBezierEditorModal } from '../curve-editor/curve-editor';
 import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
 import type { ParticleSystemConfig } from '@newkrok/three-particles';
 import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
@@ -60,18 +60,9 @@ export const createColorOverLifeTimeEntries = ({
         {
           editCurve: (): void => {
             const lifetimeCurve = particleSystemConfig.colorOverLifetime[channelName];
-            openBezierEditorModal(lifetimeCurve);
-
-            // Set up callback to update when modal is used
-            const updateInterval = setInterval(() => {
-              const modal = document.querySelector('.bezier-editor-modal') as HTMLElement;
-              if (!modal || modal.style.display === 'none') {
-                clearInterval(updateInterval);
-              } else {
-                setCurveEditorTarget(lifetimeCurve);
-                recreateParticleSystem();
-              }
-            }, 100);
+            openBezierEditorModal(lifetimeCurve, () => {
+              recreateParticleSystem();
+            });
           },
         },
         'editCurve'
