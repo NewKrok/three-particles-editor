@@ -38,10 +38,8 @@ canvas {
   user-select: none;
 }
 
-/* Removed: .right-panel - curve editor is now modal-based */
-
 .lil-gui.root {
-  max-height: calc(100% - 290px);
+  max-height: 100%;
 }
 
 /* Old fixed-position curve editor styles removed - now using modal */

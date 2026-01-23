@@ -10,6 +10,7 @@
 <div class="wrapper">
   <div id="three-particles-editor" />
   <div class="stats" class:collapsed={isLeftPanelCollapsed} />
+  <div class="right-panel" />
   <LeftSide bind:isCollapsed={isLeftPanelCollapsed} />
   <ControlPanel />
   <KofiButton floating={true} />
@@ -89,6 +90,21 @@
           left: 40px !important;
         }
       }
+    }
+
+    .right-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: flex-end;
+      overflow: hidden;
+      font-size: 11px;
+      width: 310px;
+      font-weight: 600;
     }
   }
 </style>
