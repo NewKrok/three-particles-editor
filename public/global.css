@@ -373,13 +373,12 @@ canvas {
 
 .bezier-editor__content {
   position: relative;
-  width: 100%;
+  width: 300px;
+  height: 200px;
   background: #1a1a1a;
   border-radius: 4px;
   padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 0 auto;
 }
 
 .bezier-editor__canvas {
