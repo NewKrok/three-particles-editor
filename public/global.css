@@ -50,10 +50,11 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
+  cursor: auto !important;
 }
 
 .draggable-point {
-  cursor: pointer;
+  cursor: pointer !important;
   background: #ffffff55;
   border-radius: 50%;
   left: 0;
@@ -104,6 +105,7 @@ canvas {
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
   pointer-events: auto;
+  cursor: grab;
 }
 
 .gradient-editor-modal__header {
@@ -113,7 +115,6 @@ canvas {
   margin-bottom: 20px;
   border-bottom: 1px solid #444;
   padding-bottom: 10px;
-  cursor: move;
   user-select: none;
 }
 
@@ -172,13 +173,14 @@ canvas {
   background: #333;
   border-radius: 4px;
   padding: 10px;
+  cursor: auto !important;
 }
 
 .gradient-editor-canvas {
   width: 100%;
   display: block;
   border-radius: 4px;
-  cursor: crosshair;
+  cursor: crosshair !important;
 }
 
 .gradient-stop-handle {
@@ -187,7 +189,7 @@ canvas {
   height: 16px;
   border-radius: 50%;
   border: 2px solid white;
-  cursor: pointer;
+  cursor: pointer !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.1s;
 }
@@ -224,6 +226,7 @@ canvas {
   background: #2a2a2a;
   border-radius: 6px;
   border: 1px solid #444;
+  cursor: auto !important;
 }
 
 .gradient-preset-button {
@@ -233,7 +236,7 @@ canvas {
   gap: 4px;
   padding: 6px;
   font-size: 11px;
-  cursor: pointer;
+  cursor: pointer !important;
   border: 2px solid #666;
   background: #333;
   color: #fff;
@@ -310,6 +313,7 @@ canvas {
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
   pointer-events: auto;
+  cursor: grab;
 }
 
 .bezier-editor-modal__header {
@@ -319,7 +323,6 @@ canvas {
   margin-bottom: 20px;
   border-bottom: 1px solid #444;
   padding-bottom: 10px;
-  cursor: move;
   user-select: none;
 }
 
@@ -379,6 +382,7 @@ canvas {
   border-radius: 4px;
   padding: 10px;
   margin: 0 auto;
+  cursor: auto !important;
 }
 
 .bezier-editor__canvas {
@@ -386,6 +390,7 @@ canvas {
   border: 1px solid #444;
   border-radius: 4px;
   background: #1a1a1a;
+  cursor: auto !important;
 }
 
 .bezier-editor-info {
@@ -415,6 +420,7 @@ canvas {
   background: #2a2a2a;
   border-radius: 6px;
   border: 1px solid #444;
+  cursor: auto !important;
 }
 
 .bezier-preset-button {
@@ -424,7 +430,7 @@ canvas {
   gap: 4px;
   padding: 6px;
   font-size: 11px;
-  cursor: pointer;
+  cursor: pointer !important;
   border: 2px solid #666;
   background: #333;
   color: #fff;

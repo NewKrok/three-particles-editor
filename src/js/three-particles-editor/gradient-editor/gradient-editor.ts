@@ -484,7 +484,6 @@ export const createGradientEditor = (
   const infoPanel = document.querySelector('.gradient-editor-info') as HTMLElement;
   const modal = document.querySelector('.gradient-editor-modal') as HTMLElement;
   const modalContent = document.querySelector('.gradient-editor-modal__content') as HTMLElement;
-  const modalHeader = document.querySelector('.gradient-editor-modal__header') as HTMLElement;
 
   const closeModal = () => {
     if (modal) {
@@ -509,7 +508,7 @@ export const createGradientEditor = (
     });
   }
 
-  // Draggable modal functionality
+  // Draggable modal functionality - whole content is draggable
   let isDragging = false;
   let currentX = 0;
   let currentY = 0;
@@ -517,19 +516,32 @@ export const createGradientEditor = (
   let initialY = 0;
 
   const onDragStart = (e: MouseEvent) => {
-    if (e.target === modalHeader || modalHeader.contains(e.target as Node)) {
-      // Don't start drag if clicking on close or info button
-      const target = e.target as HTMLElement;
-      if (
-        target.classList.contains('gradient-editor-modal__close') ||
-        target.classList.contains('gradient-editor-modal__info')
-      ) {
-        return;
-      }
+    const target = e.target as HTMLElement;
 
-      isDragging = true;
-      initialX = e.clientX - currentX;
-      initialY = e.clientY - currentY;
+    // Don't start drag if clicking on interactive elements
+    if (
+      target.classList.contains('gradient-editor-modal__close') ||
+      target.classList.contains('gradient-editor-modal__info') ||
+      target.classList.contains('gradient-editor-canvas') ||
+      target.classList.contains('gradient-stop-handle') ||
+      target.classList.contains('gradient-preset-button') ||
+      target.classList.contains('gradient-save-button') ||
+      target.classList.contains('gradient-preset-delete') ||
+      target.classList.contains('gradient-color-picker') ||
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'INPUT' ||
+      target.closest('.gradient-editor-presets') ||
+      target.closest('.gradient-editor-wrapper') ||
+      target.closest('.gradient-color-picker')
+    ) {
+      return;
+    }
+
+    isDragging = true;
+    initialX = e.clientX - currentX;
+    initialY = e.clientY - currentY;
+    if (modalContent) {
+      modalContent.style.cursor = 'grabbing';
     }
   };
 
@@ -544,11 +556,16 @@ export const createGradientEditor = (
   };
 
   const onDragEnd = () => {
-    isDragging = false;
+    if (isDragging) {
+      isDragging = false;
+      if (modalContent) {
+        modalContent.style.cursor = '';
+      }
+    }
   };
 
-  if (modalHeader) {
-    modalHeader.addEventListener('mousedown', onDragStart);
+  if (modalContent) {
+    modalContent.addEventListener('mousedown', onDragStart);
     document.addEventListener('mousemove', onDrag);
     document.addEventListener('mouseup', onDragEnd);
   }

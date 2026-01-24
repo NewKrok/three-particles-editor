@@ -211,7 +211,6 @@ const setupModalControls = (): void => {
   const infoPanel = document.querySelector('.bezier-editor-info') as HTMLElement;
   const modal = document.querySelector('.bezier-editor-modal') as HTMLElement;
   const modalContent = document.querySelector('.bezier-editor-modal__content') as HTMLElement;
-  const modalHeader = document.querySelector('.bezier-editor-modal__header') as HTMLElement;
 
   const closeModal = () => {
     if (modal) {
@@ -240,9 +239,9 @@ const setupModalControls = (): void => {
     });
   }
 
-  // Draggable modal functionality
-  if (modalHeader && !modalHeader.hasAttribute('data-listener')) {
-    modalHeader.setAttribute('data-listener', 'true');
+  // Draggable modal functionality - whole content is draggable
+  if (modalContent && !modalContent.hasAttribute('data-drag-listener')) {
+    modalContent.setAttribute('data-drag-listener', 'true');
 
     let isDragging = false;
     let currentX = 0;
@@ -251,19 +250,29 @@ const setupModalControls = (): void => {
     let initialY = 0;
 
     const onDragStart = (e: MouseEvent) => {
-      if (e.target === modalHeader || modalHeader.contains(e.target as Node)) {
-        const target = e.target as HTMLElement;
-        if (
-          target.classList.contains('bezier-editor-modal__close') ||
-          target.classList.contains('bezier-editor-modal__info')
-        ) {
-          return;
-        }
+      const target = e.target as HTMLElement;
 
-        isDragging = true;
-        initialX = e.clientX - currentX;
-        initialY = e.clientY - currentY;
+      // Don't start drag if clicking on interactive elements
+      if (
+        target.classList.contains('bezier-editor-modal__close') ||
+        target.classList.contains('bezier-editor-modal__info') ||
+        target.classList.contains('bezier-editor__canvas') ||
+        target.classList.contains('draggable-point') ||
+        target.classList.contains('bezier-preset-button') ||
+        target.classList.contains('bezier-save-button') ||
+        target.classList.contains('bezier-preset-delete') ||
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'INPUT' ||
+        target.closest('.bezier-editor-presets') ||
+        target.closest('.draggable-points')
+      ) {
+        return;
       }
+
+      isDragging = true;
+      initialX = e.clientX - currentX;
+      initialY = e.clientY - currentY;
+      modalContent.style.cursor = 'grabbing';
     };
 
     const onDrag = (e: MouseEvent) => {
@@ -277,10 +286,15 @@ const setupModalControls = (): void => {
     };
 
     const onDragEnd = () => {
-      isDragging = false;
+      if (isDragging) {
+        isDragging = false;
+        if (modalContent) {
+          modalContent.style.cursor = '';
+        }
+      }
     };
 
-    modalHeader.addEventListener('mousedown', onDragStart);
+    modalContent.addEventListener('mousedown', onDragStart);
     document.addEventListener('mousemove', onDrag);
     document.addEventListener('mouseup', onDragEnd);
   }
