@@ -7,20 +7,20 @@
   "duration": 0.2,
   "looping": false,
   "startLifetime": {
-    "min": 0.8,
-    "max": 1.4
+    "min": 0.4,
+    "max": 0.67
   },
   "startSpeed": {
-    "min": 4,
-    "max": 7
+    "min": 0.11,
+    "max": 0.93
   },
   "startSize": {
     "min": 5,
-    "max": 9
+    "max": 12.25
   },
   "startOpacity": {
-    "min": 0.9,
-    "max": 1
+    "min": 0.7,
+    "max": 0.9
   },
   "startRotation": {
     "min": 0,
@@ -38,15 +38,15 @@
       "b": 0.6
     }
   },
-  "gravity": -2,
-  "maxParticles": 120,
+  "gravity": -1.4,
+  "maxParticles": 83,
   "emission": {
-    "rateOverTime": 800
+    "rateOverTime": 255
   },
   "shape": {
     "shape": "SPHERE",
     "sphere": {
-      "radius": 0.05
+      "radius": 0.2064
     }
   },
   "renderer": {
@@ -56,16 +56,16 @@
     "isActive": true,
     "orbital": {
       "x": {
-        "min": -0.8,
-        "max": 0.8
+        "min": -0.6,
+        "max": 0.6
       },
       "y": {
-        "min": -0.8,
-        "max": 0.8
+        "min": -0.6,
+        "max": 0.6
       },
       "z": {
-        "min": -0.8,
-        "max": 0.8
+        "min": -0.6,
+        "max": 0.6
       }
     }
   },
@@ -150,25 +150,25 @@
         },
         {
           "x": 0.2,
-          "y": 0.85
+          "y": 0.9
         },
         {
           "x": 0.4,
-          "y": 0.7,
+          "y": 0.8,
           "percentage": 0.4
         },
         {
           "x": 0.65,
-          "y": 0.5,
+          "y": 0.6,
           "percentage": 0.65
         },
         {
           "x": 0.85,
-          "y": 0.3
+          "y": 0.35
         },
         {
           "x": 1,
-          "y": 0.15,
+          "y": 0.2,
           "percentage": 1
         }
       ]
@@ -255,7 +255,7 @@
     "strength": 0.3,
     "frequency": 0.35,
     "positionAmount": 0.4,
-    "rotationAmount": 3.5,
+    "rotationAmount": 2.2,
     "sizeAmount": 0.25
   },
   "_editorData": {
@@ -315,7 +315,7 @@
       }
     ],
     "metadata": {
-      "name": "Celestial Impact",
+      "name": "Solar Flare",
       "createdAt": 1737734400000,
       "modifiedAt": 1737734400000,
       "editorVersion": "2.3.0"
