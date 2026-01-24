@@ -1,6 +1,6 @@
-import { TextureId } from '../texture-config';
 import { blendingMap } from '@newkrok/three-particles';
 import { getTexture } from '../assets';
+import { openTextureSelectorModal } from '../texture-selector/texture-selector';
 
 type RendererEntriesParams = {
   parentFolder: any;
@@ -44,55 +44,36 @@ export const createRendererEntries = ({
     controllers.forEach((controller) => controller.destroy());
     controllers = [];
 
-    let customAssetList =
-      JSON.parse(localStorage.getItem('particle-system-editor/library') || '[]') || [];
+    // Add a display field showing current texture
+    const displayTextureConfig = {
+      selectedTexture: particleSystemConfig._editorData.textureId || 'None',
+    };
 
     controllers.push(
       folder
-        .add(
-          particleSystemConfig._editorData,
-          'textureId',
-          customAssetList
-            .map(({ name }: { name: string }) => name)
-            .concat(
-              [
-                TextureId.POINT,
-                TextureId.GRADIENT_POINT,
-                TextureId.CIRCLE,
-                TextureId.CLOUD,
-                TextureId.FLAME,
-                TextureId.FLARE,
-                TextureId.STAR,
-                TextureId.STAR_TOON,
-                TextureId.PLUS,
-                TextureId.PLUS_TOON,
-                TextureId.MOON,
-                TextureId.RAINDROP,
-                TextureId.LEAF_TOON,
-                TextureId.SNOWFLAKE,
-                TextureId.NUMBERS,
-                TextureId.NUMBERS_TOON,
-                TextureId.CONFETTI,
-                TextureId.CONFETTI_TOON,
-                TextureId.MAGIC_EXPLOSION,
-                TextureId.FEATHER,
-                TextureId.SKULL,
-                TextureId.HEART,
-                TextureId.ROCKS,
-                TextureId.SQUARE,
-                TextureId.LIGHT_STREAK,
-                TextureId.RADIAL_BURST,
-                TextureId.STARBURST,
-                TextureId.SOFT_SMOKE,
-              ].sort()
-            )
-        )
+        .add(displayTextureConfig, 'selectedTexture')
+        .name('Selected Texture')
         .listen()
-        .onChange((v: string) => {
-          setConfigByTexture(v);
-          recreateParticleSystem();
-        })
+        .disable()
     );
+
+    // Add button to open texture selector
+    const textureSelectButton = {
+      selectTexture: () => {
+        openTextureSelectorModal({
+          currentTextureId: particleSystemConfig._editorData.textureId,
+          onSelect: (textureId: string) => {
+            particleSystemConfig._editorData.textureId = textureId;
+            displayTextureConfig.selectedTexture = textureId;
+            setConfigByTexture(textureId);
+            recreateParticleSystem();
+          },
+        });
+      },
+    };
+
+    controllers.push(folder.add(textureSelectButton, 'selectTexture').name('Choose Texture...'));
+
     setConfigByTexture(particleSystemConfig._editorData.textureId);
 
     controllers.push(

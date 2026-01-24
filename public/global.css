@@ -481,3 +481,228 @@ canvas {
 .bezier-preset-delete:hover {
   background: #ff6666;
 }
+
+/* Texture Selector Modal */
+.texture-selector-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.texture-selector-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 650px;
+  width: 85%;
+  max-height: 75vh;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  pointer-events: auto;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+}
+
+.texture-selector-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  user-select: none;
+}
+
+.texture-selector-modal__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.texture-selector-modal__header-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.texture-selector-modal__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.texture-selector-modal__close:hover {
+  background: #444;
+}
+
+.texture-selector-modal__body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.texture-selector-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+}
+
+.texture-selector-search-icon {
+  color: #888;
+  font-size: 20px;
+  user-select: none;
+}
+
+.texture-selector-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  padding: 4px;
+}
+
+.texture-selector-search-input::placeholder {
+  color: #666;
+}
+
+.texture-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(140px, auto);
+  gap: 12px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 6px;
+  border: 1px solid #444;
+  cursor: auto !important;
+  max-height: calc(75vh - 180px);
+}
+
+.texture-selector-item {
+  display: flex;
+  flex-direction: column;
+  background: #333;
+  border: 2px solid #555;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.texture-selector-item:hover {
+  border-color: #888;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.texture-selector-item--selected {
+  border-color: #4a9eff;
+  background: #3a3a3a;
+}
+
+.texture-selector-item--selected:hover {
+  border-color: #6bb3ff;
+}
+
+.texture-selector-preview {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  background: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.texture-selector-transparent-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(./static/transparent.webp);
+  background-repeat: repeat;
+  background-size: 20%;
+}
+
+.texture-selector-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.texture-selector-circle-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.texture-selector-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background: #2a2a2a;
+  gap: 8px;
+}
+
+.texture-selector-name {
+  flex: 1;
+  font-size: 11px;
+  color: #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.texture-selector-download {
+  background: #4a9eff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.texture-selector-download:hover {
+  background: #6bb3ff;
+}

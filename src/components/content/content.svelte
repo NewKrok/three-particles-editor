@@ -61,6 +61,27 @@
       </div>
     </div>
   </div>
+  <div class="texture-selector-modal" style="display: none;">
+    <div class="texture-selector-modal__content">
+      <div class="texture-selector-modal__header">
+        <h2>Texture Selector</h2>
+        <div class="texture-selector-modal__header-buttons">
+          <button class="texture-selector-modal__close">×</button>
+        </div>
+      </div>
+      <div class="texture-selector-modal__body">
+        <div class="texture-selector-search">
+          <span class="material-icons texture-selector-search-icon">search</span>
+          <input
+            type="text"
+            class="texture-selector-search-input"
+            placeholder="Search textures..."
+          />
+        </div>
+        <div class="texture-selector-grid"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style lang="scss">
