@@ -1,6 +1,6 @@
-import { TextureId } from "../texture-config";
-import { blendingMap } from "@newkrok/three-particles";
-import { getTexture } from "../assets";
+import { TextureId } from '../texture-config';
+import { blendingMap } from '@newkrok/three-particles';
+import { getTexture } from '../assets';
 
 type RendererEntriesParams = {
   parentFolder: any;
@@ -19,9 +19,9 @@ export const createRendererEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }: RendererEntriesParams): RendererEntriesResult => {
-  let lastUsedTextureId = "";
+  let lastUsedTextureId = '';
 
-  const folder = parentFolder.addFolder("Renderer");
+  const folder = parentFolder.addFolder('Renderer');
   folder.close();
 
   const setConfigByTexture = (textureId: string): void => {
@@ -45,13 +45,13 @@ export const createRendererEntries = ({
     controllers = [];
 
     let customAssetList =
-      JSON.parse(localStorage.getItem("particle-system-editor/library") || "[]") || [];
+      JSON.parse(localStorage.getItem('particle-system-editor/library') || '[]') || [];
 
     controllers.push(
       folder
         .add(
           particleSystemConfig._editorData,
-          "textureId",
+          'textureId',
           customAssetList
             .map(({ name }: { name: string }) => name)
             .concat(
@@ -80,6 +80,9 @@ export const createRendererEntries = ({
                 TextureId.HEART,
                 TextureId.ROCKS,
                 TextureId.SQUARE,
+                TextureId.LIGHT_STREAK,
+                TextureId.RADIAL_BURST,
+                TextureId.STARBURST,
               ].sort()
             )
         )
@@ -93,43 +96,38 @@ export const createRendererEntries = ({
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "discardBackgroundColor")
+        .add(particleSystemConfig.renderer, 'discardBackgroundColor')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .add(
-          particleSystemConfig.renderer,
-          "backgroundColorTolerance",
-          0.0,
-          2.0,
-          0.001
-        )
+        .add(particleSystemConfig.renderer, 'backgroundColorTolerance', 0.0, 2.0, 0.001)
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .addColor(particleSystemConfig.renderer, "backgroundColor")
+        .addColor(particleSystemConfig.renderer, 'backgroundColor')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
-    if (typeof particleSystemConfig.renderer.blending === "number")
+    if (typeof particleSystemConfig.renderer.blending === 'number')
       particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
-        (entry) => blendingMap[entry as keyof typeof blendingMap] === particleSystemConfig.renderer.blending
+        (entry) =>
+          blendingMap[entry as keyof typeof blendingMap] === particleSystemConfig.renderer.blending
       );
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "blending", [
-          "THREE.NoBlending",
-          "THREE.NormalBlending",
-          "THREE.AdditiveBlending",
-          "THREE.SubtractiveBlending",
-          "THREE.MultiplyBlending",
+        .add(particleSystemConfig.renderer, 'blending', [
+          'THREE.NoBlending',
+          'THREE.NormalBlending',
+          'THREE.AdditiveBlending',
+          'THREE.SubtractiveBlending',
+          'THREE.MultiplyBlending',
         ])
         .listen()
         .onChange(recreateParticleSystem)
@@ -137,21 +135,21 @@ export const createRendererEntries = ({
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "transparent")
+        .add(particleSystemConfig.renderer, 'transparent')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "depthTest")
+        .add(particleSystemConfig.renderer, 'depthTest')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "depthWrite")
+        .add(particleSystemConfig.renderer, 'depthWrite')
         .onChange(recreateParticleSystem)
         .listen()
     );
