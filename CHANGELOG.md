@@ -1,3 +1,26 @@
+# [2.5.0](https://github.com/NewKrok/three-particles-editor/compare/v2.4.0...v2.5.0) (2026-01-24)
+
+### Bug Fixes
+
+- correct bezier editor canvas sizing and alignment ([b98a6b0](https://github.com/NewKrok/three-particles-editor/commit/b98a6b0947db88743a367f4a55e2cf33c54ce655))
+- restore right-panel container for lil-gui positioning ([5e30995](https://github.com/NewKrok/three-particles-editor/commit/5e30995c0ec4d8b2f253e76d5b939037b5d2b56e))
+- unify gradient editor help panel style with bezier editor ([f572767](https://github.com/NewKrok/three-particles-editor/commit/f5727672d04fe702b283ae321b03d3c0a3eb1f50)), closes [#333](https://github.com/NewKrok/three-particles-editor/issues/333) [#2a2a2a](https://github.com/NewKrok/three-particles-editor/issues/2a2a2a) [#444](https://github.com/NewKrok/three-particles-editor/issues/444) [#4a9eff](https://github.com/NewKrok/three-particles-editor/issues/4a9eff)
+
+### Features
+
+- add download button for all textures in library ([7d759b8](https://github.com/NewKrok/three-particles-editor/commit/7d759b83c6db185d86941ffa55205baa8ce86e11))
+- add preview images for particle effect examples ([ec64965](https://github.com/NewKrok/three-particles-editor/commit/ec649659d787462da499daa4f681735764ec10c8))
+- add screenshot capture functionality with Shift+S hotkey ([2b57a51](https://github.com/NewKrok/three-particles-editor/commit/2b57a517ebd6f49dc997755375ca954ee59333cc))
+- add soft-smoke particle texture ([d7362ca](https://github.com/NewKrok/three-particles-editor/commit/d7362cafeb8a24819718fbc0563d089ce7fe2869))
+- add texture selector modal to renderer settings ([d63db50](https://github.com/NewKrok/three-particles-editor/commit/d63db50872e5e9ac5fbcabe9c20901aec74db86a))
+- add three new high-quality particle examples using soft-smoke texture ([0ccf5d2](https://github.com/NewKrok/three-particles-editor/commit/0ccf5d2c4e45e8b45740bd3f6976c76dcb069b09)), closes [hi#quality](https://github.com/hi/issues/quality)
+- add three new particle textures (light-streak, radial-burst, starburst) ([e7c33b6](https://github.com/NewKrok/three-particles-editor/commit/e7c33b6acd4738d8d34bf6fed53b9f89cd6870bb))
+- enable real-time particle system updates in bezier editor ([9821d39](https://github.com/NewKrok/three-particles-editor/commit/9821d3934130e291680c9f4151fc22b029049cd7))
+- enhance bezier curve editor with modal interface and expanded presets ([184763b](https://github.com/NewKrok/three-particles-editor/commit/184763bf7df262a25762d0bf4aee6ced636cd04a))
+- make entire modal draggable for curve and gradient editors ([23b5c74](https://github.com/NewKrok/three-particles-editor/commit/23b5c748a269c7c9593dd41e01d40c87e6124e5d))
+- redesign Arcane Vortex as Arcane Burst effect ([161f0b4](https://github.com/NewKrok/three-particles-editor/commit/161f0b441168672f72c4180f3c55dbeed89f0fbc)), closes [hi#quality](https://github.com/hi/issues/quality)
+- replace Celestial Impact with Solar Flare effect ([51741a4](https://github.com/NewKrok/three-particles-editor/commit/51741a4c0e0bbb1c5689474ef33ff3efeff4c508))
+
 # [2.4.0](https://github.com/NewKrok/three-particles-editor/compare/v2.3.0...v2.4.0) (2026-01-22)
 
 ### Bug Fixes
