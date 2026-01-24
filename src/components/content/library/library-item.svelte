@@ -14,6 +14,23 @@
   $: if (name || name === '') rename({ id, name });
 
   const removeRequest = () => (open = true);
+
+  const downloadTexture = async () => {
+    try {
+      const response = await fetch(normalizedUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${name}.png`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Failed to download texture:', error);
+    }
+  };
 </script>
 
 <div class="wrapper">
@@ -26,11 +43,19 @@
     <Content class="mdc-typography--body2">
       {#if isDefault}
         <div class="default-name">{name}</div>
+        <PrimaryAction on:click={downloadTexture}>
+          <Icon class="material-icons">download</Icon>
+        </PrimaryAction>
       {:else}
         <Textfield bind:value={name} />
-        <PrimaryAction on:click={removeRequest}>
-          <Icon class="material-icons">delete</Icon>
-        </PrimaryAction>
+        <div class="actions">
+          <PrimaryAction on:click={downloadTexture}>
+            <Icon class="material-icons">download</Icon>
+          </PrimaryAction>
+          <PrimaryAction on:click={removeRequest}>
+            <Icon class="material-icons">delete</Icon>
+          </PrimaryAction>
+        </div>
       {/if}
     </Content>
   </Card>
@@ -97,5 +122,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
   }
 </style>
