@@ -1,0 +1,287 @@
+{
+  "startLifetime": {
+    "min": 1,
+    "max": 1.5
+  },
+  "startSpeed": {
+    "min": 0,
+    "max": 0
+  },
+  "startSize": {
+    "min": 4,
+    "max": 7
+  },
+  "startOpacity": {
+    "min": 0.85,
+    "max": 1
+  },
+  "startRotation": {
+    "min": 0,
+    "max": 360
+  },
+  "startColor": {
+    "min": {
+      "r": 0.5,
+      "g": 0.3,
+      "b": 1
+    },
+    "max": {
+      "r": 0.8,
+      "g": 0.5,
+      "b": 1
+    }
+  },
+  "simulationSpace": "WORLD",
+  "maxParticles": 80,
+  "emission": {
+    "rateOverTime": 0,
+    "rateOverDistance": 25
+  },
+  "shape": {
+    "shape": "SPHERE",
+    "sphere": {
+      "radius": 0.01
+    }
+  },
+  "renderer": {
+    "blending": "THREE.AdditiveBlending"
+  },
+  "sizeOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0.4,
+          "percentage": 0
+        },
+        {
+          "x": 0.1,
+          "y": 0.7
+        },
+        {
+          "x": 0.08,
+          "y": 0.85
+        },
+        {
+          "x": 0.35,
+          "y": 1,
+          "percentage": 0.35
+        },
+        {
+          "x": 0.65,
+          "y": 0.95
+        },
+        {
+          "x": 0.85,
+          "y": 0.6
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "percentage": 1
+        }
+      ]
+    }
+  },
+  "colorOverLifetime": {
+    "isActive": true,
+    "r": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0.6,
+          "percentage": 0
+        },
+        {
+          "x": 0.2,
+          "y": 0.8
+        },
+        {
+          "x": 0.4,
+          "y": 1,
+          "percentage": 0.4
+        },
+        {
+          "x": 0.6,
+          "y": 0.9,
+          "percentage": 0.6
+        },
+        {
+          "x": 0.8,
+          "y": 0.7
+        },
+        {
+          "x": 1,
+          "y": 0.5,
+          "percentage": 1
+        }
+      ]
+    },
+    "g": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0.4,
+          "percentage": 0
+        },
+        {
+          "x": 0.2,
+          "y": 0.6
+        },
+        {
+          "x": 0.5,
+          "y": 0.8,
+          "percentage": 0.5
+        },
+        {
+          "x": 0.75,
+          "y": 0.6
+        },
+        {
+          "x": 1,
+          "y": 0.3,
+          "percentage": 1
+        }
+      ]
+    },
+    "b": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 1,
+          "percentage": 0
+        },
+        {
+          "x": 0.15,
+          "y": 1
+        },
+        {
+          "x": 0.4,
+          "y": 0.95,
+          "percentage": 0.4
+        },
+        {
+          "x": 0.7,
+          "y": 0.85,
+          "percentage": 0.7
+        },
+        {
+          "x": 0.9,
+          "y": 0.9
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "percentage": 1
+        }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0,
+          "percentage": 0
+        },
+        {
+          "x": 0.05,
+          "y": 0.95
+        },
+        {
+          "x": 0.03,
+          "y": 1
+        },
+        {
+          "x": 0.4,
+          "y": 1,
+          "percentage": 0.4
+        },
+        {
+          "x": 0.75,
+          "y": 0.85
+        },
+        {
+          "x": 0.9,
+          "y": 0.35
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "percentage": 1
+        }
+      ]
+    }
+  },
+  "rotationOverLifetime": {
+    "isActive": true,
+    "min": -90,
+    "max": 90
+  },
+  "noise": {
+    "isActive": true,
+    "useRandomOffset": true,
+    "strength": 0.15,
+    "frequency": 0.4,
+    "positionAmount": 0.2,
+    "rotationAmount": 2,
+    "sizeAmount": 0.15
+  },
+  "_editorData": {
+    "textureId": "STARBURST",
+    "simulation": {
+      "movements": "PROJECTILE_STRAIGHT",
+      "movementSpeed": 2,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "frustumCulled": true,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "gradientStops": [
+      {
+        "position": 0,
+        "color": {
+          "r": 127,
+          "g": 76,
+          "b": 255,
+          "a": 255
+        }
+      },
+      {
+        "position": 0.5,
+        "color": {
+          "r": 204,
+          "g": 127,
+          "b": 255,
+          "a": 230
+        }
+      },
+      {
+        "position": 1,
+        "color": {
+          "r": 153,
+          "g": 102,
+          "b": 242,
+          "a": 0
+        }
+      }
+    ],
+    "metadata": {
+      "name": "Supernova Burst",
+      "createdAt": 1737734400000,
+      "modifiedAt": 1737734400000,
+      "editorVersion": "2.3.0"
+    }
+  }
+}

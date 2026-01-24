@@ -1,6 +1,6 @@
-import { TextureId } from "../texture-config";
-import { blendingMap } from "@newkrok/three-particles";
-import { getTexture } from "../assets";
+import { blendingMap } from '@newkrok/three-particles';
+import { getTexture } from '../assets';
+import { openTextureSelectorModal } from '../texture-selector/texture-selector';
 
 type RendererEntriesParams = {
   parentFolder: any;
@@ -19,9 +19,9 @@ export const createRendererEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }: RendererEntriesParams): RendererEntriesResult => {
-  let lastUsedTextureId = "";
+  let lastUsedTextureId = '';
 
-  const folder = parentFolder.addFolder("Renderer");
+  const folder = parentFolder.addFolder('Renderer');
   folder.close();
 
   const setConfigByTexture = (textureId: string): void => {
@@ -44,92 +44,72 @@ export const createRendererEntries = ({
     controllers.forEach((controller) => controller.destroy());
     controllers = [];
 
-    let customAssetList =
-      JSON.parse(localStorage.getItem("particle-system-editor/library") || "[]") || [];
+    // Add a display field showing current texture
+    const displayTextureConfig = {
+      selectedTexture: particleSystemConfig._editorData.textureId || 'None',
+    };
 
     controllers.push(
       folder
-        .add(
-          particleSystemConfig._editorData,
-          "textureId",
-          customAssetList
-            .map(({ name }: { name: string }) => name)
-            .concat(
-              [
-                TextureId.POINT,
-                TextureId.GRADIENT_POINT,
-                TextureId.CIRCLE,
-                TextureId.CLOUD,
-                TextureId.FLAME,
-                TextureId.FLARE,
-                TextureId.STAR,
-                TextureId.STAR_TOON,
-                TextureId.PLUS,
-                TextureId.PLUS_TOON,
-                TextureId.MOON,
-                TextureId.RAINDROP,
-                TextureId.LEAF_TOON,
-                TextureId.SNOWFLAKE,
-                TextureId.NUMBERS,
-                TextureId.NUMBERS_TOON,
-                TextureId.CONFETTI,
-                TextureId.CONFETTI_TOON,
-                TextureId.MAGIC_EXPLOSION,
-                TextureId.FEATHER,
-                TextureId.SKULL,
-                TextureId.HEART,
-                TextureId.ROCKS,
-                TextureId.SQUARE,
-              ].sort()
-            )
-        )
+        .add(displayTextureConfig, 'selectedTexture')
+        .name('Selected Texture')
         .listen()
-        .onChange((v: string) => {
-          setConfigByTexture(v);
-          recreateParticleSystem();
-        })
+        .disable()
     );
+
+    // Add button to open texture selector
+    const textureSelectButton = {
+      selectTexture: () => {
+        openTextureSelectorModal({
+          currentTextureId: particleSystemConfig._editorData.textureId,
+          onSelect: (textureId: string) => {
+            particleSystemConfig._editorData.textureId = textureId;
+            displayTextureConfig.selectedTexture = textureId;
+            setConfigByTexture(textureId);
+            recreateParticleSystem();
+          },
+        });
+      },
+    };
+
+    controllers.push(folder.add(textureSelectButton, 'selectTexture').name('Choose Texture...'));
+
     setConfigByTexture(particleSystemConfig._editorData.textureId);
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "discardBackgroundColor")
+        .add(particleSystemConfig.renderer, 'discardBackgroundColor')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .add(
-          particleSystemConfig.renderer,
-          "backgroundColorTolerance",
-          0.0,
-          2.0,
-          0.001
-        )
+        .add(particleSystemConfig.renderer, 'backgroundColorTolerance', 0.0, 2.0, 0.001)
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .addColor(particleSystemConfig.renderer, "backgroundColor")
+        .addColor(particleSystemConfig.renderer, 'backgroundColor')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
-    if (typeof particleSystemConfig.renderer.blending === "number")
+    if (typeof particleSystemConfig.renderer.blending === 'number')
       particleSystemConfig.renderer.blending = Object.keys(blendingMap).find(
-        (entry) => blendingMap[entry as keyof typeof blendingMap] === particleSystemConfig.renderer.blending
+        (entry) =>
+          blendingMap[entry as keyof typeof blendingMap] === particleSystemConfig.renderer.blending
       );
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "blending", [
-          "THREE.NoBlending",
-          "THREE.NormalBlending",
-          "THREE.AdditiveBlending",
-          "THREE.SubtractiveBlending",
-          "THREE.MultiplyBlending",
+        .add(particleSystemConfig.renderer, 'blending', [
+          'THREE.NoBlending',
+          'THREE.NormalBlending',
+          'THREE.AdditiveBlending',
+          'THREE.SubtractiveBlending',
+          'THREE.MultiplyBlending',
         ])
         .listen()
         .onChange(recreateParticleSystem)
@@ -137,21 +117,21 @@ export const createRendererEntries = ({
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "transparent")
+        .add(particleSystemConfig.renderer, 'transparent')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "depthTest")
+        .add(particleSystemConfig.renderer, 'depthTest')
         .onChange(recreateParticleSystem)
         .listen()
     );
 
     controllers.push(
       folder
-        .add(particleSystemConfig.renderer, "depthWrite")
+        .add(particleSystemConfig.renderer, 'depthWrite')
         .onChange(recreateParticleSystem)
         .listen()
     );

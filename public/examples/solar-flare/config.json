@@ -1,0 +1,324 @@
+{
+  "transform": {
+    "rotation": {
+      "x": -90
+    }
+  },
+  "duration": 0.2,
+  "looping": false,
+  "startLifetime": {
+    "min": 0.4,
+    "max": 0.67
+  },
+  "startSpeed": {
+    "min": 0.11,
+    "max": 0.93
+  },
+  "startSize": {
+    "min": 5,
+    "max": 12.25
+  },
+  "startOpacity": {
+    "min": 0.7,
+    "max": 0.9
+  },
+  "startRotation": {
+    "min": 0,
+    "max": 360
+  },
+  "startColor": {
+    "min": {
+      "r": 1,
+      "g": 0.85,
+      "b": 0.4
+    },
+    "max": {
+      "r": 1,
+      "g": 0.95,
+      "b": 0.6
+    }
+  },
+  "gravity": -1.4,
+  "maxParticles": 83,
+  "emission": {
+    "rateOverTime": 255
+  },
+  "shape": {
+    "shape": "SPHERE",
+    "sphere": {
+      "radius": 0.2064
+    }
+  },
+  "renderer": {
+    "blending": "THREE.AdditiveBlending"
+  },
+  "velocityOverLifetime": {
+    "isActive": true,
+    "orbital": {
+      "x": {
+        "min": -0.6,
+        "max": 0.6
+      },
+      "y": {
+        "min": -0.6,
+        "max": 0.6
+      },
+      "z": {
+        "min": -0.6,
+        "max": 0.6
+      }
+    }
+  },
+  "sizeOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0.3,
+          "percentage": 0
+        },
+        {
+          "x": 0.08,
+          "y": 0.75
+        },
+        {
+          "x": 0.06,
+          "y": 0.9
+        },
+        {
+          "x": 0.25,
+          "y": 1,
+          "percentage": 0.25
+        },
+        {
+          "x": 0.55,
+          "y": 0.9
+        },
+        {
+          "x": 0.8,
+          "y": 0.6
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "percentage": 1
+        }
+      ]
+    }
+  },
+  "colorOverLifetime": {
+    "isActive": true,
+    "r": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 1,
+          "percentage": 0
+        },
+        {
+          "x": 0.15,
+          "y": 1
+        },
+        {
+          "x": 0.35,
+          "y": 0.95,
+          "percentage": 0.35
+        },
+        {
+          "x": 0.6,
+          "y": 0.8,
+          "percentage": 0.6
+        },
+        {
+          "x": 0.85,
+          "y": 0.6
+        },
+        {
+          "x": 1,
+          "y": 0.4,
+          "percentage": 1
+        }
+      ]
+    },
+    "g": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0.95,
+          "percentage": 0
+        },
+        {
+          "x": 0.2,
+          "y": 0.9
+        },
+        {
+          "x": 0.4,
+          "y": 0.8,
+          "percentage": 0.4
+        },
+        {
+          "x": 0.65,
+          "y": 0.6,
+          "percentage": 0.65
+        },
+        {
+          "x": 0.85,
+          "y": 0.35
+        },
+        {
+          "x": 1,
+          "y": 0.2,
+          "percentage": 1
+        }
+      ]
+    },
+    "b": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 0.55,
+          "percentage": 0
+        },
+        {
+          "x": 0.2,
+          "y": 0.4
+        },
+        {
+          "x": 0.4,
+          "y": 0.3,
+          "percentage": 0.4
+        },
+        {
+          "x": 0.6,
+          "y": 0.2,
+          "percentage": 0.6
+        },
+        {
+          "x": 0.8,
+          "y": 0.15
+        },
+        {
+          "x": 1,
+          "y": 0.1,
+          "percentage": 1
+        }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        {
+          "x": 0,
+          "y": 1,
+          "percentage": 0
+        },
+        {
+          "x": 0.12,
+          "y": 1
+        },
+        {
+          "x": 0.1,
+          "y": 0.98
+        },
+        {
+          "x": 0.45,
+          "y": 0.95,
+          "percentage": 0.45
+        },
+        {
+          "x": 0.7,
+          "y": 0.7
+        },
+        {
+          "x": 0.88,
+          "y": 0.3
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "percentage": 1
+        }
+      ]
+    }
+  },
+  "rotationOverLifetime": {
+    "isActive": true,
+    "min": -150,
+    "max": 150
+  },
+  "noise": {
+    "isActive": true,
+    "useRandomOffset": true,
+    "strength": 0.3,
+    "frequency": 0.35,
+    "positionAmount": 0.4,
+    "rotationAmount": 2.2,
+    "sizeAmount": 0.25
+  },
+  "_editorData": {
+    "textureId": "STARBURST",
+    "simulation": {
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "frustumCulled": true,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "gradientStops": [
+      {
+        "position": 0,
+        "color": {
+          "r": 255,
+          "g": 242,
+          "b": 102,
+          "a": 255
+        }
+      },
+      {
+        "position": 0.35,
+        "color": {
+          "r": 255,
+          "g": 204,
+          "b": 51,
+          "a": 240
+        }
+      },
+      {
+        "position": 0.7,
+        "color": {
+          "r": 255,
+          "g": 153,
+          "b": 25,
+          "a": 180
+        }
+      },
+      {
+        "position": 1,
+        "color": {
+          "r": 204,
+          "g": 102,
+          "b": 0,
+          "a": 0
+        }
+      }
+    ],
+    "metadata": {
+      "name": "Solar Flare",
+      "createdAt": 1737734400000,
+      "modifiedAt": 1737734400000,
+      "editorVersion": "2.3.0"
+    }
+  }
+}

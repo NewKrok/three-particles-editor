@@ -16,7 +16,12 @@ import {
   updateParticleSystems,
 } from '@newkrok/three-particles';
 import { convertToNewFormat } from './three-particles-editor/config-converter';
-import { createWorld, setTerrain, updateWorld } from './three-particles-editor/world';
+import {
+  createWorld,
+  setTerrain,
+  updateWorld,
+  captureScreenshot,
+} from './three-particles-editor/world';
 import { initAssets, loadCustomAssets } from './three-particles-editor/assets';
 
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
@@ -94,10 +99,10 @@ type ParticleSystem = {
 
 type ConfigEntry = {
   onReset?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   onParticleSystemChange?: (particleSystem: ParticleSystem) => void;
   onAssetUpdate?: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   onUpdate?: (cycleData: CycleData) => void;
 };
 
@@ -199,6 +204,14 @@ export const createParticleSystemEditor = (targetQuery: string): void => {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) pauseTime();
     else if (!isPaused) resumeTime();
+  });
+
+  // Screenshot hotkey: Shift + S
+  document.addEventListener('keydown', (event) => {
+    if (event.shiftKey && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      captureScreenshot();
+    }
   });
 
   initAssets(() => {
@@ -378,6 +391,7 @@ interface EditorInterface {
   getCurrentParticleSystemConfig: () => ParticleSystemConfig;
   updateConfigMetadata: (name?: string) => ConfigMetadata;
   getConfigMetadata: () => ConfigMetadata;
+  captureScreenshot: () => void;
 }
 
 declare global {
@@ -442,4 +456,5 @@ window.editor = {
 
     return particleSystemConfig._editorData.metadata;
   },
+  captureScreenshot,
 };

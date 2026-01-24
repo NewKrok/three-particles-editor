@@ -10,19 +10,10 @@
 <div class="wrapper">
   <div id="three-particles-editor" />
   <div class="stats" class:collapsed={isLeftPanelCollapsed} />
+  <div class="right-panel" />
   <LeftSide bind:isCollapsed={isLeftPanelCollapsed} />
   <ControlPanel />
   <KofiButton floating={true} />
-  <div class="right-panel">
-    <div class="curve-editor">
-      <div class="curve-editor__title">Bezier curve editor</div>
-      <div class="curve-editor__content">
-        <canvas class="curve-editor__canvas" width="300px" height="200px" />
-        <div class="draggable-points" />
-      </div>
-      <div class="curve-editor__predefined-list" />
-    </div>
-  </div>
   <div class="gradient-editor-modal" style="display: none;">
     <div class="gradient-editor-modal__content">
       <div class="gradient-editor-modal__header">
@@ -43,6 +34,51 @@
           <p><strong>Right-click</strong> a stop to delete (except first/last)</p>
         </div>
         <div class="gradient-editor-presets"></div>
+      </div>
+    </div>
+  </div>
+  <div class="bezier-editor-modal" style="display: none;">
+    <div class="bezier-editor-modal__content">
+      <div class="bezier-editor-modal__header">
+        <h2>Bezier Curve Editor</h2>
+        <div class="bezier-editor-modal__header-buttons">
+          <button class="bezier-editor-modal__info" title="Toggle controls info">?</button>
+          <button class="bezier-editor-modal__close">×</button>
+        </div>
+      </div>
+      <div class="bezier-editor-modal__body">
+        <div class="bezier-editor__content">
+          <canvas class="bezier-editor__canvas" width="300" height="200" />
+          <div class="draggable-points" />
+        </div>
+        <div class="bezier-editor-info" style="display: none;">
+          <p><strong>Drag</strong> the points to adjust the curve shape</p>
+          <p><strong>Control handles</strong> adjust the curve smoothness between points</p>
+          <p><strong>First and last</strong> points can only move vertically</p>
+          <p><strong>Middle point</strong> can move freely within the canvas</p>
+        </div>
+        <div class="bezier-editor-presets"></div>
+      </div>
+    </div>
+  </div>
+  <div class="texture-selector-modal" style="display: none;">
+    <div class="texture-selector-modal__content">
+      <div class="texture-selector-modal__header">
+        <h2>Texture Selector</h2>
+        <div class="texture-selector-modal__header-buttons">
+          <button class="texture-selector-modal__close">×</button>
+        </div>
+      </div>
+      <div class="texture-selector-modal__body">
+        <div class="texture-selector-search">
+          <span class="material-icons texture-selector-search-icon">search</span>
+          <input
+            type="text"
+            class="texture-selector-search-input"
+            placeholder="Search textures..."
+          />
+        </div>
+        <div class="texture-selector-grid"></div>
       </div>
     </div>
   </div>
@@ -75,6 +111,21 @@
           left: 40px !important;
         }
       }
+    }
+
+    .right-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: flex-end;
+      overflow: hidden;
+      font-size: 11px;
+      width: 310px;
+      font-weight: 600;
     }
   }
 </style>

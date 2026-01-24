@@ -38,47 +38,11 @@ canvas {
   user-select: none;
 }
 
-.right-panel {
-  font-weight: 600;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  height: 100%;
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  overflow: hidden;
-  font-size: 11px;
-  width: 310px;
-}
-
 .lil-gui.root {
-  max-height: calc(100% - 290px);
+  max-height: 100%;
 }
 
-.curve-editor {
-  background: #222;
-  border: 1px solid #333;
-  padding: 5px;
-  position: relative;
-}
-
-.curve-editor__title {
-  color: #fff;
-  margin-bottom: 5px;
-  user-select: none;
-}
-
-.curve-editor__content {
-  line-height: 0;
-  position: relative;
-}
-
-.curve-editor__canvas {
-  width: 300px;
-  height: 200px;
-}
+/* Old fixed-position curve editor styles removed - now using modal */
 
 .draggable-points {
   width: 300px;
@@ -86,10 +50,11 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
+  cursor: auto !important;
 }
 
 .draggable-point {
-  cursor: pointer;
+  cursor: pointer !important;
   background: #ffffff55;
   border-radius: 50%;
   left: 0;
@@ -113,27 +78,7 @@ canvas {
   transform: translate(5px, 5px);
 }
 
-.curve-editor__predefined-list {
-  display: flex;
-  max-width: 100%;
-  gap: 4px;
-  margin-top: 15px;
-}
-
-.curve-editor__predefined-entry {
-  cursor: pointer;
-  border: 1px solid #ffffff55;
-  flex: 1;
-  height: 43px;
-  background-color: #000;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.curve-editor__predefined-entry:hover {
-  border: 1px solid #ffffff;
-}
+/* Old preset list styles removed - now using modal with new button-based presets */
 
 /* Gradient Editor Modal */
 .gradient-editor-modal {
@@ -160,6 +105,7 @@ canvas {
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
   pointer-events: auto;
+  cursor: grab;
 }
 
 .gradient-editor-modal__header {
@@ -169,7 +115,6 @@ canvas {
   margin-bottom: 20px;
   border-bottom: 1px solid #444;
   padding-bottom: 10px;
-  cursor: move;
   user-select: none;
 }
 
@@ -228,13 +173,14 @@ canvas {
   background: #333;
   border-radius: 4px;
   padding: 10px;
+  cursor: auto !important;
 }
 
 .gradient-editor-canvas {
   width: 100%;
   display: block;
   border-radius: 4px;
-  cursor: crosshair;
+  cursor: crosshair !important;
 }
 
 .gradient-stop-handle {
@@ -243,7 +189,7 @@ canvas {
   height: 16px;
   border-radius: 50%;
   border: 2px solid white;
-  cursor: pointer;
+  cursor: pointer !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.1s;
 }
@@ -253,15 +199,21 @@ canvas {
 }
 
 .gradient-editor-info {
-  background: #333;
-  border-radius: 4px;
-  padding: 10px;
-  font-size: 11px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
   color: #aaa;
+  line-height: 1.6;
 }
 
 .gradient-editor-info p {
   margin: 4px 0;
+}
+
+.gradient-editor-info strong {
+  color: #4a9eff;
 }
 
 .gradient-editor-presets {
@@ -274,6 +226,7 @@ canvas {
   background: #2a2a2a;
   border-radius: 6px;
   border: 1px solid #444;
+  cursor: auto !important;
 }
 
 .gradient-preset-button {
@@ -283,7 +236,7 @@ canvas {
   gap: 4px;
   padding: 6px;
   font-size: 11px;
-  cursor: pointer;
+  cursor: pointer !important;
   border: 2px solid #666;
   background: #333;
   color: #fff;
@@ -333,4 +286,423 @@ canvas {
 
 .gradient-preset-delete:hover {
   background: #ff6666;
+}
+
+/* Bezier Editor Modal */
+.bezier-editor-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.bezier-editor-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.bezier-editor-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  user-select: none;
+}
+
+.bezier-editor-modal__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.bezier-editor-modal__header-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.bezier-editor-modal__info,
+.bezier-editor-modal__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.bezier-editor-modal__info {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bezier-editor-modal__close {
+  font-size: 28px;
+}
+
+.bezier-editor-modal__info:hover,
+.bezier-editor-modal__close:hover {
+  background: #444;
+}
+
+.bezier-editor-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bezier-editor__content {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 0 auto;
+  cursor: auto !important;
+}
+
+.bezier-editor__canvas {
+  display: block;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #1a1a1a;
+  cursor: auto !important;
+}
+
+.bezier-editor-info {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.bezier-editor-info p {
+  margin: 4px 0;
+}
+
+.bezier-editor-info strong {
+  color: #4a9eff;
+}
+
+.bezier-editor-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 6px;
+  border: 1px solid #444;
+  cursor: auto !important;
+}
+
+.bezier-preset-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  font-size: 11px;
+  cursor: pointer !important;
+  border: 2px solid #666;
+  background: #333;
+  color: #fff;
+  border-radius: 4px;
+  transition: all 0.15s;
+  min-width: 70px;
+}
+
+.bezier-preset-button:hover {
+  background: #3a3a3a;
+  border-color: #888;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bezier-preset-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.bezier-save-button:hover {
+  background: #333 !important;
+  border-color: #6bb3ff !important;
+}
+
+.bezier-preset-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.bezier-preset-delete:hover {
+  background: #ff6666;
+}
+
+/* Texture Selector Modal */
+.texture-selector-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.texture-selector-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 650px;
+  width: 85%;
+  max-height: 75vh;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  pointer-events: auto;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+}
+
+.texture-selector-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  user-select: none;
+}
+
+.texture-selector-modal__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.texture-selector-modal__header-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.texture-selector-modal__close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.texture-selector-modal__close:hover {
+  background: #444;
+}
+
+.texture-selector-modal__body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.texture-selector-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+}
+
+.texture-selector-search-icon {
+  color: #888;
+  font-size: 20px;
+  user-select: none;
+}
+
+.texture-selector-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  padding: 4px;
+}
+
+.texture-selector-search-input::placeholder {
+  color: #666;
+}
+
+.texture-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(140px, auto);
+  gap: 12px;
+  overflow-y: auto;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 6px;
+  border: 1px solid #444;
+  cursor: auto !important;
+  max-height: calc(75vh - 180px);
+}
+
+.texture-selector-item {
+  display: flex;
+  flex-direction: column;
+  background: #333;
+  border: 2px solid #555;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.texture-selector-item:hover {
+  border-color: #888;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.texture-selector-item--selected {
+  border-color: #4a9eff;
+  background: #3a3a3a;
+}
+
+.texture-selector-item--selected:hover {
+  border-color: #6bb3ff;
+}
+
+.texture-selector-preview {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  background: #1a1a1a;
+  flex-shrink: 0;
+}
+
+.texture-selector-transparent-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(./static/transparent.webp);
+  background-repeat: repeat;
+  background-size: 20%;
+}
+
+.texture-selector-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.texture-selector-circle-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.texture-selector-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background: #2a2a2a;
+  gap: 8px;
+}
+
+.texture-selector-name {
+  flex: 1;
+  font-size: 11px;
+  color: #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.texture-selector-download {
+  background: #4a9eff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.texture-selector-download:hover {
+  background: #6bb3ff;
 }
