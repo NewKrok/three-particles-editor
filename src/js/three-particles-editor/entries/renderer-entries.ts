@@ -83,6 +83,7 @@ export const createRendererEntries = ({
                 TextureId.LIGHT_STREAK,
                 TextureId.RADIAL_BURST,
                 TextureId.STARBURST,
+                TextureId.SOFT_SMOKE,
               ].sort()
             )
         )

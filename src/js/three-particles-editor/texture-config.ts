@@ -31,6 +31,7 @@ export const TextureId = {
   LIGHT_STREAK: 'LIGHT_STREAK',
   RADIAL_BURST: 'RADIAL_BURST',
   STARBURST: 'STARBURST',
+  SOFT_SMOKE: 'SOFT_SMOKE',
   WIREFRAME: 'WIREFRAME',
 };
 
@@ -194,6 +195,11 @@ export const textureConfigs: TextureConfig[] = [
   {
     id: TextureId.STARBURST,
     url: './assets/textures/starbust.webp',
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.SOFT_SMOKE,
+    url: './assets/textures/soft-smoke.webp',
     isParticleTexture: true,
   },
 ];
