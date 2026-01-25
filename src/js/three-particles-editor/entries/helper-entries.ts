@@ -4,6 +4,7 @@ import { TextureId } from '../texture-config';
 import { setTerrain } from '../world';
 import type { ParticleSystem, ParticleSystemConfig } from '@newkrok/three-particles';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
+import { updateShapeHelper } from '../shape-helper';
 
 const worldAxesHelper = new THREE.AxesHelper(5);
 const localAxesHelper = new THREE.AxesHelper(1);
@@ -152,6 +153,19 @@ export const createHelperEntries = ({
     .onChange(updateWorldAxesHelper)
     .listen();
 
+  const updateShapeHelperVisibility = (): void => {
+    updateShapeHelper(
+      particleSystemContainer,
+      particleSystemConfig.shape,
+      particleSystemConfig._editorData.showShape
+    );
+  };
+  folder
+    .add(particleSystemConfig._editorData, 'showShape')
+    .name('Show shape')
+    .onChange(updateShapeHelperVisibility)
+    .listen();
+
   folder
     .add(particleSystemConfig._editorData.terrain, 'textureId', [
       TextureId.WIREFRAME,
@@ -167,11 +181,13 @@ export const createHelperEntries = ({
 
   updateLocalAxesHelper();
   updateWorldAxesHelper();
+  updateShapeHelperVisibility();
 
   return {
     onParticleSystemChange: (): void => {
       updateLocalAxesHelper();
       updateWorldAxesHelper();
+      updateShapeHelperVisibility();
     },
     onUpdate: ({ elapsed }: { elapsed: number }): void => {
       if (particleSystemContainer) {
@@ -263,6 +279,7 @@ export const createHelperEntries = ({
     },
     onReset: (): void => {
       updateWorldAxesHelper();
+      updateShapeHelperVisibility();
       particleSystemContainer.position.x = 0;
       particleSystemContainer.position.y = 0;
       particleSystemContainer.position.z = 0;
