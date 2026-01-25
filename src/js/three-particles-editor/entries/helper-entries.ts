@@ -54,6 +54,8 @@ type HelperEntriesResult = {
   onReset: () => void;
 };
 
+let currentParticleSystem: ParticleSystem | null = null;
+
 export const createHelperEntries = ({
   parentFolder,
   particleSystemConfig,
@@ -154,11 +156,13 @@ export const createHelperEntries = ({
     .listen();
 
   const updateShapeHelperVisibility = (): void => {
-    updateShapeHelper(
-      particleSystemContainer,
-      particleSystemConfig.shape,
-      particleSystemConfig._editorData.showShape
-    );
+    if (currentParticleSystem) {
+      updateShapeHelper(
+        currentParticleSystem.instance,
+        particleSystemConfig.shape,
+        particleSystemConfig._editorData.showShape
+      );
+    }
   };
   folder
     .add(particleSystemConfig._editorData, 'showShape')
@@ -181,10 +185,12 @@ export const createHelperEntries = ({
 
   updateLocalAxesHelper();
   updateWorldAxesHelper();
-  updateShapeHelperVisibility();
+  // Note: updateShapeHelperVisibility() is called in onParticleSystemChange
+  // because it needs the particle system instance to be created first
 
   return {
-    onParticleSystemChange: (): void => {
+    onParticleSystemChange: (particleSystem: ParticleSystem): void => {
+      currentParticleSystem = particleSystem;
       updateLocalAxesHelper();
       updateWorldAxesHelper();
       updateShapeHelperVisibility();
