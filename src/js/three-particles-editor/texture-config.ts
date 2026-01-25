@@ -33,6 +33,8 @@ export const TextureId = {
   STARBURST: 'STARBURST',
   SOFT_SMOKE: 'SOFT_SMOKE',
   WIREFRAME: 'WIREFRAME',
+  VORTEX: 'VORTEX',
+  BUBBLES: 'BUBBLES',
 };
 
 type TextureConfig = {
@@ -200,6 +202,16 @@ export const textureConfigs: TextureConfig[] = [
   {
     id: TextureId.SOFT_SMOKE,
     url: './assets/textures/soft-smoke.webp',
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.VORTEX,
+    url: './assets/textures/vortex.webp',
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.BUBBLES,
+    url: './assets/textures/bubbles.webp',
     isParticleTexture: true,
   },
 ];

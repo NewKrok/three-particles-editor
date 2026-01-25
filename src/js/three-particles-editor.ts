@@ -71,6 +71,7 @@ type EditorData = {
   };
   showLocalAxes: boolean;
   showWorldAxes: boolean;
+  showShape: boolean;
   frustumCulled: boolean;
   terrain: {
     textureId: string;
@@ -121,6 +122,7 @@ const defaultEditorData: EditorData = {
   },
   showLocalAxes: false,
   showWorldAxes: false,
+  showShape: false,
   frustumCulled: true,
   terrain: {
     textureId: TextureId.WIREFRAME,

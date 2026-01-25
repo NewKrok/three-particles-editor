@@ -190,6 +190,8 @@ const renderTextureGrid = (): void => {
     TextureId.RADIAL_BURST,
     TextureId.STARBURST,
     TextureId.SOFT_SMOKE,
+    TextureId.VORTEX,
+    TextureId.BUBBLES,
   ]
     .map((id) => ({
       id,
