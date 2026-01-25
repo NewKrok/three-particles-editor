@@ -1,3 +1,19 @@
+# [2.6.0](https://github.com/NewKrok/three-particles-editor/compare/v2.5.0...v2.6.0) (2026-01-25)
+
+### Bug Fixes
+
+- add @semantic-release/npm plugin to update package.json version ([7debc17](https://github.com/NewKrok/three-particles-editor/commit/7debc177c945539e3a1df6a5933906c846950cf6))
+- remove duplicate config storage from examples-config.js ([1a16395](https://github.com/NewKrok/three-particles-editor/commit/1a163950f4ac7e828b2338b984c824a5300073f6))
+- shape helper now follows transform position values ([5cf480d](https://github.com/NewKrok/three-particles-editor/commit/5cf480d9f54f296f58d19e093637fcd26886501d))
+
+### Features
+
+- add Mystic Portal particle effect example ([b796712](https://github.com/NewKrok/three-particles-editor/commit/b796712a57bdc5955ab03586c37be08dfc6c6839))
+- add preview image for Rising Bubbles effect ([fb5e561](https://github.com/NewKrok/three-particles-editor/commit/fb5e56113cf464f5a8a02acf03d7356387874b0a))
+- add Show Shape debug helper to visualize emitter shapes ([27ec18b](https://github.com/NewKrok/three-particles-editor/commit/27ec18b70fefa8cc511e2d4d672efd8b88b49048))
+- add vortex and bubbles particle textures ([5edc0aa](https://github.com/NewKrok/three-particles-editor/commit/5edc0aa3f5fa80de040a1cdfa614a0d97b96bdf0))
+- replace Cauldron Bubbles with Rising Bubbles particle effect ([24bd39f](https://github.com/NewKrok/three-particles-editor/commit/24bd39fcd206c46db651a4a86f25b53f5ebeae21))
+
 # [2.5.0](https://github.com/NewKrok/three-particles-editor/compare/v2.4.0...v2.5.0) (2026-01-24)
 
 ### Bug Fixes
