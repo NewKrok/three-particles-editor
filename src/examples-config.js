@@ -63,7 +63,7 @@ const SMOKE =
 
 export const particleExamples = [
   {
-    name: 'Cauldron Bubbles',
+    name: 'Rising Bubbles',
   },
   {
     name: 'Mystic Portal',
