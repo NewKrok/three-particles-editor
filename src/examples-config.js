@@ -63,6 +63,9 @@ const SMOKE =
 
 export const particleExamples = [
   {
+    name: 'Snow Cannon',
+  },
+  {
     name: 'Rising Bubbles',
   },
   {
