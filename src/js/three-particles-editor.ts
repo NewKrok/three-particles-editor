@@ -405,18 +405,18 @@ declare global {
 window.editor = {
   createNew,
   load: (config: ParticleSystemConfig) => {
-    createNew();
     loadParticleSystem({
       config,
       particleSystemConfig,
       recreateParticleSystem,
+      onLoad: () => configEntries.forEach(({ onReset }) => onReset && onReset()),
     });
   },
   loadFromClipboard: () => {
-    createNew();
     loadFromClipboard({
       particleSystemConfig,
       recreateParticleSystem,
+      onLoad: () => configEntries.forEach(({ onReset }) => onReset && onReset()),
     });
   },
   copyToClipboard: () => copyToClipboard(particleSystemConfig),
