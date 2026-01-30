@@ -39,10 +39,7 @@ import { createSizeOverLifeTimeEntries } from './three-particles-editor/entries/
 import { createTextureSheetAnimationEntries } from './three-particles-editor/entries/texture-sheet-animation-entries';
 import { createTransformEntries } from './three-particles-editor/entries/transform-entries';
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
-import { ObjectUtils } from '@newkrok/three-utils';
 import { generateDefaultName } from './utils/name-utils';
-
-const { patchObject } = ObjectUtils;
 
 type ConfigMetadata = {
   name: string;
@@ -159,12 +156,6 @@ let isInitializing = false;
 const configEntries: ConfigEntry[] = [];
 
 export const createNew = (): void => {
-  console.log('[createNew] START - configDirty before:', configDirty);
-  console.log(
-    '[createNew] particleSystemConfig.general BEFORE:',
-    JSON.stringify(particleSystemConfig.general)
-  );
-
   // Create new metadata with current timestamp and generated name
   const newMetadata = {
     name: generateDefaultName(),
@@ -174,31 +165,29 @@ export const createNew = (): void => {
   };
 
   const defaultConfig = getDefaultParticleSystemConfig();
-  console.log('[createNew] defaultConfig.general:', JSON.stringify(defaultConfig.general));
 
-  // First reset the particle system config to defaults
-  patchObject(particleSystemConfig, defaultConfig, {
-    skippedProperties: ['_editorData'],
-    applyToFirstObject: true,
+  // Clear all existing properties from particleSystemConfig (except _editorData)
+  // This is necessary because patchObject doesn't handle type changes properly
+  // (e.g., when startLifetime changes from {min, max} object to a number)
+  Object.keys(particleSystemConfig).forEach((key) => {
+    if (key !== '_editorData') {
+      delete particleSystemConfig[key];
+    }
   });
 
-  console.log(
-    '[createNew] particleSystemConfig.general AFTER patchObject:',
-    JSON.stringify(particleSystemConfig.general)
-  );
-
-  // Then reset _editorData separately to ensure clean state
-  patchObject(particleSystemConfig._editorData, defaultEditorData, {
-    skippedProperties: [],
-    applyToFirstObject: true,
+  // Deep clone the default config and assign to particleSystemConfig
+  Object.keys(defaultConfig).forEach((key) => {
+    if (key !== '_editorData') {
+      particleSystemConfig[key] = JSON.parse(JSON.stringify(defaultConfig[key]));
+    }
   });
 
-  // Reset nested objects that need fresh copies
-  particleSystemConfig._editorData.simulation = { ...defaultEditorData.simulation };
-  particleSystemConfig._editorData.terrain = {
-    ...defaultEditorData.terrain,
-    ...defaultEditorData.simulation,
-  };
+  // Reset _editorData to defaults
+  const editorDataKeys = Object.keys(defaultEditorData);
+  editorDataKeys.forEach((key) => {
+    if (key === 'metadata') return; // Handle metadata separately
+    particleSystemConfig._editorData[key] = JSON.parse(JSON.stringify(defaultEditorData[key]));
+  });
 
   // Update metadata
   particleSystemConfig._editorData.metadata = newMetadata;
@@ -209,7 +198,6 @@ export const createNew = (): void => {
   configEntries.forEach(({ onReset }) => onReset && onReset());
   isInitializing = false;
   configDirty = false;
-  console.log('[createNew] END - configDirty after:', configDirty);
 };
 
 const resumeTime = (): void => {
@@ -281,14 +269,6 @@ const animate = (): void => {
 };
 
 const recreateParticleSystem = (markAsDirty = true): void => {
-  console.log(
-    '[recreateParticleSystem] called with markAsDirty:',
-    markAsDirty,
-    'isInitializing:',
-    isInitializing,
-    'configDirty before:',
-    configDirty
-  );
   resumeTime();
   if (particleSystem) {
     particleSystem.dispose();
@@ -309,7 +289,6 @@ const recreateParticleSystem = (markAsDirty = true): void => {
   if (markAsDirty && !isInitializing) {
     configDirty = true;
   }
-  console.log('[recreateParticleSystem] configDirty after:', configDirty);
 };
 
 const createPanel = (): void => {
@@ -453,7 +432,6 @@ declare global {
 window.editor = {
   createNew,
   load: (config: ParticleSystemConfig) => {
-    console.log('[editor.load] START - configDirty before:', configDirty);
     isInitializing = true;
     loadParticleSystem({
       config,
@@ -463,7 +441,6 @@ window.editor = {
     });
     isInitializing = false;
     configDirty = false;
-    console.log('[editor.load] END - configDirty after:', configDirty);
   },
   loadFromClipboard: () => {
     isInitializing = true;

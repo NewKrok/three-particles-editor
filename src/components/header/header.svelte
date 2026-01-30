@@ -70,7 +70,6 @@
 
   const createNewRequest = () => {
     const dirty = window.editor.isDirty();
-    console.log('[header.createNewRequest] isDirty:', dirty);
     if (dirty) {
       open = true;
     } else {
