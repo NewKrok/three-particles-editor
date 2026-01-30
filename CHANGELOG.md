@@ -1,3 +1,17 @@
+# [2.7.0](https://github.com/NewKrok/three-particles-editor/compare/v2.6.0...v2.7.0) (2026-01-30)
+
+### Bug Fixes
+
+- properly reset config when creating new particle system ([a7eb370](https://github.com/NewKrok/three-particles-editor/commit/a7eb3707de42635cce689ff1b981bfd40d3712d0))
+- resolve config loading issues and add missing texture ([e439ac3](https://github.com/NewKrok/three-particles-editor/commit/e439ac3b859da85cd7e8941f0262f98fd80c9f28))
+
+### Features
+
+- add burst emission mode support to editor ([f6db818](https://github.com/NewKrok/three-particles-editor/commit/f6db818f522ef1db1bfe540b88c1a62bbbc8c023))
+- add individual update method option to helper settings ([98733cd](https://github.com/NewKrok/three-particles-editor/commit/98733cd31990eb8e5f699d37441e13b2c16ced87))
+- add Snow Cannon particle effect with detailed snowflake texture ([22e8e9d](https://github.com/NewKrok/three-particles-editor/commit/22e8e9d53c4e50f10bc46b699cdbf1de6b95d549))
+- show confirmation dialog only when config has unsaved changes ([e1b0a12](https://github.com/NewKrok/three-particles-editor/commit/e1b0a12680b49c43dec8ef01fad7e86e77fff03b))
+
 # [2.6.0](https://github.com/NewKrok/three-particles-editor/compare/v2.5.0...v2.6.0) (2026-01-25)
 
 ### Bug Fixes
