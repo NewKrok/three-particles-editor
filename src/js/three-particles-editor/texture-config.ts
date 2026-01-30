@@ -17,6 +17,7 @@ export const TextureId = {
   RAINDROP: 'RAINDROP',
   LEAF_TOON: 'LEAF_TOON',
   SNOWFLAKE: 'SNOWFLAKE',
+  SNOWFLAKE_DETAILED: 'SNOWFLAKE_DETAILED',
   NUMBERS: 'NUMBERS',
   NUMBERS_TOON: 'NUMBERS_TOON',
   CONFETTI: 'CONFETTI',
@@ -126,6 +127,11 @@ export const textureConfigs: TextureConfig[] = [
   {
     id: TextureId.SNOWFLAKE,
     url: './assets/textures/snowflake.webp',
+    isParticleTexture: true,
+  },
+  {
+    id: TextureId.SNOWFLAKE_DETAILED,
+    url: './assets/textures/snowflake-detailed.webp',
     isParticleTexture: true,
   },
   {

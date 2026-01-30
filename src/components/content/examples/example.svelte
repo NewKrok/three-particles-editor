@@ -7,7 +7,14 @@
 
   let open = false;
 
-  const loadRequest = () => (open = true);
+  const loadRequest = () => {
+    const dirty = window.editor.isDirty();
+    if (dirty) {
+      open = true;
+    } else {
+      load();
+    }
+  };
 
   const load = () => {
     if (!config) {

@@ -68,7 +68,14 @@
   // Flag to prevent automatic updates from overwriting user edits
   let userEditedName = false;
 
-  const createNewRequest = () => (open = true);
+  const createNewRequest = () => {
+    const dirty = window.editor.isDirty();
+    if (dirty) {
+      open = true;
+    } else {
+      createNew();
+    }
+  };
   const createNew = () => {
     window.editor.createNew();
     updateConfigInfo();

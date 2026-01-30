@@ -9,6 +9,7 @@ type RendererEntriesParams = {
 };
 
 type RendererEntriesResult = {
+  onReset: () => void;
   onParticleSystemChange: () => void;
   onUpdate: () => void;
   onAssetUpdate: () => void;
@@ -140,6 +141,7 @@ export const createRendererEntries = ({
   rebuild();
 
   return {
+    onReset: rebuild,
     onParticleSystemChange: (): void => {
       // It looks onChange doesn't work on dropdown entry so have to handle it manually
       if (lastUsedTextureId !== particleSystemConfig._editorData.textureId) {

@@ -176,6 +176,7 @@ const renderTextureGrid = (): void => {
     TextureId.RAINDROP,
     TextureId.LEAF_TOON,
     TextureId.SNOWFLAKE,
+    TextureId.SNOWFLAKE_DETAILED,
     TextureId.NUMBERS,
     TextureId.NUMBERS_TOON,
     TextureId.CONFETTI,

@@ -39,10 +39,7 @@ import { createSizeOverLifeTimeEntries } from './three-particles-editor/entries/
 import { createTextureSheetAnimationEntries } from './three-particles-editor/entries/texture-sheet-animation-entries';
 import { createTransformEntries } from './three-particles-editor/entries/transform-entries';
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
-import { ObjectUtils } from '@newkrok/three-utils';
 import { generateDefaultName } from './utils/name-utils';
-
-const { patchObject } = ObjectUtils;
 
 type ConfigMetadata = {
   name: string;
@@ -73,6 +70,7 @@ type EditorData = {
   showWorldAxes: boolean;
   showShape: boolean;
   frustumCulled: boolean;
+  useIndividualUpdate: boolean;
   terrain: {
     textureId: string;
     movements?: string;
@@ -96,6 +94,7 @@ type CycleData = {
 type ParticleSystem = {
   instance: THREE.Object3D;
   dispose: () => void;
+  update: (cycleData: CycleData) => void;
 };
 
 type ConfigEntry = {
@@ -124,6 +123,7 @@ const defaultEditorData: EditorData = {
   showWorldAxes: false,
   showShape: false,
   frustumCulled: true,
+  useIndividualUpdate: false,
   terrain: {
     textureId: TextureId.WIREFRAME,
   },
@@ -154,6 +154,8 @@ let particleSystemContainer: Object3D;
 let particleSystem: ParticleSystem | null = null;
 let clock: THREE.Clock;
 let isPaused = false;
+let configDirty = false;
+let isInitializing = false;
 const configEntries: ConfigEntry[] = [];
 
 export const createNew = (): void => {
@@ -165,21 +167,40 @@ export const createNew = (): void => {
     editorVersion: EDITOR_VERSION,
   };
 
-  patchObject(particleSystemConfig._editorData, defaultEditorData, {
-    skippedProperties: [],
-    applyToFirstObject: true,
+  const defaultConfig = getDefaultParticleSystemConfig();
+
+  // Clear all existing properties from particleSystemConfig (except _editorData)
+  // This is necessary because patchObject doesn't handle type changes properly
+  // (e.g., when startLifetime changes from {min, max} object to a number)
+  Object.keys(particleSystemConfig).forEach((key) => {
+    if (key !== '_editorData') {
+      delete particleSystemConfig[key];
+    }
   });
-  patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
-    skippedProperties: [],
-    applyToFirstObject: true,
+
+  // Deep clone the default config and assign to particleSystemConfig
+  Object.keys(defaultConfig).forEach((key) => {
+    if (key !== '_editorData') {
+      particleSystemConfig[key] = JSON.parse(JSON.stringify(defaultConfig[key]));
+    }
+  });
+
+  // Reset _editorData to defaults
+  const editorDataKeys = Object.keys(defaultEditorData);
+  editorDataKeys.forEach((key) => {
+    if (key === 'metadata') return; // Handle metadata separately
+    particleSystemConfig._editorData[key] = JSON.parse(JSON.stringify(defaultEditorData[key]));
   });
 
   // Update metadata
   particleSystemConfig._editorData.metadata = newMetadata;
 
   setTerrain();
-  recreateParticleSystem();
+  isInitializing = true;
+  recreateParticleSystem(false);
   configEntries.forEach(({ onReset }) => onReset && onReset());
+  isInitializing = false;
+  configDirty = false;
 };
 
 const resumeTime = (): void => {
@@ -225,9 +246,11 @@ export const createParticleSystemEditor = (targetQuery: string): void => {
         url,
       })),
       onComplete: () => {
+        isInitializing = true;
         createPanel();
         createCurveEditor();
-        recreateParticleSystem();
+        recreateParticleSystem(false);
+        isInitializing = false;
         animate();
       },
     });
@@ -242,13 +265,17 @@ const animate = (): void => {
     cycleData.elapsed = clock.getElapsedTime();
 
     configEntries.forEach(({ onUpdate }) => onUpdate && onUpdate(cycleData));
-    updateParticleSystems(cycleData);
+    if (particleSystemConfig._editorData.useIndividualUpdate && particleSystem) {
+      particleSystem.update(cycleData);
+    } else {
+      updateParticleSystems(cycleData);
+    }
   }
   updateWorld();
   requestAnimationFrame(animate);
 };
 
-const recreateParticleSystem = (): void => {
+const recreateParticleSystem = (markAsDirty = true): void => {
   resumeTime();
   if (particleSystem) {
     particleSystem.dispose();
@@ -264,6 +291,11 @@ const recreateParticleSystem = (): void => {
   configEntries.forEach(
     ({ onParticleSystemChange }) => onParticleSystemChange && onParticleSystemChange(particleSystem)
   );
+
+  // Only mark as dirty if not initializing and markAsDirty is true
+  if (markAsDirty && !isInitializing) {
+    configDirty = true;
+  }
 };
 
 const createPanel = (): void => {
@@ -373,7 +405,7 @@ const createPanel = (): void => {
     })
   );
   /* Other components temporarily disabled for debugging */
-  recreateParticleSystem();
+  recreateParticleSystem(false);
 };
 
 // Type for particle system configuration
@@ -394,6 +426,8 @@ interface EditorInterface {
   updateConfigMetadata: (name?: string) => ConfigMetadata;
   getConfigMetadata: () => ConfigMetadata;
   captureScreenshot: () => void;
+  isDirty: () => boolean;
+  markDirty: () => void;
 }
 
 declare global {
@@ -405,22 +439,30 @@ declare global {
 window.editor = {
   createNew,
   load: (config: ParticleSystemConfig) => {
-    createNew();
+    isInitializing = true;
     loadParticleSystem({
       config,
       particleSystemConfig,
       recreateParticleSystem,
+      onLoad: () => configEntries.forEach(({ onReset }) => onReset && onReset()),
     });
+    isInitializing = false;
+    configDirty = false;
   },
   loadFromClipboard: () => {
-    createNew();
+    isInitializing = true;
     loadFromClipboard({
       particleSystemConfig,
       recreateParticleSystem,
+      onLoad: () => {
+        configEntries.forEach(({ onReset }) => onReset && onReset());
+        isInitializing = false;
+        configDirty = false;
+      },
     });
   },
   copyToClipboard: () => copyToClipboard(particleSystemConfig),
-  reset: recreateParticleSystem,
+  reset: () => recreateParticleSystem(false),
   play: resumeTime,
   pause: pauseTime,
   updateAssets: () =>
@@ -459,4 +501,8 @@ window.editor = {
     return particleSystemConfig._editorData.metadata;
   },
   captureScreenshot,
+  isDirty: () => configDirty,
+  markDirty: () => {
+    configDirty = true;
+  },
 };

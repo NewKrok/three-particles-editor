@@ -49,7 +49,15 @@ export const copyToClipboard = (particleSystemConfig) => {
   navigator.clipboard.write(data);
 };
 
-export const loadFromClipboard = ({ particleSystemConfig, recreateParticleSystem }) => {
+export const loadFromClipboard = ({
+  particleSystemConfig,
+  recreateParticleSystem,
+  onLoad,
+}: {
+  particleSystemConfig: any;
+  recreateParticleSystem: (markAsDirty?: boolean) => void;
+  onLoad?: () => void;
+}) => {
   navigator.clipboard
     .readText()
     .then((text) => {
@@ -57,6 +65,7 @@ export const loadFromClipboard = ({ particleSystemConfig, recreateParticleSystem
         config: JSON.parse(text),
         particleSystemConfig,
         recreateParticleSystem,
+        onLoad,
       });
     })
     .catch(() => {
@@ -65,7 +74,17 @@ export const loadFromClipboard = ({ particleSystemConfig, recreateParticleSystem
     });
 };
 
-export const loadParticleSystem = ({ config, particleSystemConfig, recreateParticleSystem }) => {
+export const loadParticleSystem = ({
+  config,
+  particleSystemConfig,
+  recreateParticleSystem,
+  onLoad,
+}: {
+  config: any;
+  particleSystemConfig: any;
+  recreateParticleSystem: (markAsDirty?: boolean) => void;
+  onLoad?: () => void;
+}) => {
   // Check if the loaded configuration is from version 2.0.0 or newer
   const isV2Config = isConfigV2(config);
 
@@ -89,7 +108,12 @@ export const loadParticleSystem = ({ config, particleSystemConfig, recreateParti
     applyToFirstObject: true,
   });
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
-  recreateParticleSystem();
+  recreateParticleSystem(false);
+
+  // Call onLoad callback to notify entries about the loaded config
+  if (onLoad) {
+    onLoad();
+  }
 
   // Show success notification
   showSuccessSnackbar('Particle system successfully loaded');
