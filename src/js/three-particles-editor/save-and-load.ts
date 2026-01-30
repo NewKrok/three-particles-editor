@@ -55,7 +55,7 @@ export const loadFromClipboard = ({
   onLoad,
 }: {
   particleSystemConfig: any;
-  recreateParticleSystem: () => void;
+  recreateParticleSystem: (markAsDirty?: boolean) => void;
   onLoad?: () => void;
 }) => {
   navigator.clipboard
@@ -82,7 +82,7 @@ export const loadParticleSystem = ({
 }: {
   config: any;
   particleSystemConfig: any;
-  recreateParticleSystem: () => void;
+  recreateParticleSystem: (markAsDirty?: boolean) => void;
   onLoad?: () => void;
 }) => {
   // Check if the loaded configuration is from version 2.0.0 or newer
@@ -108,7 +108,7 @@ export const loadParticleSystem = ({
     applyToFirstObject: true,
   });
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
-  recreateParticleSystem();
+  recreateParticleSystem(false);
 
   // Call onLoad callback to notify entries about the loaded config
   if (onLoad) {
