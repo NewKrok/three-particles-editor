@@ -50,15 +50,6 @@ export default {
     format: 'iife',
     name: 'app',
     file: 'public/build/bundle.js',
-    globals: {
-      three: 'THREE',
-      '@smui/common/internal': 'smuiInternal',
-      '@smui/common/classadder': 'smuiClassadder',
-      '@newkrok/three-particles': 'threeParticles',
-      'three/examples/jsm/libs/lil-gui.module.min.js': 'lil',
-      'three/examples/jsm/controls/OrbitControls.js': 'OrbitControls',
-      'three/examples/jsm/libs/stats.module.js': 'Stats',
-    },
   },
 
   plugins: [
