@@ -70,6 +70,7 @@ type EditorData = {
   showWorldAxes: boolean;
   showShape: boolean;
   frustumCulled: boolean;
+  useIndividualUpdate: boolean;
   terrain: {
     textureId: string;
     movements?: string;
@@ -93,6 +94,7 @@ type CycleData = {
 type ParticleSystem = {
   instance: THREE.Object3D;
   dispose: () => void;
+  update: (cycleData: CycleData) => void;
 };
 
 type ConfigEntry = {
@@ -121,6 +123,7 @@ const defaultEditorData: EditorData = {
   showWorldAxes: false,
   showShape: false,
   frustumCulled: true,
+  useIndividualUpdate: false,
   terrain: {
     textureId: TextureId.WIREFRAME,
   },
@@ -262,7 +265,11 @@ const animate = (): void => {
     cycleData.elapsed = clock.getElapsedTime();
 
     configEntries.forEach(({ onUpdate }) => onUpdate && onUpdate(cycleData));
-    updateParticleSystems(cycleData);
+    if (particleSystemConfig._editorData.useIndividualUpdate && particleSystem) {
+      particleSystem.update(cycleData);
+    } else {
+      updateParticleSystems(cycleData);
+    }
   }
   updateWorld();
   requestAnimationFrame(animate);

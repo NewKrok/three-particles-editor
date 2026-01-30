@@ -171,6 +171,11 @@ export const createHelperEntries = ({
     .listen();
 
   folder
+    .add(particleSystemConfig._editorData, 'useIndividualUpdate')
+    .name('Individual update method')
+    .listen();
+
+  folder
     .add(particleSystemConfig._editorData.terrain, 'textureId', [
       TextureId.WIREFRAME,
       TextureId.TERRAIN_CHESS_BOARD,
