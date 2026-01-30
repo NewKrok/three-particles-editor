@@ -1,3 +1,9 @@
+## [2.7.1](https://github.com/NewKrok/three-particles-editor/compare/v2.7.0...v2.7.1) (2026-01-30)
+
+### Bug Fixes
+
+- remove unused globals config from rollup ([8f96eac](https://github.com/NewKrok/three-particles-editor/commit/8f96eac22c88620fcf85cdc0bd430958c10eba73))
+
 # [2.7.0](https://github.com/NewKrok/three-particles-editor/compare/v2.6.0...v2.7.0) (2026-01-30)
 
 ### Bug Fixes
