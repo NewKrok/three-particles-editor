@@ -6,7 +6,8 @@
   "homepage": "https://github.com/NewKrok/three-particles-editor",
   "dependencies": {
     "@material/theme": "^14.0.0",
-    "@newkrok/three-particles": "^2.3.0",
+    "@newkrok/three-particles": "^2.4.0",
+    "@newkrok/three-utils": "^2.0.2",
     "prismjs": "^1.30.0",
     "sass": "^1.97.3",
     "sirv-cli": "^3.0.1",
