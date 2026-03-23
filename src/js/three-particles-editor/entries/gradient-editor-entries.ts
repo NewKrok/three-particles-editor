@@ -6,10 +6,7 @@
 
 import type { ParticleSystemConfig } from '@newkrok/three-particles';
 import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
-import {
-  createGradientEditor,
-  setGradientStops,
-} from '../gradient-editor/gradient-editor';
+import { createGradientEditor, setGradientStops } from '../gradient-editor/gradient-editor';
 import {
   gradientToBezierCurves,
   bezierCurvesToGradient,
@@ -31,11 +28,9 @@ let isInitialized = false;
  */
 const ensureGradientDataExists = (config: ParticleSystemConfig): void => {
   if (!config._editorData) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (config as any)._editorData = {};
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorData = (config as any)._editorData;
 
   if (!editorData.gradientStops) {
@@ -67,7 +62,6 @@ const ensureGradientDataExists = (config: ParticleSystemConfig): void => {
 const ensureConfigStructures = (config: ParticleSystemConfig): void => {
   // Ensure colorOverLifetime exists
   if (!config.colorOverLifetime) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (config as any).colorOverLifetime = {
       isActive: false,
       r: { type: 'BEZIER', scale: 1, bezierPoints: [] },
@@ -78,7 +72,6 @@ const ensureConfigStructures = (config: ParticleSystemConfig): void => {
 
   // Ensure opacityOverLifetime exists
   if (!config.opacityOverLifetime) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (config as any).opacityOverLifetime = {
       isActive: false,
       lifetimeCurve: { type: 'BEZIER', scale: 1, bezierPoints: [] },
@@ -89,10 +82,7 @@ const ensureConfigStructures = (config: ParticleSystemConfig): void => {
 /**
  * Updates bezier curves from gradient stops
  */
-const updateBeziersFromGradient = (
-  config: ParticleSystemConfig,
-  stops: GradientStop[]
-): void => {
+const updateBeziersFromGradient = (config: ParticleSystemConfig, stops: GradientStop[]): void => {
   const curves = gradientToBezierCurves(stops);
 
   // Update color over lifetime
@@ -122,7 +112,6 @@ export const createGradientEditorEntries = ({
   ensureConfigStructures(particleSystemConfig);
   ensureGradientDataExists(particleSystemConfig);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorData = (particleSystemConfig as any)._editorData;
 
   // Combined enabled toggle
@@ -197,6 +186,7 @@ export const createGradientEditorEntries = ({
   return {
     onReset: () => {
       uiState.enabled = false;
+      isInitialized = false;
       if (particleSystemConfig.colorOverLifetime) {
         particleSystemConfig.colorOverLifetime.isActive = false;
       }

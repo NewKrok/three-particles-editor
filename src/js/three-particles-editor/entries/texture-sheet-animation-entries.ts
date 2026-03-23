@@ -109,6 +109,12 @@ export const createTextureSheetAnimationEntries = ({
 };
 
 const destroyTimeModeControllers = (): void => {
-  timeModeControllers.forEach((controller) => controller.destroy());
+  timeModeControllers.forEach((controller) => {
+    try {
+      controller.destroy();
+    } catch {
+      // Controller might already be destroyed if panel was replaced
+    }
+  });
   timeModeControllers = [];
 };

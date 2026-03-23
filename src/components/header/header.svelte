@@ -300,6 +300,26 @@
     // Update on resize
     window.addEventListener('resize', checkMobile);
   }
+
+  // Editor context tracking for sub-emitter breadcrumb
+  let editorContextType = 'root';
+  let subEmitterIndex = 0;
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('editor-context-change', (event) => {
+      const detail = (event as CustomEvent).detail;
+      editorContextType = detail.type;
+      if (detail.index !== undefined) {
+        subEmitterIndex = detail.index;
+      }
+    });
+  }
+
+  const handleBackToParent = () => {
+    if (window.editor && typeof window.editor.switchToParent === 'function') {
+      window.editor.switchToParent();
+    }
+  };
 </script>
 
 <div class="wrapper">
@@ -346,6 +366,18 @@
           </button>
         {/if}
       </div>
+      {#if editorContextType === 'subEmitter'}
+        <div class="breadcrumb">
+          <button
+            class="breadcrumb-link"
+            onclick={handleBackToParent}
+            type="button"
+            aria-label="Back to parent emitter">Root</button
+          >
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Sub-Emitter {subEmitterIndex + 1}</span>
+        </div>
+      {/if}
       {#if $lastModified}
         <div class="last-modified" title="Last modified">{$lastModified}</div>
       {/if}
@@ -589,6 +621,37 @@
     &:focus {
       box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     }
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding-left: 4px;
+  }
+
+  .breadcrumb-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--mdc-theme-primary, #ff3e00);
+    font-size: 12px;
+    text-decoration: underline;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .breadcrumb-separator {
+    color: var(--mdc-theme-text-secondary-on-background, #666);
+  }
+
+  .breadcrumb-current {
+    color: var(--mdc-theme-text-secondary-on-background, #666);
+    font-weight: 500;
   }
 
   .last-modified {

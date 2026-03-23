@@ -1,8 +1,5 @@
 // EmitFrom and Shape are const enums, using string literals directly
-import {
-  createVector2FolderEntry,
-  createVector3FolderEntry,
-} from "./entry-helpers";
+import { createVector2FolderEntry, createVector3FolderEntry } from './entry-helpers';
 
 let shapeControllers: any[] = [];
 let lastInitedShape: string | null = null;
@@ -24,17 +21,11 @@ export const createShapeEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }: ShapeEntriesParams): ShapeEntriesResult => {
-  const folder = parentFolder.addFolder("Shape");
+  const folder = parentFolder.addFolder('Shape');
   folder.close();
 
   folder
-    .add(particleSystemConfig.shape, "shape", [
-      'SPHERE',
-      'CONE',
-      'BOX',
-      'CIRCLE',
-      'RECTANGLE',
-    ])
+    .add(particleSystemConfig.shape, 'shape', ['SPHERE', 'CONE', 'BOX', 'CIRCLE', 'RECTANGLE'])
     .listen()
     .onChange(() =>
       createEntriesByShape({
@@ -115,7 +106,13 @@ const createEntriesByShape = ({
 };
 
 const destroyShapeControllers = (): void => {
-  shapeControllers.forEach((controller) => controller.destroy());
+  shapeControllers.forEach((controller) => {
+    try {
+      controller.destroy();
+    } catch {
+      // Controller might already be destroyed if panel was replaced
+    }
+  });
   shapeControllers = [];
 };
 
@@ -126,19 +123,19 @@ const createShapeSphereEntries = ({
 }: ShapeEntriesParams): void => {
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.sphere, "radius", 0.0001, 10, 0.0001)
+      .add(particleSystemConfig.shape.sphere, 'radius', 0.0001, 10, 0.0001)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.sphere, "radiusThickness", 0.0, 1, 0.01)
+      .add(particleSystemConfig.shape.sphere, 'radiusThickness', 0.0, 1, 0.01)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.sphere, "arc", -360.0, 360, 0.001)
+      .add(particleSystemConfig.shape.sphere, 'arc', -360.0, 360, 0.001)
       .onChange(recreateParticleSystem)
   );
 };
@@ -150,25 +147,25 @@ const createShapeConeEntries = ({
 }: ShapeEntriesParams): void => {
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.cone, "angle", 0, 90, 0.0001)
+      .add(particleSystemConfig.shape.cone, 'angle', 0, 90, 0.0001)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.cone, "radius", 0.0001, 10, 0.0001)
+      .add(particleSystemConfig.shape.cone, 'radius', 0.0001, 10, 0.0001)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.cone, "radiusThickness", 0.0, 1, 0.01)
+      .add(particleSystemConfig.shape.cone, 'radiusThickness', 0.0, 1, 0.01)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.cone, "arc", -360.0, 360, 0.001)
+      .add(particleSystemConfig.shape.cone, 'arc', -360.0, 360, 0.001)
       .onChange(recreateParticleSystem)
   );
 };
@@ -180,11 +177,7 @@ const createShapeBoxEntries = ({
 }: ShapeEntriesParams): void => {
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.box, "emitFrom", [
-        'VOLUME',
-        'SHELL',
-        'EDGE',
-      ])
+      .add(particleSystemConfig.shape.box, 'emitFrom', ['VOLUME', 'SHELL', 'EDGE'])
       .onChange(recreateParticleSystem)
       .listen()
   );
@@ -194,8 +187,8 @@ const createShapeBoxEntries = ({
       particleSystemConfig,
       recreateParticleSystem,
       parentFolder: folder,
-      rootPropertyName: "shape.box",
-      propertyName: "scale",
+      rootPropertyName: 'shape.box',
+      propertyName: 'scale',
       min: 0.001,
       max: 10.0,
       step: 0.001,
@@ -210,19 +203,19 @@ const createShapeCircleEntries = ({
 }: ShapeEntriesParams): void => {
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.circle, "radius", 0.0001, 10, 0.0001)
+      .add(particleSystemConfig.shape.circle, 'radius', 0.0001, 10, 0.0001)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.circle, "radiusThickness", 0.0, 1, 0.01)
+      .add(particleSystemConfig.shape.circle, 'radiusThickness', 0.0, 1, 0.01)
       .onChange(recreateParticleSystem)
   );
 
   shapeControllers.push(
     folder
-      .add(particleSystemConfig.shape.circle, "arc", -360.0, 360, 0.001)
+      .add(particleSystemConfig.shape.circle, 'arc', -360.0, 360, 0.001)
       .onChange(recreateParticleSystem)
   );
 };
@@ -237,8 +230,8 @@ const createShapeRectangleEntries = ({
       particleSystemConfig,
       recreateParticleSystem,
       parentFolder: folder,
-      rootPropertyName: "shape.rectangle",
-      propertyName: "rotation",
+      rootPropertyName: 'shape.rectangle',
+      propertyName: 'rotation',
       min: -360.0,
       max: 360.0,
       step: 0.001,
@@ -250,8 +243,8 @@ const createShapeRectangleEntries = ({
       particleSystemConfig,
       recreateParticleSystem,
       parentFolder: folder,
-      rootPropertyName: "shape.rectangle",
-      propertyName: "scale",
+      rootPropertyName: 'shape.rectangle',
+      propertyName: 'scale',
       min: 0.001,
       max: 10.0,
       step: 0.001,

@@ -174,16 +174,21 @@ const rebuildBurstFolders = (
       try {
         c.destroy();
       } catch {
-        // Controller might already be destroyed
+        // Controller might already be destroyed if panel was replaced
       }
     });
     try {
       folder.destroy();
     } catch {
-      // Folder might already be destroyed
+      // Folder might already be destroyed if panel was replaced
     }
   });
   burstFolders = [];
+  // If parent folder no longer exists in DOM, skip rebuilding
+  if (!burstsFolder?.domElement?.parentNode) {
+    burstsFolder = null;
+    return;
+  }
 
   if (!burstsFolder) return;
 
