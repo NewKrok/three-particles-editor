@@ -12,7 +12,7 @@
     showLegacyConfigModal.set(false);
   };
 
-  let open = false;
+  let open;
   $: open = $showLegacyConfigModal;
 </script>
 

@@ -1,6 +1,6 @@
-import {
+import { getCurveFunction } from '@newkrok/three-particles';
+import type {
   CurveFunctionId,
-  getCurveFunction,
   TimeMode,
   Constant,
   ParticleSystemConfig,
