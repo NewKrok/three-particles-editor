@@ -22,7 +22,7 @@
 <div>
   <Paper class="solo-paper" elevation={6}>
     <Icon class="material-icons">search</Icon>
-    <Input bind:value={filter} on:keyup={handleKeyUp} placeholder="Search" class="solo-input" />
+    <Input bind:value={filter} onkeyup={handleKeyUp} placeholder="Search" class="solo-input" />
   </Paper>
 </div>
 <Svroller width="100%" height="calc(100% - 70px)">

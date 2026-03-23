@@ -76,7 +76,7 @@
 <div class="head">
   <Paper class="solo-paper" elevation={6}>
     <Icon class="material-icons">search</Icon>
-    <Input bind:value={filter} on:keyup={handleKeyUp} placeholder="Search" class="solo-input" />
+    <Input bind:value={filter} onkeyup={handleKeyUp} placeholder="Search" class="solo-input" />
   </Paper>
   <FileUploader {add} />
 </div>

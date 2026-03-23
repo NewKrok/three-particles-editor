@@ -4,14 +4,15 @@
   import Button, { Icon, Label } from '@smui/button';
   import Textfield from '@smui/textfield';
 
-  export let id, name, url, rename, remove;
-  export let isDefault = null;
+  let { id, name = $bindable(), url, rename, remove, isDefault = null } = $props();
 
   const normalizedUrl = typeof url === 'function' ? url() : url;
 
-  let open = false;
+  let open = $state(false);
 
-  $: if (name || name === '') rename({ id, name });
+  $effect(() => {
+    if (name || name === '') rename({ id, name });
+  });
 
   const removeRequest = () => (open = true);
 
@@ -36,23 +37,23 @@
 <div class="wrapper">
   <Card>
     <Media class="card-media-square" aspectRatio="square">
-      <div class="transparent-background" />
-      <div class="media-background" style={`background-image: url(${normalizedUrl})`} />
-      <div class="circle-preview" />
+      <div class="transparent-background"></div>
+      <div class="media-background" style={`background-image: url(${normalizedUrl})`}></div>
+      <div class="circle-preview"></div>
     </Media>
     <Content class="mdc-typography--body2">
       {#if isDefault}
         <div class="default-name">{name}</div>
-        <PrimaryAction on:click={downloadTexture}>
+        <PrimaryAction onclick={downloadTexture}>
           <Icon class="material-icons">download</Icon>
         </PrimaryAction>
       {:else}
         <Textfield bind:value={name} />
         <div class="actions">
-          <PrimaryAction on:click={downloadTexture}>
+          <PrimaryAction onclick={downloadTexture}>
             <Icon class="material-icons">download</Icon>
           </PrimaryAction>
-          <PrimaryAction on:click={removeRequest}>
+          <PrimaryAction onclick={removeRequest}>
             <Icon class="material-icons">delete</Icon>
           </PrimaryAction>
         </div>
@@ -68,7 +69,7 @@
     <Button>
       <Icon class="material-icons">close</Icon><Label>No</Label>
     </Button>
-    <Button on:click={() => remove(id)}>
+    <Button onclick={() => remove(id)}>
       <Icon class="material-icons">check</Icon><Label>Yes</Label>
     </Button>
   </Actions>

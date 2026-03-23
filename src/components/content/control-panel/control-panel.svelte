@@ -7,13 +7,13 @@
 <div class="wrapper">
   <Card>
     <Actions>
-      <Button on:click={window.editor.play}>
+      <Button onclick={() => window.editor.play()}>
         <Icon class="material-icons">play_arrow</Icon><Label>Play</Label>
       </Button>
-      <Button on:click={window.editor.pause}>
+      <Button onclick={() => window.editor.pause()}>
         <Icon class="material-icons">pause</Icon><Label>Pause</Label>
       </Button>
-      <Button on:click={window.editor.reset}>
+      <Button onclick={() => window.editor.reset()}>
         <Icon class="material-icons">replay</Icon><Label>Reset</Label>
       </Button>
     </Actions>

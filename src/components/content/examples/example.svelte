@@ -1,11 +1,12 @@
 <script>
-  export let { name, preview = null, config = null } = {};
   import Card, { PrimaryAction, Media, Content } from '@smui/card';
   import Dialog, { Title, Content as DialogContent, Actions } from '@smui/dialog';
   import Button, { Icon, Label } from '@smui/button';
   import { toUrlFriendlyString } from '../../../js/utils/name-utils';
 
-  let open = false;
+  let { name, preview = null, config = null } = $props();
+
+  let open = $state(false);
 
   const loadRequest = () => {
     const dirty = window.editor.isDirty();
@@ -32,7 +33,7 @@
 
 <div class="wrapper">
   <Card>
-    <PrimaryAction on:click={loadRequest}>
+    <PrimaryAction onclick={loadRequest}>
       <Media
         class="card-media-16x9"
         aspectRatio="16x9"
@@ -56,7 +57,7 @@
     <Button>
       <Icon class="material-icons">close</Icon><Label>No</Label>
     </Button>
-    <Button on:click={load}>
+    <Button onclick={load}>
       <Icon class="material-icons">check</Icon><Label>Yes</Label>
     </Button>
   </Actions>

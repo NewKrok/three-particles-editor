@@ -1,14 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  export let floating: boolean = false;
-  export let fullWidth: boolean = false;
-  export let utmCampaign: string = 'floating_button';
+  let {
+    floating = false,
+    fullWidth = false,
+    utmCampaign = 'floating_button',
+  }: { floating?: boolean; fullWidth?: boolean; utmCampaign?: string } = $props();
 
   const kofiId = 'S6S01SSL5G';
   const kofiUrl = `https://ko-fi.com/${kofiId}/?utm_source=three-particles-editor&utm_medium=web&utm_campaign=${utmCampaign}`;
 
-  let leftPanelCollapsed = false;
+  let leftPanelCollapsed = $state(false);
 
   const handleClick = () => {
     window.open(kofiUrl, '_blank', 'noopener,noreferrer');
@@ -46,7 +48,7 @@
   class:floating
   class:full-width={fullWidth}
   class:panel-collapsed={leftPanelCollapsed && floating}
-  on:click={handleClick}
+  onclick={handleClick}
   aria-label="Support me on Ko-fi"
   title="Support me on Ko-fi"
 >

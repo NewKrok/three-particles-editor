@@ -306,8 +306,8 @@
   <div class="left-section">
     <button
       class="logo-button"
-      on:click={() => (aboutModalOpen = true)}
-      on:keydown={(e) => e.key === 'Enter' && (aboutModalOpen = true)}
+      onclick={() => (aboutModalOpen = true)}
+      onkeydown={(e) => e.key === 'Enter' && (aboutModalOpen = true)}
       title="About Three Particles Editor"
       aria-label="About Three Particles Editor"
     >
@@ -324,8 +324,8 @@
               type="text"
               class="config-name-input"
               bind:value={editedConfigName}
-              on:blur={saveConfigName}
-              on:keydown={handleKeyPress}
+              onblur={saveConfigName}
+              onkeydown={handleKeyPress}
               aria-label="Edit configuration name"
               use:focus
               placeholder="Enter configuration name"
@@ -336,8 +336,8 @@
           <!-- Display mode with hover effect -->
           <button
             class="config-name-wrapper"
-            on:click={startEditingName}
-            on:keydown={(e) => e.key === 'Enter' && startEditingName()}
+            onclick={startEditingName}
+            onkeydown={(e) => e.key === 'Enter' && startEditingName()}
             aria-label="Edit configuration name"
             type="button"
           >
@@ -355,27 +355,27 @@
   {#if !isMobile}
     <!-- Desktop layout -->
     <div class="center-section">
-      <Button on:click={createNewRequest} variant="raised">
+      <Button onclick={createNewRequest} variant="raised">
         <Icon class="material-icons">note_add</Icon><Label>New</Label>
       </Button>
-      <Button on:click={openLoadDialog} variant="raised">
+      <Button onclick={openLoadDialog} variant="raised">
         <Icon class="material-icons">folder_open</Icon><Label>Load</Label>
       </Button>
-      <Button on:click={quickSave} variant="raised">
+      <Button onclick={quickSave} variant="raised">
         <Icon class="material-icons">save</Icon><Label>Save</Label>
       </Button>
-      <Button on:click={openSaveDialog} variant="raised">
+      <Button onclick={openSaveDialog} variant="raised">
         <Icon class="material-icons">save_as</Icon><Label>Save As</Label>
       </Button>
-      <Button on:click={copyToClipboard} variant="raised">
+      <Button onclick={copyToClipboard} variant="raised">
         <Icon class="material-icons">file_copy</Icon><Label>Copy</Label>
       </Button>
-      <Button on:click={window.editor.loadFromClipboard} variant="raised">
+      <Button onclick={window.editor.loadFromClipboard} variant="raised">
         <Icon class="material-icons">content_paste</Icon><Label>Paste</Label>
       </Button>
     </div>
     <div class="right-section">
-      <Button on:click={switchTheme} variant="raised">
+      <Button onclick={switchTheme} variant="raised">
         <Icon class="material-icons">{lightTheme ? 'dark_mode' : 'light_mode'}</Icon>
         <Label>{lightTheme ? 'Dark mode' : 'Light mode'}</Label>
       </Button>
@@ -384,7 +384,7 @@
     <!-- Mobile layout -->
     <div class="mobile-controls">
       <!-- Theme toggle button -->
-      <button class="icon-button" on:click={switchTheme}>
+      <button class="icon-button" onclick={switchTheme}>
         <span class="material-icons">{lightTheme ? 'dark_mode' : 'light_mode'}</span>
       </button>
 
@@ -392,8 +392,8 @@
       <button
         type="button"
         class="menu-item"
-        on:click={openLoadDialog}
-        on:keydown={(e) => e.key === 'Enter' && openLoadDialog()}
+        onclick={openLoadDialog}
+        onkeydown={(e) => e.key === 'Enter' && openLoadDialog()}
         aria-label="Load configuration"
       >
         <Icon class="material-icons">folder_open</Icon> Load
@@ -401,8 +401,8 @@
       <button
         type="button"
         class="menu-item"
-        on:click={quickSave}
-        on:keydown={(e) => e.key === 'Enter' && quickSave()}
+        onclick={quickSave}
+        onkeydown={(e) => e.key === 'Enter' && quickSave()}
         aria-label="Save configuration"
       >
         <Icon class="material-icons">save</Icon> Save
@@ -410,13 +410,13 @@
       <button
         type="button"
         class="menu-item"
-        on:click={openSaveDialog}
-        on:keydown={(e) => e.key === 'Enter' && openSaveDialog()}
+        onclick={openSaveDialog}
+        onkeydown={(e) => e.key === 'Enter' && openSaveDialog()}
         aria-label="Save configuration as"
       >
         <Icon class="material-icons">save_as</Icon> Save As
       </button>
-      <button class="icon-button" on:click={toggleMobileMenu}>
+      <button class="icon-button" onclick={toggleMobileMenu}>
         <span class="material-icons">menu</span>
       </button>
 
@@ -425,7 +425,7 @@
         <div class="mobile-menu" class:dark-theme={!lightTheme}>
           <button
             class="menu-item"
-            on:click={() => {
+            onclick={() => {
               createNewRequest();
               mobileMenuOpen = false;
             }}
@@ -435,7 +435,7 @@
           </button>
           <button
             class="menu-item"
-            on:click={() => {
+            onclick={() => {
               quickSave();
               mobileMenuOpen = false;
             }}
@@ -445,7 +445,7 @@
           </button>
           <button
             class="menu-item"
-            on:click={() => {
+            onclick={() => {
               openSaveDialog();
               mobileMenuOpen = false;
             }}
@@ -455,7 +455,7 @@
           </button>
           <button
             class="menu-item"
-            on:click={() => {
+            onclick={() => {
               copyToClipboard();
               mobileMenuOpen = false;
             }}
@@ -465,7 +465,7 @@
           </button>
           <button
             class="menu-item"
-            on:click={() => {
+            onclick={() => {
               window.editor.loadFromClipboard();
               mobileMenuOpen = false;
             }}
@@ -486,7 +486,7 @@
     <Button>
       <Icon class="material-icons">close</Icon><Label>No</Label>
     </Button>
-    <Button on:click={createNew}>
+    <Button onclick={createNew}>
       <Icon class="material-icons">check</Icon><Label>Yes</Label>
     </Button>
   </Actions>

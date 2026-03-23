@@ -4,7 +4,7 @@
   import Paper from '@smui/paper';
   import KofiButton from '../ko-fi-button/ko-fi-button.svelte';
 
-  export let open = false;
+  let { open = $bindable(false) } = $props();
 </script>
 
 <Dialog bind:open aria-labelledby="about-title" aria-describedby="about-content">
@@ -65,7 +65,7 @@
     </Paper>
   </Content>
   <Actions>
-    <Button on:click={() => (open = false)}>
+    <Button onclick={() => (open = false)}>
       <Label>Close</Label>
     </Button>
   </Actions>

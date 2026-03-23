@@ -9,22 +9,22 @@
   /**
    * Whether the load dialog is open
    */
-  export let open = false;
+  let { open = $bindable(false) }: { open?: boolean } = $props();
 
   /**
    * Selected configuration for loading
    */
-  let selectedConfig: SavedConfig | null = null;
+  let selectedConfig: SavedConfig | null = $state(null);
 
   /**
    * Confirmation dialog state
    */
-  let showConfirmDialog = false;
+  let showConfirmDialog = $state(false);
 
   /**
    * Confirmation dialog message
    */
-  let confirmMessage = '';
+  let confirmMessage = $state('');
 
   /**
    * Saved configurations
@@ -38,7 +38,7 @@
     editorVersion?: string;
   };
 
-  let savedConfigs: SavedConfig[] = [];
+  let savedConfigs: SavedConfig[] = $state([]);
 
   /**
    * Load saved configurations from localStorage
@@ -114,10 +114,10 @@
   /**
    * Opens the load dialog and loads the saved configurations
    */
-  export const openLoadDialog = () => {
+  export function openLoadDialog() {
     loadSavedConfigs();
     open = true;
-  };
+  }
 
   /**
    * Paste configuration from clipboard
@@ -159,10 +159,10 @@
       <Title id="confirm-dialog-title">Confirm Load</Title>
       <Content id="confirm-dialog-content">{confirmMessage}</Content>
       <Actions>
-        <Button on:click={() => (showConfirmDialog = false)}>
+        <Button onclick={() => (showConfirmDialog = false)}>
           <Label>Cancel</Label>
         </Button>
-        <Button on:click={loadConfig}>
+        <Button onclick={loadConfig}>
           <Icon class="material-icons">file_download</Icon><Label>Load</Label>
         </Button>
       </Actions>
@@ -179,7 +179,7 @@
               <ConfigCard
                 {config}
                 onClick={() => showLoadConfirmation(config)}
-                on:delete={({ detail }) => deleteConfig(detail.configId)}
+                ondelete={(data) => deleteConfig(data.configId)}
               />
             {/each}
           </div>
@@ -193,10 +193,10 @@
     </div>
   </Content>
   <Actions>
-    <Button on:click={() => (open = false)}>
+    <Button onclick={() => (open = false)}>
       <Icon class="material-icons">close</Icon><Label>Close</Label>
     </Button>
-    <Button on:click={pasteFromClipboard}>
+    <Button onclick={pasteFromClipboard}>
       <Icon class="material-icons">content_paste</Icon><Label>Paste from Clipboard</Label>
     </Button>
   </Actions>

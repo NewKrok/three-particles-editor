@@ -1,6 +1,7 @@
+import { mount } from 'svelte';
 import App from './App.svelte';
 
-var app = new App({
+const app = mount(App, {
   target: document.body,
 });
 

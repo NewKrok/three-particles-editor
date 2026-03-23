@@ -1,56 +1,35 @@
 <script lang="ts">
-  /**
-   * Configuration card component for the Three Particles Editor
-   * Displays a saved configuration with its name and timestamps
-   */
-  import { createEventDispatcher } from 'svelte';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import Button, { Label, Icon } from '@smui/button';
 
-  const dispatch = createEventDispatcher<{
-    delete: { configId: string };
-  }>();
+  let {
+    config,
+    onClick,
+    ondelete,
+  }: {
+    config: {
+      id: string;
+      name: string;
+      createdAt: number;
+      updatedAt: number;
+    };
+    onClick: () => void;
+    ondelete?: (data: { configId: string }) => void;
+  } = $props();
 
-  /**
-   * Configuration data
-   */
-  export let config: {
-    id: string;
-    name: string;
-    createdAt: number;
-    updatedAt: number;
-  };
-
-  /**
-   * Click handler for the card
-   */
-  export let onClick: () => void;
-
-  /**
-   * Format date for display
-   */
   const formatDate = (timestamp: number): string => {
     return new Date(timestamp).toLocaleString();
   };
 
-  /**
-   * State for delete confirmation dialog
-   */
-  let showDeleteConfirmation = false;
+  let showDeleteConfirmation = $state(false);
 
-  /**
-   * Show delete confirmation dialog
-   */
   const confirmDelete = (event: MouseEvent): void => {
-    event.stopPropagation(); // Prevent card click
+    event.stopPropagation();
     showDeleteConfirmation = true;
   };
 
-  /**
-   * Handle delete confirmation
-   */
   const handleDelete = (): void => {
-    dispatch('delete', { configId: config.id });
+    ondelete?.({ configId: config.id });
     showDeleteConfirmation = false;
   };
 </script>
@@ -68,10 +47,10 @@
       <p>This action cannot be undone.</p>
     </Content>
     <Actions>
-      <Button on:click={() => (showDeleteConfirmation = false)}>
+      <Button onclick={() => (showDeleteConfirmation = false)}>
         <Label>Cancel</Label>
       </Button>
-      <Button on:click={handleDelete}>
+      <Button onclick={handleDelete}>
         <Icon class="material-icons">delete</Icon>
         <Label>Delete</Label>
       </Button>
@@ -83,8 +62,8 @@
   <button
     type="button"
     class="config-card"
-    on:click={onClick}
-    on:keydown={(e) => e.key === 'Enter' && onClick()}
+    onclick={onClick}
+    onkeydown={(e) => e.key === 'Enter' && onClick()}
     aria-label="Select configuration: {config.name}"
   >
     <div class="config-card-content">
@@ -103,7 +82,7 @@
   <button
     type="button"
     class="delete-button"
-    on:click={confirmDelete}
+    onclick={confirmDelete}
     aria-label="Delete configuration: {config.name}"
   >
     <Icon class="material-icons">delete</Icon>

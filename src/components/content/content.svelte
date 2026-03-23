@@ -8,9 +8,9 @@
 </script>
 
 <div class="wrapper">
-  <div id="three-particles-editor" />
-  <div class="stats" class:collapsed={isLeftPanelCollapsed} />
-  <div class="right-panel" />
+  <div id="three-particles-editor"></div>
+  <div class="stats" class:collapsed={isLeftPanelCollapsed}></div>
+  <div class="right-panel"></div>
   <LeftSide bind:isCollapsed={isLeftPanelCollapsed} />
   <ControlPanel />
   <KofiButton floating={true} />
@@ -25,7 +25,7 @@
       </div>
       <div class="gradient-editor-modal__body">
         <div class="gradient-editor-wrapper">
-          <canvas class="gradient-editor-canvas"></canvas>
+          <canvas class="gradient-editor-canvas" width="300" height="200"></canvas>
         </div>
         <div class="gradient-editor-info" style="display: none;">
           <p><strong>Click</strong> on the gradient bar to add new color stops</p>
@@ -48,8 +48,8 @@
       </div>
       <div class="bezier-editor-modal__body">
         <div class="bezier-editor__content">
-          <canvas class="bezier-editor__canvas" width="300" height="200" />
-          <div class="draggable-points" />
+          <canvas class="bezier-editor__canvas" width="300" height="200"></canvas>
+          <div class="draggable-points"></div>
         </div>
         <div class="bezier-editor-info" style="display: none;">
           <p><strong>Drag</strong> the points to adjust the curve shape</p>

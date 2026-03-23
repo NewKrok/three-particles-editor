@@ -1,7 +1,7 @@
 <script>
   import Button, { Label, Icon } from '@smui/button';
 
-  export let add;
+  let { add } = $props();
 
   let fileinput;
 
@@ -22,7 +22,7 @@
 <div class="add-image">
   <Button
     color="secondary"
-    on:click={() => {
+    onclick={() => {
       fileinput.click();
     }}
     variant="outlined"
@@ -34,7 +34,7 @@
   style="display:none"
   type="file"
   accept=".jpg, .jpeg, .png, .webp"
-  on:change={(e) => onFileSelected(e)}
+  onchange={(e) => onFileSelected(e)}
   bind:this={fileinput}
 />
 

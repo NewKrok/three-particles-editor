@@ -12,11 +12,10 @@
     showLegacyConfigModal.set(false);
   };
 
-  let open;
-  $: open = $showLegacyConfigModal;
+  let open = $derived($showLegacyConfigModal);
 </script>
 
-<Dialog bind:open fullscreen={false} surface$style="min-width: 400px;">
+<Dialog {open} fullscreen={false} surface$style="min-width: 400px;">
   <div class="header">
     <span class="material-icons warning-icon">warning</span>
     <DialogTitle class="title">Legacy Configuration Detected</DialogTitle>
@@ -32,7 +31,7 @@
   </DialogContent>
 
   <DialogActions>
-    <Button variant="raised" color="primary" on:click={closeModal}>OK</Button>
+    <Button variant="raised" color="primary" onclick={closeModal}>OK</Button>
   </DialogActions>
 </Dialog>
 

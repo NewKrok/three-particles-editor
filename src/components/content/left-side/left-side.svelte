@@ -17,10 +17,10 @@
       label: 'Library',
     },
   ].map((entry, index) => ({ ...entry, index }));
-  let active = tabs[0];
+  let active = $state(tabs[0]);
 
   // Panel state - exported to allow binding from parent components
-  export let isCollapsed: boolean = false;
+  let { isCollapsed = $bindable(false) }: { isCollapsed?: boolean } = $props();
 
   // Load saved state on component mount
   onMount(() => {
@@ -75,12 +75,12 @@
         class="collapsed-tab-icon"
         class:active={active.index === tab.index}
         aria-label={tab.label}
-        on:click={() => {
+        onclick={() => {
           active = tab;
           isCollapsed = false;
           saveState();
         }}
-        on:keydown={(e) => {
+        onkeydown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             active = tab;
             isCollapsed = false;
@@ -97,7 +97,7 @@
   <button
     type="button"
     class="collapse-toggle"
-    on:click={togglePanel}
+    onclick={togglePanel}
     aria-label={isCollapsed ? 'Expand panel' : 'Collapse panel'}
   >
     <span class="material-icons">

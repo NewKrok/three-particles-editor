@@ -38,7 +38,7 @@
 <div class="snackbar {typeClasses[type]}" class:visible>
   <div class="snackbar-content">
     <span class="snackbar-message">{message}</span>
-    <button class="snackbar-dismiss" on:click={dismiss}>Dismiss</button>
+    <button class="snackbar-dismiss" onclick={dismiss}>Dismiss</button>
   </div>
 </div>
 

@@ -16,37 +16,37 @@
   /**
    * Whether the save dialog is open
    */
-  export let open = false;
+  let { open = $bindable(false) }: { open?: boolean } = $props();
 
   /**
    * Configuration content to display in the dialog
    */
-  let configContent = '';
+  let configContent = $state('');
 
   /**
    * Configuration name for saving to localStorage
    */
-  let configName = '';
+  let configName = $state('');
 
   /**
    * Raw configuration data
    */
-  let rawConfigData: any = null;
+  let rawConfigData: any = $state(null);
 
   /**
    * Selected configuration for overwrite
    */
-  let selectedConfig: SavedConfig | null = null;
+  let selectedConfig: SavedConfig | null = $state(null);
 
   /**
    * Confirmation dialog state
    */
-  let showConfirmDialog = false;
+  let showConfirmDialog = $state(false);
 
   /**
    * Confirmation dialog message
    */
-  let confirmMessage = '';
+  let confirmMessage = $state('');
 
   /**
    * Recently saved configurations
@@ -60,7 +60,7 @@
     editorVersion?: string;
   };
 
-  let recentConfigs: SavedConfig[] = [];
+  let recentConfigs: SavedConfig[] = $state([]);
 
   /**
    * Load saved configurations from localStorage
@@ -217,7 +217,7 @@
    * Quick save function that saves the current configuration without opening the dialog
    * This is used for the direct Save button in the header
    */
-  export const quickSave = (): void => {
+  export function quickSave(): void {
     // Get the current configuration
     const currentConfig = window.editor.getCurrentParticleSystemConfig();
 
@@ -277,9 +277,9 @@
       // Log error and show error message
       showErrorSnackbar('Failed to save configuration');
     }
-  };
+  }
 
-  export const openSaveDialog = () => {
+  export function openSaveDialog() {
     rawConfigData = window.editor.getCurrentParticleSystemConfig();
 
     // Get metadata to pre-fill the config name
@@ -310,7 +310,7 @@
         Prism.highlightElement(document.querySelector('#json-content'));
       }
     }, 50);
-  };
+  }
 
   /**
    * Copies the current particle system configuration to clipboard
@@ -339,10 +339,10 @@
       <Title id="confirm-dialog-title">Confirm Overwrite</Title>
       <Content id="confirm-dialog-content">{confirmMessage}</Content>
       <Actions>
-        <Button on:click={() => (showConfirmDialog = false)}>
+        <Button onclick={() => (showConfirmDialog = false)}>
           <Label>Cancel</Label>
         </Button>
-        <Button on:click={overwriteConfig}>
+        <Button onclick={overwriteConfig}>
           <Icon class="material-icons">save</Icon><Label>Overwrite</Label>
         </Button>
       </Actions>
@@ -361,7 +361,7 @@
           bind:value={configName}
           label="Configuration Name"
           required
-          on:keydown={(e) => e.key === 'Enter' && saveToLocalStorage()}
+          onkeydown={(e) => e.key === 'Enter' && saveToLocalStorage()}
         />
       </div>
 
@@ -375,7 +375,7 @@
               <ConfigCard
                 {config}
                 onClick={() => showOverwriteConfirmation(config)}
-                on:delete={({ detail }) => deleteConfig(detail.configId)}
+                ondelete={(data) => deleteConfig(data.configId)}
               />
             {/each}
           </div>
@@ -384,13 +384,13 @@
     </div>
   </Content>
   <Actions>
-    <Button on:click={() => (open = false)}>
+    <Button onclick={() => (open = false)}>
       <Icon class="material-icons">close</Icon><Label>Close</Label>
     </Button>
-    <Button on:click={copyToClipboard}>
+    <Button onclick={copyToClipboard}>
       <Icon class="material-icons">file_copy</Icon><Label>Copy</Label>
     </Button>
-    <Button on:click={saveToLocalStorage}>
+    <Button onclick={saveToLocalStorage}>
       <Icon class="material-icons">save</Icon><Label>Save</Label>
     </Button>
   </Actions>
