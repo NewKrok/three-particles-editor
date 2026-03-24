@@ -6,7 +6,11 @@
 
 import type { ParticleSystemConfig } from '@newkrok/three-particles';
 import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
-import { createGradientEditor, setGradientStops } from '../gradient-editor/gradient-editor';
+import {
+  createGradientEditor,
+  setGradientStops,
+  setOnChangeCallback,
+} from '../gradient-editor/gradient-editor';
 import {
   gradientToBezierCurves,
   bezierCurvesToGradient,
@@ -143,21 +147,24 @@ export const createGradientEditorEntries = ({
           if (modal) {
             modal.style.display = 'block';
 
+            const onChange = (stops: GradientStop[]) => {
+              // Save stops to editor data
+              editorData.gradientStops = stops;
+
+              // Update bezier curves
+              updateBeziersFromGradient(particleSystemConfig, stops);
+
+              // Recreate particle system
+              recreateParticleSystem();
+            };
+
             // Initialize editor if not done yet
             if (!isInitialized) {
-              createGradientEditor(editorData.gradientStops, (stops: GradientStop[]) => {
-                // Save stops to editor data
-                editorData.gradientStops = stops;
-
-                // Update bezier curves
-                updateBeziersFromGradient(particleSystemConfig, stops);
-
-                // Recreate particle system
-                recreateParticleSystem();
-              });
+              createGradientEditor(editorData.gradientStops, onChange);
               isInitialized = true;
             } else {
-              // Update existing editor
+              // Update existing editor with current config's stops and callback
+              setOnChangeCallback(onChange);
               setGradientStops(editorData.gradientStops);
             }
           }

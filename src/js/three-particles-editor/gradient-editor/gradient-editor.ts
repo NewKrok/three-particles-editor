@@ -577,6 +577,13 @@ export const createGradientEditor = (
 };
 
 /**
+ * Updates the onChange callback (used when switching between configs)
+ */
+export const setOnChangeCallback = (callback: (stops: GradientStop[]) => void): void => {
+  onChangeCallback = callback;
+};
+
+/**
  * Sets the current gradient stops
  */
 export const setGradientStops = (stops: GradientStop[]): void => {
