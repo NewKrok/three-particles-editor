@@ -154,6 +154,15 @@ export const createGradientEditorEntries = ({
               // Update bezier curves
               updateBeziersFromGradient(particleSystemConfig, stops);
 
+              // Auto-enable color and opacity when gradient is edited
+              if (particleSystemConfig.colorOverLifetime) {
+                particleSystemConfig.colorOverLifetime.isActive = true;
+              }
+              if (particleSystemConfig.opacityOverLifetime) {
+                particleSystemConfig.opacityOverLifetime.isActive = true;
+              }
+              uiState.enabled = true;
+
               // Recreate particle system
               recreateParticleSystem();
             };
@@ -192,15 +201,9 @@ export const createGradientEditorEntries = ({
 
   return {
     onReset: () => {
-      uiState.enabled = false;
+      // Sync UI state from the current config (which may have been loaded/reset)
+      uiState.enabled = particleSystemConfig.colorOverLifetime?.isActive || false;
       isInitialized = false;
-      if (particleSystemConfig.colorOverLifetime) {
-        particleSystemConfig.colorOverLifetime.isActive = false;
-      }
-      if (particleSystemConfig.opacityOverLifetime) {
-        particleSystemConfig.opacityOverLifetime.isActive = false;
-      }
-      editorData.gradientStops = getDefaultGradientStops();
     },
   };
 };

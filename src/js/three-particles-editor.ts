@@ -478,13 +478,6 @@ const switchToSubEmitter = (index: number): void => {
   configEntries.length = 0;
   createPanel(expandedSubEmitterConfig);
   recreateParticleSystem(false);
-
-  // Dispatch context change event for UI
-  window.dispatchEvent(
-    new CustomEvent('editor-context-change', {
-      detail: { type: 'subEmitter', index, depth: editorContextStack.length },
-    })
-  );
 };
 
 const switchToParent = (): void => {
@@ -524,22 +517,9 @@ const switchToParent = (): void => {
   configEntries.length = 0;
   const configToShow =
     editorContextStack.length === 0 ? particleSystemConfig : expandedSubEmitterConfig;
+
   createPanel(configToShow);
   recreateParticleSystem(false);
-
-  // Dispatch context change event for UI
-  window.dispatchEvent(
-    new CustomEvent('editor-context-change', {
-      detail:
-        editorContextStack.length === 0
-          ? { type: 'root' }
-          : {
-              type: 'subEmitter',
-              index: editorContext.subEmitterIndex,
-              depth: editorContextStack.length,
-            },
-    })
-  );
 };
 
 const destroyPanel = (): void => {
