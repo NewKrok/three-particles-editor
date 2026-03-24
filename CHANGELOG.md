@@ -1,3 +1,9 @@
+## [2.8.1](https://github.com/NewKrok/three-particles-editor/compare/v2.8.0...v2.8.1) (2026-03-24)
+
+### Bug Fixes
+
+- preserve color/opacity state on config load and remove header breadcrumb ([129b754](https://github.com/NewKrok/three-particles-editor/commit/129b754a4b391f274a6b05a4b5598f823ed7dda1))
+
 # [2.8.0](https://github.com/NewKrok/three-particles-editor/compare/v2.7.1...v2.8.0) (2026-03-24)
 
 ### Bug Fixes
