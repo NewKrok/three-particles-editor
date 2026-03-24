@@ -1,3 +1,16 @@
+# [2.8.0](https://github.com/NewKrok/three-particles-editor/compare/v2.7.1...v2.8.0) (2026-03-24)
+
+### Bug Fixes
+
+- add missing Poison Skulls preview image ([97caca8](https://github.com/NewKrok/three-particles-editor/commit/97caca8cb79191a142a586a087761196137487c9))
+- gradient editor callback not updating when switching between configs ([6d2f47f](https://github.com/NewKrok/three-particles-editor/commit/6d2f47f3ad9c6c0b6e91b27f80c3017f55c5dd71))
+
+### Features
+
+- add nested sub-emitter support and fix sub-emitter bugs ([730c89f](https://github.com/NewKrok/three-particles-editor/commit/730c89fbdab53371fdb59076653439d14eafe38b))
+- add Poison Skulls example with sub-emitter smoke effect ([2b124e5](https://github.com/NewKrok/three-particles-editor/commit/2b124e5e890607504f717e83902014a0057f8575))
+- add Sub-Emitters editor support ([fe0a2cf](https://github.com/NewKrok/three-particles-editor/commit/fe0a2cfec799ba4b32edcd1d1caa6622ea93b548))
+
 ## [2.7.1](https://github.com/NewKrok/three-particles-editor/compare/v2.7.0...v2.7.1) (2026-01-30)
 
 ### Bug Fixes
