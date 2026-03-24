@@ -23,7 +23,7 @@ import {
   updateWorld,
   captureScreenshot,
 } from './three-particles-editor/world';
-import { initAssets, loadCustomAssets } from './three-particles-editor/assets';
+import { getTexture, initAssets, loadCustomAssets } from './three-particles-editor/assets';
 
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { Object3D } from 'three';
@@ -108,6 +108,12 @@ type ConfigEntry = {
   onUpdate?: (cycleData: CycleData) => void;
 };
 
+type EditorContextStackEntry = {
+  subEmitterIndex: number;
+  parentConfig: any;
+  expandedConfig: any;
+};
+
 type EditorContext = {
   type: 'root' | 'subEmitter';
   subEmitterIndex: number | null;
@@ -171,14 +177,30 @@ let editorContext: EditorContext = {
   subEmitterIndex: null,
   parentConfig: null,
 };
+const editorContextStack: EditorContextStackEntry[] = [];
 
-export const createNew = (): void => {
-  // Switch back to root context if editing a sub-emitter
+const resetToRoot = (): void => {
   if (editorContext.type === 'subEmitter') {
+    // Collapse all levels back — walk the stack from top to bottom
+    while (editorContextStack.length > 0) {
+      const entry = editorContextStack[editorContextStack.length - 1];
+      if (expandedSubEmitterConfig) {
+        entry.parentConfig.subEmitters[entry.subEmitterIndex].config =
+          collapseSubEmitterConfig(expandedSubEmitterConfig);
+      }
+      expandedSubEmitterConfig = entry.expandedConfig;
+      editorContextStack.pop();
+    }
+    expandedSubEmitterConfig = null;
     editorContext = { type: 'root', subEmitterIndex: null, parentConfig: null };
     destroyPanel();
     configEntries.length = 0;
   }
+};
+
+export const createNew = (): void => {
+  // Switch back to root context if editing a sub-emitter
+  resetToRoot();
 
   // Create new metadata with current timestamp and generated name
   const newMetadata = {
@@ -303,6 +325,21 @@ const getActiveConfig = (): any => {
   return particleSystemConfig;
 };
 
+const resolveSubEmitterTextures = (config: any): void => {
+  if (!config.subEmitters) return;
+  config.subEmitters.forEach((subEmitter: any) => {
+    const subConfig = subEmitter.config;
+    if (subConfig?._editorData?.textureId) {
+      const texture = getTexture(subConfig._editorData.textureId);
+      if (texture) {
+        subConfig.map = texture.map;
+      }
+    }
+    // Recursively resolve nested sub-emitters
+    if (subConfig) resolveSubEmitterTextures(subConfig);
+  });
+};
+
 const recreateParticleSystem = (markAsDirty = true): void => {
   resumeTime();
   if (particleSystem) {
@@ -313,6 +350,9 @@ const recreateParticleSystem = (markAsDirty = true): void => {
 
   // When editing a sub-emitter, preview the sub-emitter config standalone
   const activeConfig = getActiveConfig();
+
+  // Resolve textures for sub-emitters (map is not serialized, only textureId is)
+  resolveSubEmitterTextures(activeConfig);
 
   // Convert old configuration format to new format before creating particle system
   const convertedConfig = convertToNewFormat(activeConfig);
@@ -352,10 +392,28 @@ const subEditorDefaults = {
   ],
 };
 
+const deepMerge = (target: any, source: any): any => {
+  Object.keys(source).forEach((key) => {
+    if (
+      typeof source[key] === 'object' &&
+      source[key] !== null &&
+      !Array.isArray(source[key]) &&
+      typeof target[key] === 'object' &&
+      target[key] !== null &&
+      !Array.isArray(target[key])
+    ) {
+      deepMerge(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  });
+  return target;
+};
+
 const expandSubEmitterConfig = (minimalConfig: any): any => {
   // Start with a full default config (JSON clone — no THREE objects)
   const fullConfig = JSON.parse(JSON.stringify(getDefaultParticleSystemConfig()));
-  // Merge the minimal (diff) config on top
+  // Deep merge the minimal (diff) config on top
   Object.keys(minimalConfig).forEach((key) => {
     if (key === '_editorData') return; // handled separately
     if (
@@ -365,7 +423,7 @@ const expandSubEmitterConfig = (minimalConfig: any): any => {
       typeof fullConfig[key] === 'object' &&
       fullConfig[key] !== null
     ) {
-      Object.assign(fullConfig[key], minimalConfig[key]);
+      deepMerge(fullConfig[key], minimalConfig[key]);
     } else {
       fullConfig[key] = minimalConfig[key];
     }
@@ -395,16 +453,24 @@ const collapseSubEmitterConfig = (fullConfig: any): any => {
 };
 
 const switchToSubEmitter = (index: number): void => {
-  if (!particleSystemConfig.subEmitters || !particleSystemConfig.subEmitters[index]) return;
+  const activeConfig = getActiveConfig();
+  if (!activeConfig.subEmitters || !activeConfig.subEmitters[index]) return;
+
+  // Push current level onto the stack (save the live config object for this level)
+  editorContextStack.push({
+    subEmitterIndex: index,
+    parentConfig: activeConfig,
+    expandedConfig: activeConfig,
+  });
 
   editorContext = {
     type: 'subEmitter',
     subEmitterIndex: index,
-    parentConfig: particleSystemConfig,
+    parentConfig: activeConfig,
   };
 
   // Expand the minimal sub-emitter config to a full config for the editor panel
-  const minimalConfig = particleSystemConfig.subEmitters[index].config;
+  const minimalConfig = activeConfig.subEmitters[index].config;
   expandedSubEmitterConfig = expandSubEmitterConfig(minimalConfig);
 
   // Rebuild the panel with expanded sub-emitter config
@@ -416,37 +482,62 @@ const switchToSubEmitter = (index: number): void => {
   // Dispatch context change event for UI
   window.dispatchEvent(
     new CustomEvent('editor-context-change', {
-      detail: { type: 'subEmitter', index },
+      detail: { type: 'subEmitter', index, depth: editorContextStack.length },
     })
   );
 };
 
 const switchToParent = (): void => {
-  if (editorContext.type === 'root') return;
+  if (editorContext.type === 'root' || editorContextStack.length === 0) return;
 
-  // Collapse the expanded config back to minimal diff and save it
-  if (expandedSubEmitterConfig && editorContext.subEmitterIndex !== null) {
-    particleSystemConfig.subEmitters[editorContext.subEmitterIndex].config =
+  // Collapse the expanded config back to minimal diff and save it on the parent
+  const currentEntry = editorContextStack[editorContextStack.length - 1];
+  if (expandedSubEmitterConfig && currentEntry) {
+    currentEntry.parentConfig.subEmitters[currentEntry.subEmitterIndex].config =
       collapseSubEmitterConfig(expandedSubEmitterConfig);
-    expandedSubEmitterConfig = null;
   }
 
-  editorContext = {
-    type: 'root',
-    subEmitterIndex: null,
-    parentConfig: null,
-  };
+  // Pop from stack and restore previous level
+  const poppedEntry = editorContextStack.pop()!;
 
-  // Rebuild the panel with root config
+  if (editorContextStack.length === 0) {
+    // Back at root
+    expandedSubEmitterConfig = null;
+    editorContext = {
+      type: 'root',
+      subEmitterIndex: null,
+      parentConfig: null,
+    };
+  } else {
+    // Back to a parent sub-emitter level — restore the saved expanded config
+    const parentEntry = editorContextStack[editorContextStack.length - 1];
+    expandedSubEmitterConfig = poppedEntry.expandedConfig;
+    editorContext = {
+      type: 'subEmitter',
+      subEmitterIndex: parentEntry.subEmitterIndex,
+      parentConfig: parentEntry.parentConfig,
+    };
+  }
+
+  // Rebuild the panel with the restored config
   destroyPanel();
   configEntries.length = 0;
-  createPanel(particleSystemConfig);
+  const configToShow =
+    editorContextStack.length === 0 ? particleSystemConfig : expandedSubEmitterConfig;
+  createPanel(configToShow);
   recreateParticleSystem(false);
 
   // Dispatch context change event for UI
   window.dispatchEvent(
     new CustomEvent('editor-context-change', {
-      detail: { type: 'root' },
+      detail:
+        editorContextStack.length === 0
+          ? { type: 'root' }
+          : {
+              type: 'subEmitter',
+              index: editorContext.subEmitterIndex,
+              depth: editorContextStack.length,
+            },
     })
   );
 };
@@ -460,8 +551,9 @@ const destroyPanel = (): void => {
 
 const createPanel = (config: any = particleSystemConfig): void => {
   const isSubEmitter = editorContext.type === 'subEmitter';
+  const depth = editorContextStack.length;
   const panelTitle = isSubEmitter
-    ? `Sub-Emitter ${(editorContext.subEmitterIndex ?? 0) + 1}`
+    ? `Sub-Emitter ${(editorContext.subEmitterIndex ?? 0) + 1}${depth > 1 ? ` (Level ${depth})` : ''}`
     : 'Particle System Editor';
 
   const panel = new GUI({
@@ -483,6 +575,16 @@ const createPanel = (config: any = particleSystemConfig): void => {
       particleSystemConfig: config,
       scene,
       particleSystemContainer,
+    })
+  );
+
+  // Sub-Emitters section (available at all levels for nested sub-emitters)
+  configEntries.push(
+    createSubEmitterEntries({
+      parentFolder: panel,
+      particleSystemConfig: config,
+      recreateParticleSystem,
+      onEditSubEmitter: switchToSubEmitter,
     })
   );
 
@@ -514,18 +616,6 @@ const createPanel = (config: any = particleSystemConfig): void => {
       recreateParticleSystem,
     })
   );
-  // Sub-Emitters section right after Emission (only for root config)
-  if (!isSubEmitter) {
-    configEntries.push(
-      createSubEmitterEntries({
-        parentFolder: panel,
-        particleSystemConfig: config,
-        recreateParticleSystem,
-        onEditSubEmitter: switchToSubEmitter,
-      })
-    );
-  }
-
   configEntries.push(
     createShapeEntries({
       parentFolder: panel,
@@ -621,12 +711,7 @@ window.editor = {
   createNew,
   load: (config: ParticleSystemConfig) => {
     // Switch back to root context if editing a sub-emitter
-    if (editorContext.type === 'subEmitter') {
-      editorContext = { type: 'root', subEmitterIndex: null, parentConfig: null };
-      destroyPanel();
-      configEntries.length = 0;
-      createPanel(particleSystemConfig);
-    }
+    resetToRoot();
     isInitializing = true;
     loadParticleSystem({
       config,
@@ -639,12 +724,7 @@ window.editor = {
   },
   loadFromClipboard: () => {
     // Switch back to root context if editing a sub-emitter
-    if (editorContext.type === 'subEmitter') {
-      editorContext = { type: 'root', subEmitterIndex: null, parentConfig: null };
-      destroyPanel();
-      configEntries.length = 0;
-      createPanel(particleSystemConfig);
-    }
+    resetToRoot();
     isInitializing = true;
     loadFromClipboard({
       particleSystemConfig,

@@ -92,7 +92,7 @@
     }
 
     .transparent-background {
-      background-image: url(./static/transparent.webp);
+      background-image: url(/assets/images/transparent.webp);
       background-repeat: repeat;
       background-size: 10%;
       position: absolute;
