@@ -63,6 +63,15 @@ const SMOKE =
 
 export const particleExamples = [
   {
+    name: 'Floating Hearts',
+  },
+  {
+    name: 'Star Blast',
+  },
+  {
+    name: 'Fire Blast',
+  },
+  {
     name: 'Poison Skulls',
   },
   {

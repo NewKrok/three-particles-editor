@@ -1,7 +1,4 @@
-import {
-  createMinMaxColorFolderEntry,
-  createMinMaxFloatFolderEntry,
-} from "./entry-helpers-v2";
+import { createMinMaxColorFolderEntry, createMinMaxFloatFolderEntry } from './entry-helpers-v2';
 
 type GeneralEntriesParams = {
   parentFolder: any;
@@ -14,23 +11,29 @@ export const createGeneralEntries = ({
   particleSystemConfig,
   recreateParticleSystem,
 }: GeneralEntriesParams): Record<string, unknown> => {
-  const folder = parentFolder.addFolder("General");
+  const folder = parentFolder.addFolder('General');
+
+  if (!particleSystemConfig.renderer.rendererType) {
+    particleSystemConfig.renderer.rendererType = 'POINTS';
+  }
 
   folder
-    .add(particleSystemConfig, "duration", 0.0, 30, 0.01)
+    .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED'])
     .onChange(recreateParticleSystem)
     .listen();
 
   folder
-    .add(particleSystemConfig, "looping")
+    .add(particleSystemConfig, 'duration', 0.0, 30, 0.01)
     .onChange(recreateParticleSystem)
     .listen();
+
+  folder.add(particleSystemConfig, 'looping').onChange(recreateParticleSystem).listen();
 
   createMinMaxFloatFolderEntry({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startDelay",
+    propertyName: 'startDelay',
     min: 0.0,
     max: 30.0,
     step: 0.01,
@@ -40,7 +43,7 @@ export const createGeneralEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startLifetime",
+    propertyName: 'startLifetime',
     min: 0.01,
     max: 30.0,
     step: 0.01,
@@ -50,7 +53,7 @@ export const createGeneralEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startSpeed",
+    propertyName: 'startSpeed',
     min: 0.0,
     max: 30.0,
     step: 0.01,
@@ -60,7 +63,7 @@ export const createGeneralEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startSize",
+    propertyName: 'startSize',
     min: 0.0,
     max: 100.0,
     step: 0.01,
@@ -70,7 +73,7 @@ export const createGeneralEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startRotation",
+    propertyName: 'startRotation',
     min: -360.0,
     max: 360.0,
     step: 0.001,
@@ -80,36 +83,33 @@ export const createGeneralEntries = ({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startColor",
+    propertyName: 'startColor',
   });
 
   createMinMaxFloatFolderEntry({
     particleSystemConfig,
     recreateParticleSystem,
     parentFolder: folder,
-    propertyName: "startOpacity",
+    propertyName: 'startOpacity',
     min: 0.0,
     max: 1.0,
     step: 0.001,
   });
 
   folder
-    .add(particleSystemConfig, "gravity", -20, 20, 0.01)
+    .add(particleSystemConfig, 'gravity', -20, 20, 0.01)
     .onChange(recreateParticleSystem)
     .listen();
 
   folder
-    .add(particleSystemConfig, "simulationSpace", [
-      'LOCAL',
-      'WORLD',
-    ])
+    .add(particleSystemConfig, 'simulationSpace', ['LOCAL', 'WORLD'])
     .onChange(recreateParticleSystem)
     .listen();
 
-  folder
-    .add(particleSystemConfig, "maxParticles", 1.0, 1000, 1.0)
+  const maxParticlesController = folder
+    .add(particleSystemConfig, 'maxParticles', 1.0, 1000, 1.0)
     .onChange(recreateParticleSystem)
     .listen();
 
-  return {};
+  return { maxParticlesController };
 };

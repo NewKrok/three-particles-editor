@@ -30,7 +30,10 @@ import { Object3D } from 'three';
 import { TextureId } from './three-particles-editor/texture-config';
 import { createCurveEditor } from './three-particles-editor/curve-editor/curve-editor';
 import { createGradientEditorEntries } from './three-particles-editor/entries/gradient-editor-entries';
-import { createEmissionEntries } from './three-particles-editor/entries/emission-entries';
+import {
+  createEmissionEntries,
+  updateAllBurstCountMax,
+} from './three-particles-editor/entries/emission-entries';
 import { createGeneralEntries } from './three-particles-editor/entries/general-entries';
 import { createNoiseEntries } from './three-particles-editor/entries/noise-entries';
 import { createRendererEntries } from './three-particles-editor/entries/renderer-entries';
@@ -75,6 +78,7 @@ type EditorData = {
   showForceFields: boolean;
   frustumCulled: boolean;
   useIndividualUpdate: boolean;
+  enableBigNumbers: boolean;
   terrain: {
     textureId: string;
     movements?: string;
@@ -141,6 +145,7 @@ const defaultEditorData: EditorData = {
   showForceFields: false,
   frustumCulled: true,
   useIndividualUpdate: false,
+  enableBigNumbers: false,
   terrain: {
     textureId: TextureId.WIREFRAME,
   },
@@ -389,6 +394,7 @@ const subEditorDefaults = {
   showForceFields: false,
   frustumCulled: true,
   useIndividualUpdate: false,
+  enableBigNumbers: false,
   terrain: { textureId: TextureId.WIREFRAME },
   gradientStops: [
     { position: 0, color: { r: 255, g: 255, b: 255, a: 255 } },
@@ -553,12 +559,29 @@ const createPanel = (config: any = particleSystemConfig): void => {
     panel.add(navObj, 'backToParent').name('<< Back to Parent');
   }
 
+  // Mutable controller references for big numbers toggle
+  let maxParticlesCtrl: any = null;
+  let rateOverTimeCtrl: any = null;
+  let rateOverDistanceCtrl: any = null;
+
+  const handleBigNumbersToggle = (enabled: boolean): void => {
+    const maxParticles = enabled ? 100000 : 1000;
+    const rateMax = enabled ? 10000 : 500;
+    const burstMax = enabled ? 10000 : 1000;
+
+    if (maxParticlesCtrl) maxParticlesCtrl.max(maxParticles);
+    if (rateOverTimeCtrl) rateOverTimeCtrl.max(rateMax);
+    if (rateOverDistanceCtrl) rateOverDistanceCtrl.max(rateMax);
+    updateAllBurstCountMax(burstMax);
+  };
+
   configEntries.push(
     createHelperEntries({
       parentFolder: panel,
       particleSystemConfig: config,
       scene,
       particleSystemContainer,
+      onBigNumbersToggle: handleBigNumbersToggle,
     })
   );
 
@@ -586,20 +609,28 @@ const createPanel = (config: any = particleSystemConfig): void => {
       },
     })
   );
-  configEntries.push(
-    createGeneralEntries({
-      parentFolder: panel,
-      particleSystemConfig: config,
-      recreateParticleSystem,
-    })
-  );
-  configEntries.push(
-    createEmissionEntries({
-      parentFolder: panel,
-      particleSystemConfig: config,
-      recreateParticleSystem,
-    })
-  );
+
+  const generalResult = createGeneralEntries({
+    parentFolder: panel,
+    particleSystemConfig: config,
+    recreateParticleSystem,
+  });
+  configEntries.push(generalResult);
+  maxParticlesCtrl = generalResult.maxParticlesController;
+
+  const emissionResult = createEmissionEntries({
+    parentFolder: panel,
+    particleSystemConfig: config,
+    recreateParticleSystem,
+  });
+  configEntries.push(emissionResult);
+  rateOverTimeCtrl = emissionResult.rateOverTimeController;
+  rateOverDistanceCtrl = emissionResult.rateOverDistanceController;
+
+  // Apply initial big numbers state if loading a config that had it enabled
+  if (config._editorData?.enableBigNumbers) {
+    handleBigNumbersToggle(true);
+  }
   configEntries.push(
     createShapeEntries({
       parentFolder: panel,

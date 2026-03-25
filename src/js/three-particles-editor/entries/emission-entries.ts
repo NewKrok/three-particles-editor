@@ -15,6 +15,15 @@ type BurstFolderData = {
 let burstFolders: BurstFolderData[] = [];
 let burstsFolder: any = null;
 
+// Big numbers support for burst count sliders
+let burstCountMax = 1000;
+let allBurstCountControllers: any[] = [];
+
+export const updateAllBurstCountMax = (max: number): void => {
+  burstCountMax = max;
+  allBurstCountControllers.forEach((c) => c.max(max));
+};
+
 const isRandomBetweenTwoConstants = (
   value: Constant | RandomBetweenTwoConstants
 ): value is RandomBetweenTwoConstants => {
@@ -64,8 +73,12 @@ const createBurstFolder = (
   let countControllers: any[] = [];
 
   const createCountControls = () => {
-    // Remove existing count controllers
-    countControllers.forEach((c) => c.destroy());
+    // Remove existing count controllers from the global registry
+    countControllers.forEach((c) => {
+      const idx = allBurstCountControllers.indexOf(c);
+      if (idx !== -1) allBurstCountControllers.splice(idx, 1);
+      c.destroy();
+    });
     countControllers = [];
 
     if (countTypeObj.type === 'Constant') {
@@ -76,7 +89,7 @@ const createBurstFolder = (
       }
 
       const countController = folder
-        .add(constantCountObj, 'value', 1, 1000, 1)
+        .add(constantCountObj, 'value', 1, burstCountMax, 1)
         .name('Count')
         .onChange((v: number) => {
           burst.count = Math.round(v);
@@ -84,6 +97,7 @@ const createBurstFolder = (
         })
         .listen();
       countControllers.push(countController);
+      allBurstCountControllers.push(countController);
     } else {
       // Convert to RandomBetweenTwoConstants if needed
       if (!isRandomBetweenTwoConstants(burst.count)) {
@@ -96,7 +110,7 @@ const createBurstFolder = (
       if (countRef.max === undefined) countRef.max = 10;
 
       const minController = folder
-        .add(countRef, 'min', 1, 1000, 1)
+        .add(countRef, 'min', 1, burstCountMax, 1)
         .name('Count Min')
         .onChange((v: number) => {
           countRef.min = Math.round(Math.min(v, countRef.max ?? v));
@@ -104,9 +118,10 @@ const createBurstFolder = (
         })
         .listen();
       countControllers.push(minController);
+      allBurstCountControllers.push(minController);
 
       const maxController = folder
-        .add(countRef, 'max', 1, 1000, 1)
+        .add(countRef, 'max', 1, burstCountMax, 1)
         .name('Count Max')
         .onChange((v: number) => {
           countRef.max = Math.round(Math.max(v, countRef.min ?? v));
@@ -114,6 +129,7 @@ const createBurstFolder = (
         })
         .listen();
       countControllers.push(maxController);
+      allBurstCountControllers.push(maxController);
     }
   };
 
@@ -168,6 +184,9 @@ const rebuildBurstFolders = (
   particleSystemConfig: any,
   recreateParticleSystem: () => void
 ): void => {
+  // Clear global burst count controller registry
+  allBurstCountControllers = [];
+
   // Clean up existing burst folders
   burstFolders.forEach(({ folder, controllers }) => {
     controllers.forEach((c) => {
@@ -223,12 +242,12 @@ export const createEmissionEntries = ({
   const folder = parentFolder.addFolder('Emission');
   folder.close();
 
-  folder
+  const rateOverTimeController = folder
     .add(particleSystemConfig.emission, 'rateOverTime', 0.0, 500, 1.0)
     .onChange(recreateParticleSystem)
     .listen();
 
-  folder
+  const rateOverDistanceController = folder
     .add(particleSystemConfig.emission, 'rateOverDistance', 0.0, 500, 1.0)
     .onChange(recreateParticleSystem)
     .listen();
@@ -266,5 +285,7 @@ export const createEmissionEntries = ({
     onReset: () => {
       rebuildBurstFolders(particleSystemConfig, recreateParticleSystem);
     },
+    rateOverTimeController,
+    rateOverDistanceController,
   };
 };

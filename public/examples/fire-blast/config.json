@@ -1,0 +1,256 @@
+{
+  "duration": 1.2,
+  "startDelay": { "min": 0, "max": 0 },
+  "startLifetime": { "min": 0.2, "max": 2 },
+  "startSpeed": { "min": 0.8, "max": 0.93 },
+  "startSize": { "min": 22.31, "max": 30 },
+  "startOpacity": { "min": 0.9, "max": 1 },
+  "startRotation": { "min": 0, "max": 360 },
+  "startColor": { "min": { "g": 0.6, "b": 0.1 }, "max": { "g": 0.9, "b": 0.3 } },
+  "gravity": 0.06,
+  "maxParticles": 60,
+  "emission": {
+    "rateOverTime": 0,
+    "bursts": [
+      { "time": 0, "count": { "min": 25, "max": 40 }, "cycles": 1, "interval": 0, "probability": 1 }
+    ]
+  },
+  "shape": { "sphere": { "radius": 0.05 } },
+  "renderer": {
+    "blending": "THREE.AdditiveBlending",
+    "discardBackgroundColor": true,
+    "backgroundColorTolerance": 0.2,
+    "backgroundColor": { "r": 0, "g": 0, "b": 0 }
+  },
+  "velocityOverLifetime": {
+    "linear": {
+      "x": { "min": 0, "max": 0 },
+      "y": { "min": 0, "max": 0 },
+      "z": { "min": 0, "max": 0 }
+    },
+    "orbital": {
+      "x": { "min": 0, "max": 0 },
+      "y": { "min": 0, "max": 0 },
+      "z": { "min": 0, "max": 0 }
+    }
+  },
+  "sizeOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 0.02, "y": 1 },
+        { "x": 0.1, "y": 1, "percentage": 0.1 },
+        { "x": 0.5, "y": 0.9 },
+        { "x": 1, "y": 0.7, "percentage": 1 }
+      ]
+    }
+  },
+  "colorOverLifetime": {
+    "isActive": true,
+    "r": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.3, "y": 1 },
+        { "x": 0.6, "y": 0.8, "percentage": 0.6 },
+        { "x": 0.85, "y": 0.5 },
+        { "x": 1, "y": 0.3, "percentage": 1 }
+      ]
+    },
+    "g": {
+      "bezierPoints": [
+        { "x": 0, "y": 0.9, "percentage": 0 },
+        { "x": 0.2, "y": 0.6 },
+        { "x": 0.5, "y": 0.3, "percentage": 0.5 },
+        { "x": 0.75, "y": 0.15 },
+        { "x": 1, "y": 0.05, "percentage": 1 }
+      ]
+    },
+    "b": {
+      "bezierPoints": [
+        { "x": 0, "y": 0.3, "percentage": 0 },
+        { "x": 0.15, "y": 0.1 },
+        { "x": 0.4, "y": 0.05, "percentage": 0.4 },
+        { "x": 0.7, "y": 0.02 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.2, "y": 1 },
+        { "x": 0.5, "y": 0.9, "percentage": 0.5 },
+        { "x": 0.8, "y": 0.5 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "rotationOverLifetime": { "isActive": true, "min": -120, "max": 120 },
+  "noise": {
+    "isActive": true,
+    "useRandomOffset": true,
+    "strength": 0.25,
+    "frequency": 0.4,
+    "positionAmount": 0.4,
+    "rotationAmount": 2
+  },
+  "textureSheetAnimation": { "startFrame": { "min": 0, "max": 0 } },
+  "forceFields": [],
+  "_editorData": {
+    "textureId": "SOFT_SMOKE",
+    "simulation": {
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "showShape": false,
+    "showForceFields": false,
+    "frustumCulled": true,
+    "useIndividualUpdate": false,
+    "enableBigNumbers": false,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "gradientStops": [
+      { "position": 0, "color": { "r": 255, "g": 255, "b": 255, "a": 255 } },
+      { "position": 1, "color": { "r": 255, "g": 255, "b": 255, "a": 0 } }
+    ],
+    "metadata": {
+      "name": "Fire Blast",
+      "createdAt": 1774481786400,
+      "modifiedAt": 1774481786400,
+      "editorVersion": "2.8.0"
+    }
+  },
+  "subEmitters": [
+    {
+      "config": {
+        "transform": { "rotation": { "x": -90 } },
+        "duration": 0.8,
+        "looping": false,
+        "startDelay": { "min": 0, "max": 0 },
+        "startLifetime": { "min": 1.5, "max": 3 },
+        "startSpeed": { "min": 0.1, "max": 0.3 },
+        "startSize": { "min": 21, "max": 35 },
+        "startOpacity": { "min": 0.15, "max": 0.25 },
+        "startRotation": { "min": -360, "max": 360 },
+        "startColor": {
+          "min": { "r": 0.5, "g": 0.5, "b": 0.5 },
+          "max": { "r": 0.8, "g": 0.8, "b": 0.8 }
+        },
+        "gravity": -0.3,
+        "maxParticles": 3,
+        "emission": {
+          "rateOverTime": 0,
+          "bursts": [{ "time": 0, "count": 2, "cycles": 1, "interval": 0, "probability": 1 }]
+        },
+        "shape": { "shape": "CONE", "cone": { "angle": 20, "radius": 0.05 } },
+        "renderer": {
+          "blending": "THREE.NormalBlending",
+          "discardBackgroundColor": true,
+          "backgroundColorTolerance": 0.4,
+          "backgroundColor": { "r": 0, "g": 0, "b": 0 }
+        },
+        "velocityOverLifetime": {
+          "linear": {
+            "x": { "min": 0, "max": 0 },
+            "y": { "min": 0, "max": 0 },
+            "z": { "min": 0, "max": 0 }
+          },
+          "orbital": {
+            "x": { "min": 0, "max": 0 },
+            "y": { "min": 0, "max": 0 },
+            "z": { "min": 0, "max": 0 }
+          }
+        },
+        "sizeOverLifetime": {
+          "isActive": true,
+          "lifetimeCurve": {
+            "bezierPoints": [
+              { "x": 0, "y": 1, "percentage": 0 },
+              { "x": 0.3, "y": 1.2 },
+              { "x": 0.6, "y": 1.4, "percentage": 0.6 },
+              { "x": 0.85, "y": 1.5 },
+              { "x": 1, "y": 1.5, "percentage": 1 }
+            ]
+          }
+        },
+        "colorOverLifetime": {
+          "r": {
+            "bezierPoints": [
+              { "x": 0, "y": 1, "percentage": 0 },
+              { "x": 1, "y": 1, "percentage": 1 }
+            ]
+          },
+          "g": {
+            "bezierPoints": [
+              { "x": 0, "y": 1, "percentage": 0 },
+              { "x": 1, "y": 1, "percentage": 1 }
+            ]
+          },
+          "b": {
+            "bezierPoints": [
+              { "x": 0, "y": 1, "percentage": 0 },
+              { "x": 1, "y": 1, "percentage": 1 }
+            ]
+          }
+        },
+        "opacityOverLifetime": {
+          "isActive": true,
+          "lifetimeCurve": {
+            "bezierPoints": [
+              { "x": 0, "y": 1, "percentage": 0 },
+              { "x": 0.3, "y": 0.8 },
+              { "x": 0.6, "y": 0.4, "percentage": 0.6 },
+              { "x": 0.85, "y": 0.1 },
+              { "x": 1, "y": 0, "percentage": 1 }
+            ]
+          }
+        },
+        "rotationOverLifetime": { "isActive": true, "min": -15, "max": 15 },
+        "noise": {
+          "isActive": true,
+          "useRandomOffset": true,
+          "strength": 0.08,
+          "frequency": 0.2,
+          "positionAmount": 0.15,
+          "rotationAmount": 1
+        },
+        "textureSheetAnimation": { "startFrame": { "min": 0, "max": 0 } },
+        "forceFields": [],
+        "_editorData": {
+          "textureId": "CLOUD",
+          "simulation": {
+            "movements": "DISABLED",
+            "movementSpeed": 1,
+            "rotation": "DISABLED",
+            "rotationSpeed": 1
+          },
+          "showLocalAxes": false,
+          "showWorldAxes": false,
+          "showShape": false,
+          "showForceFields": false,
+          "frustumCulled": true,
+          "useIndividualUpdate": false,
+          "enableBigNumbers": false,
+          "terrain": { "textureId": "WIREFRAME" },
+          "gradientStops": [
+            { "position": 0, "color": { "r": 255, "g": 255, "b": 255, "a": 255 } },
+            { "position": 1, "color": { "r": 255, "g": 255, "b": 255, "a": 0 } }
+          ]
+        }
+      },
+      "maxInstances": 25
+    }
+  ]
+}

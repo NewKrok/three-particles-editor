@@ -47,6 +47,7 @@ type HelperEntriesParams = {
   particleSystemConfig: ParticleSystemConfig;
   scene: THREE.Scene;
   particleSystemContainer: THREE.Object3D;
+  onBigNumbersToggle?: (enabled: boolean) => void;
 };
 
 type HelperEntriesResult = {
@@ -62,6 +63,7 @@ export const createHelperEntries = ({
   particleSystemConfig,
   scene,
   particleSystemContainer,
+  onBigNumbersToggle,
 }: HelperEntriesParams): HelperEntriesResult => {
   const folder = parentFolder.addFolder('Helper');
   folder.close();
@@ -198,6 +200,18 @@ export const createHelperEntries = ({
     })
     .listen();
 
+  if (particleSystemConfig._editorData.enableBigNumbers === undefined) {
+    particleSystemConfig._editorData.enableBigNumbers = false;
+  }
+
+  folder
+    .add(particleSystemConfig._editorData, 'enableBigNumbers')
+    .name('Enable big numbers')
+    .onChange((v: boolean) => {
+      if (onBigNumbersToggle) onBigNumbersToggle(v);
+    })
+    .listen();
+
   updateLocalAxesHelper();
   updateWorldAxesHelper();
   // Note: updateShapeHelperVisibility() is called in onParticleSystemChange
@@ -307,6 +321,7 @@ export const createHelperEntries = ({
       particleSystemContainer.rotation.x = 0;
       particleSystemContainer.rotation.y = 0;
       particleSystemContainer.rotation.z = 0;
+      if (onBigNumbersToggle) onBigNumbersToggle(particleSystemConfig._editorData.enableBigNumbers);
     },
   };
 };
