@@ -1,3 +1,10 @@
+# [2.9.0](https://github.com/NewKrok/three-particles-editor/compare/v2.8.1...v2.9.0) (2026-03-25)
+
+### Features
+
+- add force field editor with 3D visualization and drag interaction ([00841f7](https://github.com/NewKrok/three-particles-editor/commit/00841f79fc6497511d7ea751d2b188b1bb7e2f16))
+- add rendererType option, big numbers toggle, and new examples ([fb3e100](https://github.com/NewKrok/three-particles-editor/commit/fb3e100da48f4144ca9abe4ca325351173157293))
+
 ## [2.8.1](https://github.com/NewKrok/three-particles-editor/compare/v2.8.0...v2.8.1) (2026-03-24)
 
 ### Bug Fixes
