@@ -41,6 +41,7 @@ import { createTextureSheetAnimationEntries } from './three-particles-editor/ent
 import { createTransformEntries } from './three-particles-editor/entries/transform-entries';
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
 import { createSubEmitterEntries } from './three-particles-editor/entries/sub-emitter-entries';
+import { createForceFieldEntries } from './three-particles-editor/entries/force-field-entries';
 import { generateDefaultName } from './utils/name-utils';
 
 type ConfigMetadata = {
@@ -71,6 +72,7 @@ type EditorData = {
   showLocalAxes: boolean;
   showWorldAxes: boolean;
   showShape: boolean;
+  showForceFields: boolean;
   frustumCulled: boolean;
   useIndividualUpdate: boolean;
   terrain: {
@@ -136,6 +138,7 @@ const defaultEditorData: EditorData = {
   showLocalAxes: false,
   showWorldAxes: false,
   showShape: false,
+  showForceFields: false,
   frustumCulled: true,
   useIndividualUpdate: false,
   terrain: {
@@ -383,6 +386,7 @@ const subEditorDefaults = {
   showLocalAxes: false,
   showWorldAxes: false,
   showShape: false,
+  showForceFields: false,
   frustumCulled: true,
   useIndividualUpdate: false,
   terrain: { textureId: TextureId.WIREFRAME },
@@ -636,6 +640,14 @@ const createPanel = (config: any = particleSystemConfig): void => {
       parentFolder: panel,
       particleSystemConfig: config,
       recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createForceFieldEntries({
+      parentFolder: panel,
+      particleSystemConfig: config,
+      recreateParticleSystem,
+      scene,
     })
   );
   configEntries.push(

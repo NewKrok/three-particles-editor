@@ -5,6 +5,7 @@ import { setTerrain } from '../world';
 import type { ParticleSystem, ParticleSystemConfig } from '@newkrok/three-particles';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { updateShapeHelper } from '../shape-helper';
+import { updateForceFieldHelperVisibility } from './force-field-entries';
 
 const worldAxesHelper = new THREE.AxesHelper(5);
 const localAxesHelper = new THREE.AxesHelper(1);
@@ -168,6 +169,15 @@ export const createHelperEntries = ({
     .add(particleSystemConfig._editorData, 'showShape')
     .name('Show shape')
     .onChange(updateShapeHelperVisibility)
+    .listen();
+
+  const updateForceFieldHelpers = (): void => {
+    updateForceFieldHelperVisibility(scene, particleSystemConfig);
+  };
+  folder
+    .add(particleSystemConfig._editorData, 'showForceFields')
+    .name('Show force fields')
+    .onChange(updateForceFieldHelpers)
     .listen();
 
   folder

@@ -78,6 +78,22 @@ export const copyToClipboard = (particleSystemConfig) => {
     _editorData: { ...particleSystemConfig._editorData },
   };
 
+  // Include force fields if present
+  if (particleSystemConfig.forceFields && particleSystemConfig.forceFields.length > 0) {
+    serialized.forceFields = particleSystemConfig.forceFields.map((ff: any) => {
+      const result: any = {};
+      if (ff.isActive !== undefined && ff.isActive !== true) result.isActive = ff.isActive;
+      if (ff.type) result.type = ff.type;
+      if (ff.position) result.position = { x: ff.position.x, y: ff.position.y, z: ff.position.z };
+      if (ff.direction)
+        result.direction = { x: ff.direction.x, y: ff.direction.y, z: ff.direction.z };
+      if (ff.strength !== undefined) result.strength = ff.strength;
+      if (ff.range !== undefined) result.range = ff.range;
+      if (ff.falloff) result.falloff = ff.falloff;
+      return result;
+    });
+  }
+
   // Include sub-emitters if present
   const subEmitters = serializeSubEmitters(particleSystemConfig.subEmitters);
   if (subEmitters) {
@@ -162,8 +178,9 @@ export const loadParticleSystem = ({
     applyToFirstObject: true,
   });
 
-  // Remove existing subEmitters before merge (deepMerge doesn't handle array replacement well)
+  // Remove existing arrays before merge (deepMerge doesn't handle array replacement well)
   delete particleSystemConfig.subEmitters;
+  delete particleSystemConfig.forceFields;
 
   deepMerge(particleSystemConfig, config, {
     skippedProperties: ['map'],

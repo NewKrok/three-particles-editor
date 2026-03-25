@@ -8,6 +8,7 @@ import { getTexture } from './assets';
 let scene: THREE.Scene;
 let renderer: THREE.WebGLRenderer;
 let camera: THREE.PerspectiveCamera;
+let controls: OrbitControls;
 let stats: Stats;
 let mesh: THREE.Mesh;
 
@@ -39,7 +40,7 @@ export const createWorld = (targetQuery: string): THREE.Scene => {
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
   camera.position.set(0, 0, 6);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
   controls.enablePan = true;
   controls.enableZoom = true;
   controls.target.set(0, 0, 0);
@@ -89,6 +90,10 @@ export const setTerrain = (textureId?: string): void => {
     });
   }
 };
+
+export const getCamera = (): THREE.PerspectiveCamera => camera;
+export const getRendererDomElement = (): HTMLCanvasElement => renderer.domElement;
+export const getOrbitControls = (): OrbitControls => controls;
 
 export const captureScreenshot = (): void => {
   // Render the current frame
