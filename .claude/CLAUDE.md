@@ -285,26 +285,30 @@ window.editor = {
 
 ---
 
+## Developer Guides
+
+Detailed step-by-step guides for common tasks:
+
+- [How to Add a New Entry (Config Section)](.claude/docs/how-to-add-entry.md) — Entry file structure, lifecycle callbacks, lil-gui controllers, registration
+- [How to Add an Example](.claude/docs/how-to-add-example.md) — Example folder structure, registration in examples-config.js
+- [How to Add a Texture](.claude/docs/how-to-add-texture.md) — TextureId, texture-config, texture-metadata, texture-selector registration
+- [Curve Editor Integration](.claude/docs/curve-editor-integration.md) — Bezier curve editor usage, LifetimeCurve type, per-channel RGB curves
+- [Config Serialization](.claude/docs/config-serialization.md) — Save/load pipeline, differential storage, version detection, legacy conversion
+
 ## Development Notes
 
 ### Common Tasks
 
-1. **Adding a new configuration property**:
-   - Update the appropriate `entries/*.ts` file
-   - Add to `getDefaultParticleSystemConfig()` default values
-   - Test particle system behavior
+1. **Adding a new configuration property**: See [How to Add Entry](.claude/docs/how-to-add-entry.md)
+2. **Adding a new texture**: See [How to Add Texture](.claude/docs/how-to-add-texture.md)
+3. **Adding a new example**: See [How to Add Example](.claude/docs/how-to-add-example.md)
 
-2. **Adding a new texture**:
-   - `texture-config.ts`: New TextureId enum value
-   - `assets.ts`: Texture loading logic
-   - `public/assets/`: Texture file
-
-3. **Modifying UI component**:
+4. **Modifying UI component**:
    - Svelte components: `src/components/`
    - Use SMUI components
    - Consider responsive design
 
-4. **Legacy configuration conversion**:
+5. **Legacy configuration conversion**:
    - `config-converter.ts`: Conversion logic
    - Maintain backward compatibility
 
@@ -323,6 +327,6 @@ window.editor = {
 
 ---
 
-**Last updated:** 2026-01-21
-**Editor version:** 2.3.0
-**@newkrok/three-particles version:** 2.0.3
+**Last updated:** 2026-03-28
+**Editor version:** 2.9.0
+**@newkrok/three-particles version:** 2.12.0
