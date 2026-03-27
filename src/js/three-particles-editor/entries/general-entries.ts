@@ -18,7 +18,7 @@ export const createGeneralEntries = ({
   }
 
   folder
-    .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED'])
+    .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED', 'TRAIL'])
     .onChange(recreateParticleSystem)
     .listen();
 

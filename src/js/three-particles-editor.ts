@@ -45,6 +45,7 @@ import { createTransformEntries } from './three-particles-editor/entries/transfo
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
 import { createSubEmitterEntries } from './three-particles-editor/entries/sub-emitter-entries';
 import { createForceFieldEntries } from './three-particles-editor/entries/force-field-entries';
+import { createTrailEntries } from './three-particles-editor/entries/trail-entries';
 import { generateDefaultName } from './utils/name-utils';
 
 type ConfigMetadata = {
@@ -690,6 +691,13 @@ const createPanel = (config: any = particleSystemConfig): void => {
   );
   configEntries.push(
     createRendererEntries({
+      parentFolder: panel,
+      particleSystemConfig: config,
+      recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createTrailEntries({
       parentFolder: panel,
       particleSystemConfig: config,
       recreateParticleSystem,
