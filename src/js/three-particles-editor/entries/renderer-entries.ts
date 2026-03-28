@@ -45,37 +45,44 @@ export const createRendererEntries = ({
     controllers.forEach((controller) => controller.destroy());
     controllers = [];
 
-    // Add a display field showing current texture
-    const displayTextureConfig = {
-      selectedTexture: particleSystemConfig._editorData.textureId || 'None',
-    };
+    const isMesh = particleSystemConfig.renderer.rendererType === 'MESH';
 
-    controllers.push(
-      folder
-        .add(displayTextureConfig, 'selectedTexture')
-        .name('Selected Texture')
-        .listen()
-        .disable()
-    );
+    if (isMesh) {
+      // Mesh particles use the engine's built-in 1x1 white texture,
+      // sprite textures are not applicable — texture UI is hidden
+    } else {
+      // Add a display field showing current texture
+      const displayTextureConfig = {
+        selectedTexture: particleSystemConfig._editorData.textureId || 'None',
+      };
 
-    // Add button to open texture selector
-    const textureSelectButton = {
-      selectTexture: () => {
-        openTextureSelectorModal({
-          currentTextureId: particleSystemConfig._editorData.textureId,
-          onSelect: (textureId: string) => {
-            particleSystemConfig._editorData.textureId = textureId;
-            displayTextureConfig.selectedTexture = textureId;
-            setConfigByTexture(textureId);
-            recreateParticleSystem();
-          },
-        });
-      },
-    };
+      controllers.push(
+        folder
+          .add(displayTextureConfig, 'selectedTexture')
+          .name('Selected Texture')
+          .listen()
+          .disable()
+      );
 
-    controllers.push(folder.add(textureSelectButton, 'selectTexture').name('Choose Texture...'));
+      // Add button to open texture selector
+      const textureSelectButton = {
+        selectTexture: () => {
+          openTextureSelectorModal({
+            currentTextureId: particleSystemConfig._editorData.textureId,
+            onSelect: (textureId: string) => {
+              particleSystemConfig._editorData.textureId = textureId;
+              displayTextureConfig.selectedTexture = textureId;
+              setConfigByTexture(textureId);
+              recreateParticleSystem();
+            },
+          });
+        },
+      };
 
-    setConfigByTexture(particleSystemConfig._editorData.textureId);
+      controllers.push(folder.add(textureSelectButton, 'selectTexture').name('Choose Texture...'));
+
+      setConfigByTexture(particleSystemConfig._editorData.textureId);
+    }
 
     controllers.push(
       folder
@@ -140,9 +147,17 @@ export const createRendererEntries = ({
 
   rebuild();
 
+  let lastRendererType = particleSystemConfig.renderer.rendererType || 'POINTS';
+
   return {
     onReset: rebuild,
     onParticleSystemChange: (): void => {
+      const currentRendererType = particleSystemConfig.renderer.rendererType || 'POINTS';
+      if (lastRendererType !== currentRendererType) {
+        lastRendererType = currentRendererType;
+        rebuild();
+        return;
+      }
       // It looks onChange doesn't work on dropdown entry so have to handle it manually
       if (lastUsedTextureId !== particleSystemConfig._editorData.textureId) {
         setConfigByTexture(particleSystemConfig._editorData.textureId);

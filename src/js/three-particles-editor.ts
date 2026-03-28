@@ -46,6 +46,7 @@ import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entr
 import { createSubEmitterEntries } from './three-particles-editor/entries/sub-emitter-entries';
 import { createForceFieldEntries } from './three-particles-editor/entries/force-field-entries';
 import { createTrailEntries } from './three-particles-editor/entries/trail-entries';
+import { createMeshEntries, createGeometry } from './three-particles-editor/entries/mesh-entries';
 import { generateDefaultName } from './utils/name-utils';
 
 type ConfigMetadata = {
@@ -349,6 +350,18 @@ const resolveSubEmitterTextures = (config: any): void => {
   });
 };
 
+const resolveMeshGeometry = (config: any): void => {
+  if (config.renderer?.rendererType === 'MESH' && config.renderer?.mesh?.geometryType) {
+    config.renderer.mesh.geometry = createGeometry(config.renderer.mesh.geometryType);
+  }
+  // Recursively resolve for sub-emitters
+  if (config.subEmitters) {
+    config.subEmitters.forEach((subEmitter: any) => {
+      if (subEmitter.config) resolveMeshGeometry(subEmitter.config);
+    });
+  }
+};
+
 const recreateParticleSystem = (markAsDirty = true): void => {
   resumeTime();
   if (particleSystem) {
@@ -362,6 +375,14 @@ const recreateParticleSystem = (markAsDirty = true): void => {
 
   // Resolve textures for sub-emitters (map is not serialized, only textureId is)
   resolveSubEmitterTextures(activeConfig);
+
+  // Resolve mesh geometries (geometry is not serialized, only geometryType is)
+  resolveMeshGeometry(activeConfig);
+
+  // Mesh particles use the engine's built-in default texture, not sprite textures
+  if (activeConfig.renderer?.rendererType === 'MESH') {
+    delete activeConfig.map;
+  }
 
   // Convert old configuration format to new format before creating particle system
   const convertedConfig = convertToNewFormat(activeConfig);
@@ -455,7 +476,7 @@ const expandSubEmitterConfig = (minimalConfig: any): any => {
 const collapseSubEmitterConfig = (fullConfig: any): any => {
   // Convert expanded config back to minimal diff form
   const defaultConfig = JSON.parse(JSON.stringify(getDefaultParticleSystemConfig()));
-  const diff = getObjectDiff(defaultConfig, fullConfig, { skippedProperties: ['map'] });
+  const diff = getObjectDiff(defaultConfig, fullConfig, { skippedProperties: ['map', 'geometry'] });
   // Always keep _editorData
   if (fullConfig._editorData) {
     diff._editorData = { ...fullConfig._editorData };
@@ -698,6 +719,13 @@ const createPanel = (config: any = particleSystemConfig): void => {
   );
   configEntries.push(
     createTrailEntries({
+      parentFolder: panel,
+      particleSystemConfig: config,
+      recreateParticleSystem,
+    })
+  );
+  configEntries.push(
+    createMeshEntries({
       parentFolder: panel,
       particleSystemConfig: config,
       recreateParticleSystem,
