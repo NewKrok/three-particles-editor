@@ -45,6 +45,11 @@ const ensureTrailConfig = (particleSystemConfig: any): void => {
   const trail = particleSystemConfig.renderer.trail;
   if (trail.length == null) trail.length = 20;
   if (trail.width == null) trail.width = 1.0;
+  if (trail.minVertexDistance == null) trail.minVertexDistance = 0;
+  if (trail.maxTime == null) trail.maxTime = 0;
+  if (trail.smoothing == null) trail.smoothing = false;
+  if (trail.smoothingSubdivisions == null) trail.smoothingSubdivisions = 3;
+  if (trail.twistPrevention == null) trail.twistPrevention = false;
   if (!trail.widthOverTrail) trail.widthOverTrail = deepCopyCurve(DEFAULT_FADE_CURVE);
   if (!trail.opacityOverTrail) trail.opacityOverTrail = deepCopyCurve(DEFAULT_FADE_CURVE);
   if (!trail.colorOverTrail) {
@@ -95,6 +100,42 @@ export const createTrailEntries = ({
 
     controllers.push(
       folder.add(trail, 'width', 0.01, 10, 0.01).onChange(recreateParticleSystem).listen()
+    );
+
+    controllers.push(
+      folder
+        .add(trail, 'minVertexDistance', 0, 2, 0.01)
+        .name('Min Vertex Distance')
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
+    controllers.push(
+      folder
+        .add(trail, 'maxTime', 0, 10, 0.1)
+        .name('Max Time (s)')
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
+    controllers.push(
+      folder.add(trail, 'smoothing').name('Smoothing').onChange(recreateParticleSystem).listen()
+    );
+
+    controllers.push(
+      folder
+        .add(trail, 'smoothingSubdivisions', 1, 10, 1)
+        .name('Smoothing Subdivisions')
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
+    controllers.push(
+      folder
+        .add(trail, 'twistPrevention')
+        .name('Twist Prevention')
+        .onChange(recreateParticleSystem)
+        .listen()
     );
 
     // Width over trail

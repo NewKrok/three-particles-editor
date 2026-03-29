@@ -11,6 +11,7 @@ let camera: THREE.PerspectiveCamera;
 let controls: OrbitControls;
 let stats: Stats;
 let mesh: THREE.Mesh;
+let depthRenderTarget: THREE.WebGLRenderTarget | null = null;
 
 export const createWorld = (targetQuery: string): THREE.Scene => {
   const container = document.querySelector(targetQuery);
@@ -36,6 +37,11 @@ export const createWorld = (targetQuery: string): THREE.Scene => {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = true as unknown as THREE.ShadowMapType;
   container.appendChild(renderer.domElement);
+
+  // Create depth render target for soft particles
+  depthRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+    depthTexture: new THREE.DepthTexture(window.innerWidth, window.innerHeight),
+  });
 
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100);
   camera.position.set(0, 0, 6);
@@ -63,9 +69,18 @@ const onWindowResize = (): void => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  if (depthRenderTarget) {
+    depthRenderTarget.setSize(window.innerWidth, window.innerHeight);
+  }
 };
 
-export const updateWorld = (): void => {
+export const updateWorld = (softParticlesEnabled = false): void => {
+  if (softParticlesEnabled && depthRenderTarget) {
+    // Render depth pass first
+    renderer.setRenderTarget(depthRenderTarget);
+    renderer.render(scene, camera);
+    renderer.setRenderTarget(null);
+  }
   renderer.render(scene, camera);
   stats.update();
 };
@@ -94,6 +109,8 @@ export const setTerrain = (textureId?: string): void => {
 export const getCamera = (): THREE.PerspectiveCamera => camera;
 export const getRendererDomElement = (): HTMLCanvasElement => renderer.domElement;
 export const getOrbitControls = (): OrbitControls => controls;
+export const getDepthTexture = (): THREE.DepthTexture | null =>
+  depthRenderTarget?.depthTexture ?? null;
 
 export const captureScreenshot = (): void => {
   // Render the current frame

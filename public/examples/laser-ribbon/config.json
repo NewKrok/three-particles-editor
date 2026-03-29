@@ -1,0 +1,92 @@
+{
+  "renderer": {
+    "rendererType": "TRAIL",
+    "blending": "THREE.AdditiveBlending",
+    "transparent": true,
+    "depthWrite": false,
+    "trail": {
+      "length": 80,
+      "width": 0.15,
+      "minVertexDistance": 0.02,
+      "smoothing": true,
+      "smoothingSubdivisions": 4,
+      "twistPrevention": true,
+      "widthOverTrail": {
+        "type": "BEZIER",
+        "scale": 1,
+        "bezierPoints": [
+          { "x": 0, "y": 1, "percentage": 0 },
+          { "x": 0.8, "y": 1 },
+          { "x": 0.95, "y": 0.5 },
+          { "x": 1, "y": 0, "percentage": 1 }
+        ]
+      },
+      "opacityOverTrail": {
+        "type": "BEZIER",
+        "scale": 1,
+        "bezierPoints": [
+          { "x": 0, "y": 1, "percentage": 0 },
+          { "x": 0.7, "y": 1 },
+          { "x": 0.9, "y": 0.5 },
+          { "x": 1, "y": 0, "percentage": 1 }
+        ]
+      }
+    }
+  },
+  "startLifetime": {
+    "min": 1.5,
+    "max": 2
+  },
+  "startSpeed": {
+    "min": 4,
+    "max": 6
+  },
+  "startSize": {
+    "min": 0.2,
+    "max": 0.3
+  },
+  "startColor": {
+    "min": { "r": 1, "g": 0.1, "b": 0.1 },
+    "max": { "r": 1, "g": 0.3, "b": 0.1 }
+  },
+  "startOpacity": {
+    "min": 1,
+    "max": 1
+  },
+  "maxParticles": 8,
+  "emission": {
+    "rateOverTime": 4
+  },
+  "shape": {
+    "shape": "CONE",
+    "cone": {
+      "angle": 5,
+      "radius": 0.05
+    }
+  },
+  "_editorData": {
+    "textureId": "POINT",
+    "simulation": {
+      "movements": "CIRCULAR",
+      "movementSpeed": 2,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "frustumCulled": true,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "metadata": {
+      "name": "Laser Ribbon",
+      "createdAt": 1711612800000,
+      "modifiedAt": 1711612800000,
+      "editorVersion": "2.10.0"
+    }
+  }
+}

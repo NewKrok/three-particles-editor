@@ -22,6 +22,7 @@ import {
   setTerrain,
   updateWorld,
   captureScreenshot,
+  getDepthTexture,
 } from './three-particles-editor/world';
 import { getTexture, initAssets, loadCustomAssets } from './three-particles-editor/assets';
 
@@ -324,7 +325,9 @@ const animate = (): void => {
       updateParticleSystems(cycleData);
     }
   }
-  updateWorld();
+  const activeConfig = getActiveConfig();
+  const softParticlesEnabled = !!activeConfig?.renderer?.softParticles?.enabled;
+  updateWorld(softParticlesEnabled);
   requestAnimationFrame(animate);
 };
 
@@ -382,6 +385,14 @@ const recreateParticleSystem = (markAsDirty = true): void => {
   // Mesh particles use the engine's built-in default texture, not sprite textures
   if (activeConfig.renderer?.rendererType === 'MESH') {
     delete activeConfig.map;
+  }
+
+  // Inject depth texture for soft particles
+  if (activeConfig.renderer?.softParticles?.enabled) {
+    const depthTex = getDepthTexture();
+    if (depthTex) {
+      activeConfig.renderer.softParticles.depthTexture = depthTex;
+    }
   }
 
   // Convert old configuration format to new format before creating particle system
@@ -476,7 +487,9 @@ const expandSubEmitterConfig = (minimalConfig: any): any => {
 const collapseSubEmitterConfig = (fullConfig: any): any => {
   // Convert expanded config back to minimal diff form
   const defaultConfig = JSON.parse(JSON.stringify(getDefaultParticleSystemConfig()));
-  const diff = getObjectDiff(defaultConfig, fullConfig, { skippedProperties: ['map', 'geometry'] });
+  const diff = getObjectDiff(defaultConfig, fullConfig, {
+    skippedProperties: ['map', 'geometry', 'depthTexture'],
+  });
   // Always keep _editorData
   if (fullConfig._editorData) {
     diff._editorData = { ...fullConfig._editorData };

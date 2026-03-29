@@ -1,0 +1,103 @@
+{
+  "renderer": {
+    "rendererType": "MESH",
+    "blending": "THREE.NormalBlending",
+    "transparent": true,
+    "depthWrite": false,
+    "mesh": {
+      "geometryType": "OCTAHEDRON"
+    }
+  },
+  "startLifetime": {
+    "min": 3,
+    "max": 5
+  },
+  "startSpeed": {
+    "min": 0.2,
+    "max": 0.5
+  },
+  "startSize": {
+    "min": 0.15,
+    "max": 0.35
+  },
+  "startRotation": {
+    "min": -360,
+    "max": 360
+  },
+  "startColor": {
+    "min": { "r": 0.2, "g": 0.8, "b": 0.9 },
+    "max": { "r": 0.8, "g": 0.2, "b": 0.9 }
+  },
+  "startOpacity": {
+    "min": 0.7,
+    "max": 1
+  },
+  "gravity": -0.5,
+  "maxParticles": 40,
+  "emission": {
+    "rateOverTime": 8
+  },
+  "shape": {
+    "shape": "SPHERE",
+    "sphere": {
+      "radius": 2
+    }
+  },
+  "sizeOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 0.15, "y": 1 },
+        { "x": 0.85, "y": 1 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 0.1, "y": 1 },
+        { "x": 0.8, "y": 1 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "rotationOverLifetime": {
+    "isActive": true,
+    "min": -120,
+    "max": 120
+  },
+  "noise": {
+    "isActive": true,
+    "useRandomOffset": true,
+    "strength": 0.15,
+    "frequency": 0.3
+  },
+  "_editorData": {
+    "simulation": {
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "frustumCulled": true,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "metadata": {
+      "name": "Floating Gems",
+      "createdAt": 1711612800000,
+      "modifiedAt": 1711612800000,
+      "editorVersion": "2.10.0"
+    }
+  }
+}

@@ -37,7 +37,7 @@ const serializeSubEmitters = (subEmitters: any[] | undefined): any[] | undefined
   return subEmitters.map((subEmitter) => {
     const serialized: any = {
       ...getObjectDiff(defaultConfig, subEmitter.config, {
-        skippedProperties: ['map', 'geometry'],
+        skippedProperties: ['map', 'geometry', 'depthTexture'],
       }),
     };
 
@@ -73,7 +73,7 @@ export const copyToClipboard = (particleSystemConfig) => {
 
   const serialized: any = {
     ...getObjectDiff(getDefaultParticleSystemConfig(), particleSystemConfig, {
-      skippedProperties: ['map', 'geometry'],
+      skippedProperties: ['map', 'geometry', 'depthTexture'],
     }),
     _editorData: { ...particleSystemConfig._editorData },
   };
@@ -163,7 +163,7 @@ export const loadParticleSystem = ({
       // Remove map (THREE.Texture) to avoid circular references during deepMerge
       delete fullSubConfig.map;
       deepMerge(fullSubConfig, subEmitter.config || {}, {
-        skippedProperties: ['map', 'geometry'],
+        skippedProperties: ['map', 'geometry', 'depthTexture'],
         applyToFirstObject: true,
       });
       return {
@@ -183,7 +183,7 @@ export const loadParticleSystem = ({
   delete particleSystemConfig.forceFields;
 
   deepMerge(particleSystemConfig, config, {
-    skippedProperties: ['map', 'geometry'],
+    skippedProperties: ['map', 'geometry', 'depthTexture'],
     applyToFirstObject: true,
   });
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);

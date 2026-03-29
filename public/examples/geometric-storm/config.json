@@ -1,0 +1,106 @@
+{
+  "renderer": {
+    "rendererType": "MESH",
+    "blending": "THREE.AdditiveBlending",
+    "transparent": true,
+    "depthWrite": false,
+    "mesh": {
+      "geometryType": "TETRAHEDRON"
+    }
+  },
+  "transform": {
+    "rotation": { "x": -90 }
+  },
+  "startLifetime": {
+    "min": 1,
+    "max": 2
+  },
+  "startSpeed": {
+    "min": 1,
+    "max": 4
+  },
+  "startSize": {
+    "min": 0.05,
+    "max": 0.2
+  },
+  "startRotation": {
+    "min": -360,
+    "max": 360
+  },
+  "startColor": {
+    "min": { "r": 1, "g": 0.4, "b": 0.1 },
+    "max": { "r": 1, "g": 0.9, "b": 0.2 }
+  },
+  "startOpacity": {
+    "min": 0.8,
+    "max": 1
+  },
+  "maxParticles": 200,
+  "emission": {
+    "rateOverTime": 100
+  },
+  "shape": {
+    "shape": "CONE",
+    "cone": {
+      "angle": 35,
+      "radius": 0.5
+    }
+  },
+  "velocityOverLifetime": {
+    "isActive": true,
+    "orbital": {
+      "y": { "min": -3, "max": 3 }
+    }
+  },
+  "sizeOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0.5, "percentage": 0 },
+        { "x": 0.3, "y": 1 },
+        { "x": 0.7, "y": 0.8 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 0.05, "y": 1 },
+        { "x": 0.6, "y": 1 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "rotationOverLifetime": {
+    "isActive": true,
+    "min": -800,
+    "max": 800
+  },
+  "_editorData": {
+    "simulation": {
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "frustumCulled": true,
+    "terrain": {
+      "textureId": "WIREFRAME",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "metadata": {
+      "name": "Geometric Storm",
+      "createdAt": 1711612800000,
+      "modifiedAt": 1711612800000,
+      "editorVersion": "2.10.0"
+    }
+  }
+}

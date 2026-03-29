@@ -1,5 +1,6 @@
 import { blendingMap } from '@newkrok/three-particles';
 import { getTexture } from '../assets';
+import { getDepthTexture } from '../world';
 import { openTextureSelectorModal } from '../texture-selector/texture-selector';
 
 type RendererEntriesParams = {
@@ -140,6 +141,41 @@ export const createRendererEntries = ({
     controllers.push(
       folder
         .add(particleSystemConfig.renderer, 'depthWrite')
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
+    // Soft Particles
+    if (!particleSystemConfig.renderer.softParticles) {
+      particleSystemConfig.renderer.softParticles = {
+        enabled: false,
+        intensity: 1.0,
+      };
+    }
+    const softParticles = particleSystemConfig.renderer.softParticles;
+
+    controllers.push(
+      folder
+        .add(softParticles, 'enabled')
+        .name('Soft Particles')
+        .onChange((value: boolean) => {
+          if (value) {
+            const depthTex = getDepthTexture();
+            if (depthTex) {
+              softParticles.depthTexture = depthTex;
+            }
+          } else {
+            delete softParticles.depthTexture;
+          }
+          recreateParticleSystem();
+        })
+        .listen()
+    );
+
+    controllers.push(
+      folder
+        .add(softParticles, 'intensity', 0.01, 5.0, 0.01)
+        .name('Soft Particles Intensity')
         .onChange(recreateParticleSystem)
         .listen()
     );
