@@ -4,8 +4,9 @@ import { convertToNewFormat } from './config-converter';
 import { showLegacyConfigModal } from './showLegacyConfigModal';
 import { ObjectUtils } from '@newkrok/three-utils';
 import { setTerrain } from './world';
+import { getTexture } from './assets';
 
-const { deepMerge, patchObject } = ObjectUtils;
+const { deepMerge } = ObjectUtils;
 import { showSuccessSnackbar } from '../stores/snackbar-store';
 
 export const getObjectDiff = (objectA, objectB, config = { skippedProperties: [] }) => {
@@ -173,19 +174,42 @@ export const loadParticleSystem = ({
     });
   }
 
-  patchObject(particleSystemConfig, getDefaultParticleSystemConfig(), {
-    skippedProperties: [],
-    applyToFirstObject: true,
+  // Reset particleSystemConfig to defaults by deleting all keys and deep-cloning
+  // defaults back. patchObject alone doesn't remove extra keys (e.g. rendererType,
+  // trail, mesh, softParticles) that were added by previous configs or entry modules.
+  const defaultConfig = getDefaultParticleSystemConfig();
+  const savedEditorData = particleSystemConfig._editorData;
+
+  Object.keys(particleSystemConfig).forEach((key) => {
+    delete particleSystemConfig[key];
   });
 
-  // Remove existing arrays before merge (deepMerge doesn't handle array replacement well)
-  delete particleSystemConfig.subEmitters;
-  delete particleSystemConfig.forceFields;
+  Object.keys(defaultConfig).forEach((key) => {
+    if (key !== '_editorData') {
+      particleSystemConfig[key] = JSON.parse(
+        JSON.stringify(defaultConfig[key], (k, v) =>
+          k === 'map' || k === 'geometry' || k === 'depthTexture' ? undefined : v
+        )
+      );
+    }
+  });
+
+  // Restore _editorData so deepMerge can overlay the loaded config's _editorData on top
+  particleSystemConfig._editorData = savedEditorData;
 
   deepMerge(particleSystemConfig, config, {
     skippedProperties: ['map', 'geometry', 'depthTexture'],
     applyToFirstObject: true,
   });
+  // Restore map texture from _editorData.textureId before recreating,
+  // since map (THREE.Texture) is not serializable and gets lost during reset
+  if (particleSystemConfig._editorData?.textureId) {
+    const texture = getTexture(particleSystemConfig._editorData.textureId);
+    if (texture) {
+      particleSystemConfig.map = texture.map;
+    }
+  }
+
   setTerrain(particleSystemConfig._editorData.terrain?.textureId);
   recreateParticleSystem(false);
 

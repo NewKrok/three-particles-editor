@@ -1,0 +1,143 @@
+{
+  "transform": {
+    "position": { "y": -0.5 },
+    "rotation": { "x": -90 }
+  },
+  "startLifetime": {
+    "min": 5,
+    "max": 8
+  },
+  "startSpeed": {
+    "min": 0.66,
+    "max": 0.93
+  },
+  "startSize": {
+    "min": 25.96,
+    "max": 34.19
+  },
+  "startOpacity": {
+    "min": 0.406,
+    "max": 0.506
+  },
+  "startRotation": {
+    "min": -360,
+    "max": 360
+  },
+  "maxParticles": 60,
+  "emission": {
+    "rateOverTime": 8,
+    "bursts": []
+  },
+  "shape": {
+    "shape": "RECTANGLE"
+  },
+  "renderer": {
+    "blending": "THREE.NormalBlending",
+    "discardBackgroundColor": true,
+    "backgroundColorTolerance": 0.739,
+    "backgroundColor": { "r": 0, "g": 0, "b": 0 },
+    "softParticles": {
+      "enabled": true,
+      "intensity": 0.64
+    }
+  },
+  "sizeOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 0, "percentage": 0 },
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": 1 },
+        { "x": 0.5, "y": 1, "percentage": 0.5 },
+        { "x": 1, "y": 1 },
+        { "x": 1, "y": 1 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "colorOverLifetime": {
+    "isActive": true,
+    "r": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.3333333333333333, "y": 1 },
+        { "x": 0.6666666666666667, "y": 1 },
+        { "x": 1, "y": 1, "percentage": 1 }
+      ]
+    },
+    "g": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.3333333333333333, "y": 1 },
+        { "x": 0.6666666666666667, "y": 1 },
+        { "x": 1, "y": 1, "percentage": 1 }
+      ]
+    },
+    "b": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.3333333333333333, "y": 1 },
+        { "x": 0.6666666666666667, "y": 1 },
+        { "x": 1, "y": 1, "percentage": 1 }
+      ]
+    }
+  },
+  "opacityOverLifetime": {
+    "isActive": true,
+    "lifetimeCurve": {
+      "bezierPoints": [
+        { "x": 0, "y": 1, "percentage": 0 },
+        { "x": 0.3333333333333333, "y": 1 },
+        { "x": 0.6666666666666667, "y": 0 },
+        { "x": 1, "y": 0, "percentage": 1 }
+      ]
+    }
+  },
+  "rotationOverLifetime": {
+    "isActive": true,
+    "min": -8,
+    "max": 8
+  },
+  "noise": {
+    "isActive": true,
+    "useRandomOffset": true,
+    "strength": 0.08,
+    "frequency": 0.15,
+    "positionAmount": 0.5,
+    "rotationAmount": 0.89
+  },
+  "forceFields": [],
+  "_editorData": {
+    "textureId": "SOFT_SMOKE",
+    "simulation": {
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "showLocalAxes": false,
+    "showWorldAxes": false,
+    "showShape": false,
+    "showForceFields": false,
+    "frustumCulled": true,
+    "useIndividualUpdate": false,
+    "enableBigNumbers": false,
+    "terrain": {
+      "textureId": "TERRAIN_DIRT",
+      "movements": "DISABLED",
+      "movementSpeed": 1,
+      "rotation": "DISABLED",
+      "rotationSpeed": 1
+    },
+    "gradientStops": [
+      { "position": 0, "color": { "r": 255, "g": 255, "b": 255, "a": 255 } },
+      { "position": 1, "color": { "r": 255, "g": 255, "b": 255, "a": 0 } }
+    ],
+    "metadata": {
+      "name": "Soft Smoke",
+      "createdAt": 1711612800000,
+      "modifiedAt": 1711612800000,
+      "editorVersion": "2.10.0"
+    }
+  }
+}

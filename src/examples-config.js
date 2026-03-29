@@ -75,7 +75,7 @@ export const particleExamples = [
     name: 'Ethereal Wisps',
   },
   {
-    name: 'Soft Ground Fog',
+    name: 'Soft Smoke',
   },
   {
     name: 'Rock Debris',
