@@ -217,4 +217,140 @@ export const defaultGradients: GradientPreset[] = [
       { position: 1, color: { r: 0, g: 100, b: 200, a: 0 } },
     ],
   },
+  // Scientific / matplotlib colormaps
+  {
+    name: 'Turbo',
+    stops: [
+      { position: 0, color: { r: 48, g: 18, b: 59, a: 255 } },
+      { position: 0.15, color: { r: 65, g: 68, b: 225, a: 255 } },
+      { position: 0.3, color: { r: 35, g: 152, b: 251, a: 255 } },
+      { position: 0.45, color: { r: 18, g: 222, b: 163, a: 255 } },
+      { position: 0.55, color: { r: 144, g: 249, b: 64, a: 255 } },
+      { position: 0.7, color: { r: 238, g: 219, b: 30, a: 255 } },
+      { position: 0.85, color: { r: 249, g: 131, b: 14, a: 255 } },
+      { position: 1, color: { r: 122, g: 4, b: 3, a: 255 } },
+    ],
+  },
+  {
+    name: 'Cividis',
+    stops: [
+      { position: 0, color: { r: 0, g: 32, b: 77, a: 255 } },
+      { position: 0.25, color: { r: 60, g: 77, b: 110, a: 255 } },
+      { position: 0.5, color: { r: 122, g: 122, b: 122, a: 255 } },
+      { position: 0.75, color: { r: 186, g: 173, b: 108, a: 255 } },
+      { position: 1, color: { r: 253, g: 232, b: 96, a: 255 } },
+    ],
+  },
+  {
+    name: 'Spectral',
+    stops: [
+      { position: 0, color: { r: 158, g: 1, b: 66, a: 255 } },
+      { position: 0.2, color: { r: 237, g: 102, b: 60, a: 255 } },
+      { position: 0.4, color: { r: 254, g: 224, b: 118, a: 255 } },
+      { position: 0.5, color: { r: 255, g: 255, b: 191, a: 255 } },
+      { position: 0.6, color: { r: 171, g: 221, b: 164, a: 255 } },
+      { position: 0.8, color: { r: 69, g: 155, b: 201, a: 255 } },
+      { position: 1, color: { r: 94, g: 79, b: 162, a: 255 } },
+    ],
+  },
+  {
+    name: 'Viridis',
+    stops: [
+      { position: 0, color: { r: 68, g: 1, b: 84, a: 255 } },
+      { position: 0.25, color: { r: 59, g: 82, b: 139, a: 255 } },
+      { position: 0.5, color: { r: 33, g: 145, b: 140, a: 255 } },
+      { position: 0.75, color: { r: 94, g: 201, b: 98, a: 255 } },
+      { position: 1, color: { r: 253, g: 231, b: 37, a: 255 } },
+    ],
+  },
+  {
+    name: 'Inferno',
+    stops: [
+      { position: 0, color: { r: 0, g: 0, b: 4, a: 255 } },
+      { position: 0.25, color: { r: 87, g: 16, b: 110, a: 255 } },
+      { position: 0.5, color: { r: 188, g: 55, b: 84, a: 255 } },
+      { position: 0.75, color: { r: 249, g: 142, b: 9, a: 255 } },
+      { position: 1, color: { r: 252, g: 255, b: 164, a: 255 } },
+    ],
+  },
+  {
+    name: 'Magma',
+    stops: [
+      { position: 0, color: { r: 0, g: 0, b: 4, a: 255 } },
+      { position: 0.25, color: { r: 82, g: 22, b: 120, a: 255 } },
+      { position: 0.5, color: { r: 183, g: 55, b: 121, a: 255 } },
+      { position: 0.75, color: { r: 254, g: 159, b: 109, a: 255 } },
+      { position: 1, color: { r: 252, g: 253, b: 191, a: 255 } },
+    ],
+  },
+  {
+    name: 'Plasma (Scientific)',
+    stops: [
+      { position: 0, color: { r: 13, g: 8, b: 135, a: 255 } },
+      { position: 0.25, color: { r: 126, g: 3, b: 168, a: 255 } },
+      { position: 0.5, color: { r: 204, g: 71, b: 120, a: 255 } },
+      { position: 0.75, color: { r: 248, g: 149, b: 64, a: 255 } },
+      { position: 1, color: { r: 240, g: 249, b: 33, a: 255 } },
+    ],
+  },
+  {
+    name: 'Rocket',
+    stops: [
+      { position: 0, color: { r: 3, g: 5, b: 18, a: 255 } },
+      { position: 0.25, color: { r: 73, g: 28, b: 72, a: 255 } },
+      { position: 0.5, color: { r: 171, g: 51, b: 54, a: 255 } },
+      { position: 0.75, color: { r: 239, g: 138, b: 91, a: 255 } },
+      { position: 1, color: { r: 255, g: 245, b: 235, a: 255 } },
+    ],
+  },
+  {
+    name: 'Mako',
+    stops: [
+      { position: 0, color: { r: 11, g: 4, b: 5, a: 255 } },
+      { position: 0.25, color: { r: 34, g: 47, b: 103, a: 255 } },
+      { position: 0.5, color: { r: 29, g: 114, b: 143, a: 255 } },
+      { position: 0.75, color: { r: 99, g: 194, b: 189, a: 255 } },
+      { position: 1, color: { r: 222, g: 244, b: 237, a: 255 } },
+    ],
+  },
+  {
+    name: 'Vlag',
+    stops: [
+      { position: 0, color: { r: 34, g: 102, b: 175, a: 255 } },
+      { position: 0.25, color: { r: 140, g: 180, b: 219, a: 255 } },
+      { position: 0.5, color: { r: 234, g: 232, b: 230, a: 255 } },
+      { position: 0.75, color: { r: 207, g: 145, b: 151, a: 255 } },
+      { position: 1, color: { r: 149, g: 25, b: 53, a: 255 } },
+    ],
+  },
+  {
+    name: 'Icefire',
+    stops: [
+      { position: 0, color: { r: 0, g: 172, b: 199, a: 255 } },
+      { position: 0.25, color: { r: 41, g: 68, b: 105, a: 255 } },
+      { position: 0.5, color: { r: 17, g: 11, b: 14, a: 255 } },
+      { position: 0.75, color: { r: 115, g: 54, b: 28, a: 255 } },
+      { position: 1, color: { r: 222, g: 168, b: 72, a: 255 } },
+    ],
+  },
+  {
+    name: 'Flare',
+    stops: [
+      { position: 0, color: { r: 232, g: 111, b: 49, a: 255 } },
+      { position: 0.25, color: { r: 189, g: 73, b: 73, a: 255 } },
+      { position: 0.5, color: { r: 128, g: 57, b: 92, a: 255 } },
+      { position: 0.75, color: { r: 68, g: 56, b: 86, a: 255 } },
+      { position: 1, color: { r: 24, g: 32, b: 48, a: 255 } },
+    ],
+  },
+  {
+    name: 'Crest',
+    stops: [
+      { position: 0, color: { r: 42, g: 111, b: 99, a: 255 } },
+      { position: 0.25, color: { r: 54, g: 143, b: 115, a: 255 } },
+      { position: 0.5, color: { r: 109, g: 185, b: 131, a: 255 } },
+      { position: 0.75, color: { r: 186, g: 216, b: 163, a: 255 } },
+      { position: 1, color: { r: 241, g: 237, b: 201, a: 255 } },
+    ],
+  },
 ];

@@ -526,6 +526,7 @@ export const createGradientEditor = (
       target.classList.contains('gradient-stop-handle') ||
       target.classList.contains('gradient-preset-button') ||
       target.classList.contains('gradient-save-button') ||
+      target.classList.contains('gradient-reverse-button') ||
       target.classList.contains('gradient-preset-delete') ||
       target.classList.contains('gradient-color-picker') ||
       target.tagName === 'BUTTON' ||
@@ -628,6 +629,29 @@ const saveCustomPresets = (presets: GradientPreset[]): void => {
   } catch (error) {
     console.error('Failed to save custom presets:', error);
   }
+};
+
+/**
+ * Reverses the current gradient (mirrors all stop positions and reverses the order)
+ */
+const reverseGradient = (): void => {
+  if (currentStops.length < 2) return;
+
+  currentStops = currentStops.map((stop) => ({
+    position: 1 - stop.position,
+    color: { ...stop.color },
+  }));
+
+  // Sort by position after reversing
+  currentStops.sort((a, b) => a.position - b.position);
+
+  // Ensure exact 0 and 1 boundaries
+  currentStops[0].position = 0;
+  currentStops[currentStops.length - 1].position = 1;
+
+  renderGradient();
+  renderStopHandles();
+  notifyChange();
 };
 
 /**
@@ -889,6 +913,45 @@ const createPresetButtons = (): void => {
   });
 
   presetContainer.appendChild(saveButton);
+
+  // Add reverse button
+  const reverseButton = document.createElement('button');
+  reverseButton.className = 'gradient-preset-button gradient-reverse-button';
+  reverseButton.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px;
+    margin: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 2px dashed #ff9f4a;
+    background: #2a2a2a;
+    color: #ff9f4a;
+    border-radius: 4px;
+    transition: all 0.15s;
+    min-width: 70px;
+    min-height: 56px;
+    font-weight: bold;
+  `;
+  reverseButton.innerHTML =
+    '<span style="font-size: 18px;">&#8644;</span><span style="font-size: 9px;">Reverse</span>';
+
+  reverseButton.addEventListener('click', reverseGradient);
+
+  reverseButton.addEventListener('mouseenter', () => {
+    reverseButton.style.borderColor = '#ffb36b';
+    reverseButton.style.background = '#333';
+  });
+
+  reverseButton.addEventListener('mouseleave', () => {
+    reverseButton.style.borderColor = '#ff9f4a';
+    reverseButton.style.background = '#2a2a2a';
+  });
+
+  presetContainer.appendChild(reverseButton);
 
   // Add custom presets first
   customPresets.forEach((preset) => {
