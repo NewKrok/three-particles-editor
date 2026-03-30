@@ -187,6 +187,8 @@ export const createHelperEntries = ({
     .name('Individual update method')
     .listen();
 
+  folder.add(particleSystemConfig._editorData, 'useLiveUpdate').name('Live config update').listen();
+
   folder
     .add(particleSystemConfig._editorData.terrain, 'textureId', [
       TextureId.WIREFRAME,

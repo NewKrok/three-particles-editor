@@ -4,14 +4,17 @@ type GeneralEntriesParams = {
   parentFolder: any;
   particleSystemConfig: any;
   recreateParticleSystem: () => void;
+  forceRecreateParticleSystem?: () => void;
 };
 
 export const createGeneralEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
+  forceRecreateParticleSystem,
 }: GeneralEntriesParams): Record<string, unknown> => {
   const folder = parentFolder.addFolder('General');
+  const forceRecreate = forceRecreateParticleSystem ?? recreateParticleSystem;
 
   if (!particleSystemConfig.renderer.rendererType) {
     particleSystemConfig.renderer.rendererType = 'POINTS';
@@ -19,7 +22,7 @@ export const createGeneralEntries = ({
 
   folder
     .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED', 'TRAIL', 'MESH'])
-    .onChange(recreateParticleSystem)
+    .onChange(forceRecreate)
     .listen();
 
   folder
@@ -108,7 +111,7 @@ export const createGeneralEntries = ({
 
   const maxParticlesController = folder
     .add(particleSystemConfig, 'maxParticles', 1.0, 1000, 1.0)
-    .onChange(recreateParticleSystem)
+    .onChange(forceRecreate)
     .listen();
 
   return { maxParticlesController };

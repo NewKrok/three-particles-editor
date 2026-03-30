@@ -81,6 +81,7 @@ type EditorData = {
   showForceFields: boolean;
   frustumCulled: boolean;
   useIndividualUpdate: boolean;
+  useLiveUpdate: boolean;
   enableBigNumbers: boolean;
   terrain: {
     textureId: string;
@@ -106,6 +107,7 @@ type ParticleSystem = {
   instance: THREE.Object3D;
   dispose: () => void;
   update: (cycleData: CycleData) => void;
+  updateConfig: (config: Partial<Record<string, unknown>>) => void;
 };
 
 type ConfigEntry = {
@@ -148,6 +150,7 @@ const defaultEditorData: EditorData = {
   showForceFields: false,
   frustumCulled: true,
   useIndividualUpdate: false,
+  useLiveUpdate: false,
   enableBigNumbers: false,
   terrain: {
     textureId: TextureId.WIREFRAME,
@@ -251,7 +254,10 @@ export const createNew = (): void => {
 
   setTerrain();
   isInitializing = true;
-  recreateParticleSystem(false);
+  // Rebuild the panel so controllers bind to the new config object references
+  destroyPanel();
+  configEntries.length = 0;
+  createPanel();
   configEntries.forEach(({ onReset }) => onReset && onReset());
   isInitializing = false;
   configDirty = false;
@@ -365,16 +371,42 @@ const resolveMeshGeometry = (config: any): void => {
   }
 };
 
-const recreateParticleSystem = (markAsDirty = true): void => {
+/**
+ * Recreates the particle system from scratch, or — when live update is enabled and
+ * liveUpdateKeys are provided — applies a partial config update via the engine's
+ * updateConfig API without disposing the system.
+ *
+ * @param markAsDirty  When false the config-dirty flag is not set (used during init/load).
+ * @param liveUpdateKeys  Top-level config keys that are safe to hot-update.
+ *   When useLiveUpdate is ON and these keys are provided, only those properties are
+ *   sent to updateConfig(). When useLiveUpdate is OFF (or keys are not provided),
+ *   a full dispose + recreate happens.
+ */
+const recreateParticleSystem = (markAsDirty = true, liveUpdateKeys?: string[]): void => {
+  const activeConfig = getActiveConfig();
+
+  // Live-update path
+  if (markAsDirty && liveUpdateKeys && particleSystem && activeConfig._editorData?.useLiveUpdate) {
+    const partial: Record<string, unknown> = {};
+    for (const key of liveUpdateKeys) {
+      if (activeConfig[key] !== undefined) {
+        partial[key] = activeConfig[key];
+      }
+    }
+    particleSystem.updateConfig(partial);
+    if (!isInitializing) {
+      configDirty = true;
+    }
+    return;
+  }
+
+  // Full recreate path
   resumeTime();
   if (particleSystem) {
     particleSystem.dispose();
     particleSystem = null;
     cycleData.totalPauseTime = 0;
   }
-
-  // When editing a sub-emitter, preview the sub-emitter config standalone
-  const activeConfig = getActiveConfig();
 
   // Resolve textures for sub-emitters (map is not serialized, only textureId is)
   resolveSubEmitterTextures(activeConfig);
@@ -427,6 +459,7 @@ const subEditorDefaults = {
   showForceFields: false,
   frustumCulled: true,
   useIndividualUpdate: false,
+  useLiveUpdate: false,
   enableBigNumbers: false,
   terrain: { textureId: TextureId.WIREFRAME },
   gradientStops: [
@@ -645,10 +678,29 @@ const createPanel = (config: any = particleSystemConfig): void => {
     })
   );
 
+  // Live-updatable entries pass liveUpdateKeys so that when useLiveUpdate is enabled,
+  // only those top-level config keys are sent to engine.updateConfig().
+  // Non-updatable entries (shape, renderer, texture sheet, trail, mesh, sub-emitter)
+  // call recreateParticleSystem() without liveUpdateKeys → always full recreate.
+
+  const generalKeys = [
+    'duration',
+    'looping',
+    'startDelay',
+    'startLifetime',
+    'startSpeed',
+    'startSize',
+    'startRotation',
+    'startColor',
+    'startOpacity',
+    'gravity',
+    'simulationSpace',
+  ];
   const generalResult = createGeneralEntries({
     parentFolder: panel,
     particleSystemConfig: config,
-    recreateParticleSystem,
+    recreateParticleSystem: () => recreateParticleSystem(true, generalKeys),
+    forceRecreateParticleSystem: recreateParticleSystem,
   });
   configEntries.push(generalResult);
   maxParticlesCtrl = generalResult.maxParticlesController;
@@ -656,7 +708,7 @@ const createPanel = (config: any = particleSystemConfig): void => {
   const emissionResult = createEmissionEntries({
     parentFolder: panel,
     particleSystemConfig: config,
-    recreateParticleSystem,
+    recreateParticleSystem: () => recreateParticleSystem(true, ['emission']),
   });
   configEntries.push(emissionResult);
   rateOverTimeCtrl = emissionResult.rateOverTimeController;
@@ -677,42 +729,43 @@ const createPanel = (config: any = particleSystemConfig): void => {
     createVelocityOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem,
+      recreateParticleSystem: () => recreateParticleSystem(true, ['velocityOverLifetime']),
     })
   );
   configEntries.push(
     createGradientEditorEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem,
+      recreateParticleSystem: () =>
+        recreateParticleSystem(true, ['colorOverLifetime', 'opacityOverLifetime']),
     })
   );
   configEntries.push(
     createSizeOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem,
+      recreateParticleSystem: () => recreateParticleSystem(true, ['sizeOverLifetime']),
     })
   );
   configEntries.push(
     createRotationOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem,
+      recreateParticleSystem: () => recreateParticleSystem(true, ['rotationOverLifetime']),
     })
   );
   configEntries.push(
     createNoiseEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem,
+      recreateParticleSystem: () => recreateParticleSystem(true, ['noise']),
     })
   );
   configEntries.push(
     createForceFieldEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem,
+      recreateParticleSystem, // Force fields: always full recreate (engine updateConfig bug with axes)
       scene,
     })
   );
@@ -789,7 +842,13 @@ window.editor = {
       config,
       particleSystemConfig,
       recreateParticleSystem,
-      onLoad: () => configEntries.forEach(({ onReset }) => onReset && onReset()),
+      onLoad: () => {
+        // Rebuild the panel so controllers bind to the new config object references
+        destroyPanel();
+        configEntries.length = 0;
+        createPanel();
+        configEntries.forEach(({ onReset }) => onReset && onReset());
+      },
     });
     isInitializing = false;
     configDirty = false;
@@ -802,6 +861,10 @@ window.editor = {
       particleSystemConfig,
       recreateParticleSystem,
       onLoad: () => {
+        // Rebuild the panel so controllers bind to the new config object references
+        destroyPanel();
+        configEntries.length = 0;
+        createPanel();
         configEntries.forEach(({ onReset }) => onReset && onReset());
         isInitializing = false;
         configDirty = false;
