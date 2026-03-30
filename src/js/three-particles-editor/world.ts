@@ -74,12 +74,18 @@ const onWindowResize = (): void => {
   }
 };
 
-export const updateWorld = (softParticlesEnabled = false): void => {
+export const updateWorld = (
+  softParticlesEnabled = false,
+  particleContainer?: THREE.Object3D
+): void => {
   if (softParticlesEnabled && depthRenderTarget) {
-    // Render depth pass first
+    // Hide particle system during depth pass to avoid feedback loop
+    // (the particle shader reads the depth texture that would be written to)
+    if (particleContainer) particleContainer.visible = false;
     renderer.setRenderTarget(depthRenderTarget);
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);
+    if (particleContainer) particleContainer.visible = true;
   }
   renderer.render(scene, camera);
   stats.update();

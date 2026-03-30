@@ -333,7 +333,7 @@ const animate = (): void => {
   }
   const activeConfig = getActiveConfig();
   const softParticlesEnabled = !!activeConfig?.renderer?.softParticles?.enabled;
-  updateWorld(softParticlesEnabled);
+  updateWorld(softParticlesEnabled, particleSystemContainer);
   requestAnimationFrame(animate);
 };
 
