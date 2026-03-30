@@ -1,6 +1,18 @@
 import { openBezierEditorModal } from '../curve-editor/curve-editor';
 import { createLifetimeCurveFolderEntry } from './entry-helpers-v2';
 import type { GUI } from 'three/examples/jsm/libs/lil-gui.module.min';
+import {
+  createGradientEditor,
+  setGradientStops,
+  setOnChangeCallback,
+} from '../gradient-editor/gradient-editor';
+import {
+  gradientToBezierCurves,
+  bezierCurvesToGradient,
+  getDefaultGradientStops,
+  type GradientStop,
+  type BezierCurve,
+} from '../gradient-editor/gradient-to-bezier';
 
 type TrailEntriesParams = {
   parentFolder: GUI;
@@ -72,12 +84,14 @@ export const createTrailEntries = ({
 
   let controllers: any[] = [];
   let subFolders: GUI[] = [];
+  let trailGradientInitialized = false;
 
   const rebuild = (): void => {
     controllers.forEach((controller) => controller.destroy());
     controllers = [];
     subFolders.forEach((f) => f.destroy());
     subFolders = [];
+    trailGradientInitialized = false;
 
     const isTrail = particleSystemConfig.renderer.rendererType === 'TRAIL';
 
@@ -95,7 +109,7 @@ export const createTrailEntries = ({
     const trail = particleSystemConfig.renderer.trail;
 
     controllers.push(
-      folder.add(trail, 'length', 2, 100, 1).onChange(recreateParticleSystem).listen()
+      folder.add(trail, 'length', 2, 500, 1).onChange(recreateParticleSystem).listen()
     );
 
     controllers.push(
@@ -163,72 +177,96 @@ export const createTrailEntries = ({
         .name('Edit Curve')
     );
 
-    // Opacity over trail
-    const opacityOverTrailFolder = folder.addFolder('Opacity Over Trail');
-    subFolders.push(opacityOverTrailFolder);
-    createLifetimeCurveFolderEntry({
-      particleSystemConfig,
-      recreateParticleSystem,
-      parentFolder: opacityOverTrailFolder,
-      rootPropertyName: 'renderer.trail',
-      propertyName: 'opacityOverTrail',
-    });
-    controllers.push(
-      opacityOverTrailFolder
-        .add(
-          {
-            editCurve: (): void => {
-              openBezierEditorModal(trail.opacityOverTrail, () => {
-                recreateParticleSystem();
-              });
-            },
-          },
-          'editCurve'
-        )
-        .name('Edit Curve')
-    );
-
-    // Color over trail
+    // Color Over Trail (gradient editor for color + opacity)
     const colorOverTrailFolder = folder.addFolder('Color Over Trail');
     subFolders.push(colorOverTrailFolder);
+
+    // Ensure trailGradientStops exists in _editorData
+    if (!particleSystemConfig._editorData) {
+      particleSystemConfig._editorData = {};
+    }
+    const editorData = particleSystemConfig._editorData;
+
+    if (!editorData.trailGradientStops) {
+      if (
+        trail.colorOverTrail?.r &&
+        trail.colorOverTrail?.g &&
+        trail.colorOverTrail?.b &&
+        trail.opacityOverTrail
+      ) {
+        editorData.trailGradientStops = bezierCurvesToGradient(
+          trail.colorOverTrail.r as BezierCurve,
+          trail.colorOverTrail.g as BezierCurve,
+          trail.colorOverTrail.b as BezierCurve,
+          trail.opacityOverTrail as BezierCurve,
+          5
+        );
+      } else {
+        editorData.trailGradientStops = getDefaultGradientStops();
+      }
+    }
+
     controllers.push(
       colorOverTrailFolder
-        .add(trail.colorOverTrail, 'isActive')
-        .onChange(recreateParticleSystem)
-        .listen()
+        .add(
+          {
+            openEditor: (): void => {
+              const modal = document.querySelector('.gradient-editor-modal') as HTMLElement;
+              if (modal) {
+                modal.style.display = 'block';
+
+                const onChange = (stops: GradientStop[]) => {
+                  editorData.trailGradientStops = stops;
+
+                  const curves = gradientToBezierCurves(stops);
+
+                  trail.colorOverTrail.r = curves.r;
+                  trail.colorOverTrail.g = curves.g;
+                  trail.colorOverTrail.b = curves.b;
+                  trail.colorOverTrail.isActive = true;
+
+                  trail.opacityOverTrail = curves.alpha;
+
+                  recreateParticleSystem();
+                };
+
+                if (!trailGradientInitialized) {
+                  createGradientEditor(editorData.trailGradientStops, onChange);
+                  trailGradientInitialized = true;
+                } else {
+                  setOnChangeCallback(onChange);
+                  setGradientStops(editorData.trailGradientStops);
+                }
+              }
+            },
+          },
+          'openEditor'
+        )
+        .name('Edit Gradient')
     );
 
-    const createChannelCurveUI = (channelName: 'r' | 'g' | 'b', displayName: string): void => {
-      const channelFolder = colorOverTrailFolder.addFolder(displayName);
-      channelFolder.close();
+    controllers.push(
+      colorOverTrailFolder
+        .add(
+          {
+            reset: (): void => {
+              const defaultStops = getDefaultGradientStops();
+              editorData.trailGradientStops = defaultStops;
+              setGradientStops(defaultStops);
 
-      createLifetimeCurveFolderEntry({
-        particleSystemConfig,
-        recreateParticleSystem,
-        parentFolder: channelFolder,
-        rootPropertyName: 'renderer.trail.colorOverTrail',
-        propertyName: channelName,
-      });
+              const curves = gradientToBezierCurves(defaultStops);
+              trail.colorOverTrail.r = curves.r;
+              trail.colorOverTrail.g = curves.g;
+              trail.colorOverTrail.b = curves.b;
+              trail.opacityOverTrail = curves.alpha;
 
-      controllers.push(
-        channelFolder
-          .add(
-            {
-              editCurve: (): void => {
-                openBezierEditorModal(trail.colorOverTrail[channelName], () => {
-                  recreateParticleSystem();
-                });
-              },
+              recreateParticleSystem();
             },
-            'editCurve'
-          )
-          .name('Edit Curve')
-      );
-    };
-
-    createChannelCurveUI('r', 'Red channel');
-    createChannelCurveUI('g', 'Green channel');
-    createChannelCurveUI('b', 'Blue channel');
+          },
+          'reset'
+        )
+        .name('Reset to Default')
+    );
   };
 
   rebuild();
