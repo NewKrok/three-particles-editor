@@ -260,6 +260,7 @@ const setupModalControls = (): void => {
         target.classList.contains('draggable-point') ||
         target.classList.contains('bezier-preset-button') ||
         target.classList.contains('bezier-save-button') ||
+        target.classList.contains('bezier-reverse-button') ||
         target.classList.contains('bezier-preset-delete') ||
         target.tagName === 'BUTTON' ||
         target.tagName === 'INPUT' ||
@@ -557,6 +558,68 @@ const saveCustomPresets = (presets: BezierCurvePreset[]): void => {
   } catch (error) {
     console.error('Failed to save custom bezier presets:', error);
   }
+};
+
+/**
+ * Reverses the current curve (mirrors horizontally)
+ */
+const reverseCurve = (): void => {
+  const points = Array.from(document.querySelectorAll('.bezier-point')) as HTMLElement[];
+  if (points.length !== 3) return;
+
+  // Read current bezier points from DOM
+  const bezierPoints: BezierPoint[] = points
+    .reduce((prev: BezierPoint[], current, index) => {
+      const position = getPosition(current);
+      const leftControlPosition =
+        index === 0
+          ? null
+          : getPosition(current.querySelector('.control-point--left') as HTMLElement);
+      const rightControlPosition =
+        index === points.length - 1
+          ? null
+          : getPosition(current.querySelector('.control-point--right') as HTMLElement);
+
+      if (leftControlPosition)
+        prev.push({
+          x: (position.left + leftControlPosition.left) / EDITOR_SIZE.x,
+          y: 1 - (position.top + leftControlPosition.top) / EDITOR_SIZE.y,
+        });
+      prev.push({
+        x: position.left / EDITOR_SIZE.x,
+        y: 1 - position.top / EDITOR_SIZE.y,
+        percentage:
+          index === 0 ? 0 : index === points.length - 1 ? 1 : round(position.left / EDITOR_SIZE.x),
+      });
+      if (rightControlPosition)
+        prev.push({
+          x: (position.left + rightControlPosition.left) / EDITOR_SIZE.x,
+          y: 1 - (position.top + rightControlPosition.top) / EDITOR_SIZE.y,
+        });
+
+      return prev;
+    }, [])
+    .map((entry) => ({ ...entry, x: round(entry.x), y: round(entry.y) }));
+
+  // Reverse: mirror all x values and reverse the array order
+  const reversed = bezierPoints
+    .map((p) => ({
+      ...p,
+      x: round(1 - p.x),
+      percentage: p.percentage !== undefined ? round(1 - p.percentage) : undefined,
+    }))
+    .reverse();
+
+  // Fix first/last percentage
+  reversed[0].percentage = 0;
+  reversed[reversed.length - 1].percentage = 1;
+  // Middle point keeps its mirrored percentage
+
+  setCurveEditorPositions({ bezierPoints: reversed });
+  if (currentTarget) {
+    setCurveEditorTarget(currentTarget);
+  }
+  notifyChange();
 };
 
 /**
@@ -898,6 +961,45 @@ const createPredefinedButtons = (): void => {
   });
 
   presetContainer.appendChild(saveButton);
+
+  // Add reverse button
+  const reverseButton = document.createElement('button');
+  reverseButton.className = 'bezier-preset-button bezier-reverse-button';
+  reverseButton.style.cssText = `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px;
+    margin: 2px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 2px dashed #ff9f4a;
+    background: #2a2a2a;
+    color: #ff9f4a;
+    border-radius: 4px;
+    transition: all 0.15s;
+    min-width: 70px;
+    min-height: 60px;
+    font-weight: bold;
+  `;
+  reverseButton.innerHTML =
+    '<span style="font-size: 18px;">&#8644;</span><span style="font-size: 9px;">Reverse</span>';
+
+  reverseButton.addEventListener('click', reverseCurve);
+
+  reverseButton.addEventListener('mouseenter', () => {
+    reverseButton.style.borderColor = '#ffb36b';
+    reverseButton.style.background = '#333';
+  });
+
+  reverseButton.addEventListener('mouseleave', () => {
+    reverseButton.style.borderColor = '#ff9f4a';
+    reverseButton.style.background = '#2a2a2a';
+  });
+
+  presetContainer.appendChild(reverseButton);
 
   // Add custom presets first
   customPresets.forEach((preset) => {
