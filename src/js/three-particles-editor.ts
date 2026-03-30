@@ -765,7 +765,7 @@ const createPanel = (config: any = particleSystemConfig): void => {
     createForceFieldEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem, // Force fields: always full recreate (engine updateConfig bug with axes)
+      recreateParticleSystem: () => recreateParticleSystem(true, ['forceFields']),
       scene,
     })
   );
