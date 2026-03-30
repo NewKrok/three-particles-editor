@@ -1,3 +1,22 @@
+# [2.10.0](https://github.com/NewKrok/three-particles-editor/compare/v2.9.0...v2.10.0) (2026-03-30)
+
+### Bug Fixes
+
+- disable trail-based examples due to performance issues ([ed1dedf](https://github.com/NewKrok/three-particles-editor/commit/ed1dedf674f27fb6c5bb949b8cc3eaed531c3110))
+- prevent crash when dragging force fields and allow switching between them ([6c3dded](https://github.com/NewKrok/three-particles-editor/commit/6c3dded7895a34ef0b40994cea2bfe825c1964be))
+- prevent WebGL feedback loop in soft particles depth pass ([cff2e10](https://github.com/NewKrok/three-particles-editor/commit/cff2e1025c87051ccbbb479b4757aaf0ae60c2c3))
+- properly reset config when switching examples and rename soft smoke ([fc9206b](https://github.com/NewKrok/three-particles-editor/commit/fc9206b8eb61c559f48c501adb94e1573bd010a4))
+
+### Features
+
+- add live config update mode using engine's updateConfig API ([07c38f5](https://github.com/NewKrok/three-particles-editor/commit/07c38f548f5b9ffc48897ff24e30fe4807f5fa4f))
+- add mesh particle renderer editor and update three-particles to 2.13.0 ([85b9dea](https://github.com/NewKrok/three-particles-editor/commit/85b9deae22cdf82a919c5d40b25fbb0a4c510458))
+- add new bezier curve presets and reverse curve button ([29f4be7](https://github.com/NewKrok/three-particles-editor/commit/29f4be71a1e3a2d8b1f8e0890450e604e1082490))
+- add scientific colormap gradient presets and reverse gradient button ([b27c1db](https://github.com/NewKrok/three-particles-editor/commit/b27c1db8e75afc7b9be778bce7bf4cfe6ca561dc))
+- add trail renderer editor and update three-particles to 2.12.0 ([ff505ef](https://github.com/NewKrok/three-particles-editor/commit/ff505ef6551eb14c22da38fcee3b79188dadb354))
+- add trail v2 properties, soft particles support, and new examples ([cefc90a](https://github.com/NewKrok/three-particles-editor/commit/cefc90a41da7d065376473092ae2626963fc367e))
+- enable live update for force field properties ([942f5b5](https://github.com/NewKrok/three-particles-editor/commit/942f5b5dbcb2030598327c7c8fae306627d80bef))
+
 # [2.9.0](https://github.com/NewKrok/three-particles-editor/compare/v2.8.1...v2.9.0) (2026-03-25)
 
 ### Features
