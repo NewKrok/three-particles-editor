@@ -5,6 +5,7 @@ import {
   initForceFieldInteraction,
   deselectForceField,
   isForceFieldDragging,
+  getActiveForceFieldIndex,
 } from '../force-field-interaction';
 
 type ForceFieldEntriesParams = {
@@ -375,8 +376,14 @@ export const createForceFieldEntries = ({
       }
     },
     onParticleSystemChange: () => {
-      // Don't rebuild helpers during drag — TransformControls is attached to the current helper
-      if (particleSystemConfig._editorData?.showForceFields && !isForceFieldDragging()) {
+      // Don't rebuild helpers while dragging or when a force field is selected —
+      // the TransformControls is attached to the current helper mesh, and
+      // replacing it mid-interaction causes a null reference crash.
+      if (
+        particleSystemConfig._editorData?.showForceFields &&
+        !isForceFieldDragging() &&
+        getActiveForceFieldIndex() === null
+      ) {
         createForceFieldHelpers(scene, particleSystemConfig.forceFields || []);
       }
     },

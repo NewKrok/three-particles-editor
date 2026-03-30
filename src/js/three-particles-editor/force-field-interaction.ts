@@ -36,9 +36,6 @@ const hitsTransformControls = (event: PointerEvent): boolean => {
 const onPointerDown = (event: PointerEvent): void => {
   if (!scene) return;
 
-  // If clicking on the TransformControls gizmo, don't deselect
-  if (hitsTransformControls(event)) return;
-
   const domElement = getRendererDomElement();
   const rect = domElement.getBoundingClientRect();
   mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -47,10 +44,10 @@ const onPointerDown = (event: PointerEvent): void => {
   const camera = getCamera();
   raycaster.setFromCamera(mouse, camera);
 
+  // Check center meshes first — clicking another force field should always work,
+  // even if the active TransformControls gizmo overlaps it.
   const centerMeshes = getForceFieldCenterMeshes();
-  if (centerMeshes.length === 0) return;
-
-  const intersects = raycaster.intersectObjects(centerMeshes, false);
+  const intersects = centerMeshes.length > 0 ? raycaster.intersectObjects(centerMeshes, false) : [];
 
   if (intersects.length > 0) {
     const mesh = intersects[0].object as THREE.Mesh;
@@ -59,6 +56,9 @@ const onPointerDown = (event: PointerEvent): void => {
       selectForceField(index);
       event.stopPropagation();
     }
+  } else if (hitsTransformControls(event)) {
+    // Clicking the gizmo itself — don't deselect, let TransformControls handle it
+    return;
   } else {
     // Click on empty space — deselect
     deselectForceField();
