@@ -85,6 +85,16 @@ export const createRendererEntries = ({
       setConfigByTexture(particleSystemConfig._editorData.textureId);
     }
 
+    if (!particleSystemConfig.simulationBackend) {
+      particleSystemConfig.simulationBackend = 'AUTO';
+    }
+    controllers.push(
+      folder
+        .add(particleSystemConfig, 'simulationBackend', ['AUTO', 'CPU', 'GPU'])
+        .onChange(recreateParticleSystem)
+        .listen()
+    );
+
     controllers.push(
       folder
         .add(particleSystemConfig.renderer, 'discardBackgroundColor')

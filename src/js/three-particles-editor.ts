@@ -15,7 +15,18 @@ import {
   createParticleSystem,
   getDefaultParticleSystemConfig,
   updateParticleSystems,
+  registerTSLMaterialFactory,
 } from '@newkrok/three-particles';
+import {
+  createTSLParticleMaterial,
+  createTSLTrailMaterial,
+  createComputePipeline,
+  writeParticleToModifierBuffers,
+  deactivateParticleInModifierBuffers,
+  flushEmitQueue,
+  registerCurveDataLength,
+  encodeForceFieldsForGPU,
+} from '@newkrok/three-particles/webgpu';
 import { convertToNewFormat } from './three-particles-editor/config-converter';
 import {
   createWorld,
@@ -184,6 +195,8 @@ let clock: THREE.Clock;
 let isPaused = false;
 let configDirty = false;
 let isInitializing = false;
+let webGPUAvailable = false;
+let backendBadge: HTMLElement | null = null;
 const configEntries: ConfigEntry[] = [];
 let currentPanel: GUI | null = null;
 let editorContext: EditorContext = {
@@ -277,9 +290,57 @@ const pauseTime = (): void => {
   }
 };
 
-export const createParticleSystemEditor = (targetQuery: string): void => {
+export const createParticleSystemEditor = async (targetQuery: string): Promise<void> => {
   clock = new THREE.Clock();
-  scene = createWorld(targetQuery);
+
+  // Register WebGPU TSL materials only when the browser supports WebGPU
+  try {
+    if (navigator.gpu) {
+      const adapter = await navigator.gpu.requestAdapter();
+      if (adapter) {
+        registerTSLMaterialFactory({
+          createTSLParticleMaterial,
+          createTSLTrailMaterial,
+          createComputePipeline,
+          writeParticleToModifierBuffers,
+          deactivateParticleInModifierBuffers,
+          flushEmitQueue,
+          registerCurveDataLength,
+          encodeForceFieldsForGPU,
+        });
+        webGPUAvailable = true;
+      }
+    }
+  } catch {
+    // WebGPU not available — engine will use GLSL ShaderMaterial fallback
+  }
+
+  // Debug: log WGSL shader compilation errors with source code
+  if (typeof GPUDevice !== 'undefined') {
+    const origCreateShaderModule = GPUDevice.prototype.createShaderModule;
+
+    GPUDevice.prototype.createShaderModule = function (descriptor: any) {
+      const module = origCreateShaderModule.call(this, descriptor);
+      module.getCompilationInfo().then((info: any) => {
+        const errors = info.messages.filter((m: any) => m.type === 'error');
+        if (errors.length > 0) {
+          // eslint-disable-next-line no-console
+          console.group('%c[WGSL Shader Error]', 'color:red;font-weight:bold');
+
+          errors.forEach((e: any) =>
+            console.error(`Line ${e.lineNum}:${e.linePos} — ${e.message}`)
+          );
+          // eslint-disable-next-line no-console
+          console.log(descriptor.code);
+          // eslint-disable-next-line no-console
+          console.groupEnd();
+        }
+      });
+      return module;
+    };
+  }
+
+  scene = await createWorld(targetQuery);
 
   particleSystemContainer = new Object3D();
   scene.add(particleSystemContainer);
@@ -296,6 +357,16 @@ export const createParticleSystemEditor = (targetQuery: string): void => {
       captureScreenshot();
     }
   });
+
+  // Create backend indicator badge (top-right, same row as FPS stats)
+  backendBadge = document.createElement('div');
+  backendBadge.style.cssText =
+    'position:absolute;top:48px;right:315px;padding:2px 8px;border-radius:3px;' +
+    'font-size:10px;font-weight:700;font-family:Roboto,sans-serif;letter-spacing:0.5px;' +
+    'color:#fff;background:#555;z-index:10;pointer-events:none;line-height:15px;';
+  backendBadge.textContent = '...';
+  const wrapper = document.querySelector('.wrapper');
+  if (wrapper) wrapper.appendChild(backendBadge);
 
   initAssets(() => {
     const customTextures =
@@ -333,7 +404,8 @@ const animate = (): void => {
   }
   const activeConfig = getActiveConfig();
   const softParticlesEnabled = !!activeConfig?.renderer?.softParticles?.enabled;
-  updateWorld(softParticlesEnabled, particleSystemContainer);
+  const computeNode = particleSystem?.computeNode ?? null;
+  updateWorld(softParticlesEnabled, particleSystemContainer, computeNode);
   requestAnimationFrame(animate);
 };
 
@@ -429,7 +501,26 @@ const recreateParticleSystem = (markAsDirty = true, liveUpdateKeys?: string[]): 
 
   // Convert old configuration format to new format before creating particle system
   const convertedConfig = convertToNewFormat(activeConfig);
+
+  // WebGPU: POINTS rendererType uses gl_PointCoord which is not available in WGSL.
+  // Force INSTANCED when WebGPU is active (same approach as the three-particles demos).
+  // Applied to the converted copy so the editor config stays unchanged for serialization.
+  if (webGPUAvailable) {
+    const rt = convertedConfig.renderer?.rendererType;
+    if (!rt || rt === 'POINTS') {
+      if (!convertedConfig.renderer) convertedConfig.renderer = {};
+      convertedConfig.renderer.rendererType = 'INSTANCED';
+    }
+  }
+
   particleSystem = createParticleSystem(convertedConfig);
+
+  // Update backend indicator badge
+  if (backendBadge) {
+    const isGPU = !!particleSystem.computeNode;
+    backendBadge.textContent = isGPU ? 'GPU' : 'CPU';
+    backendBadge.style.background = isGPU ? '#2e7d32' : '#555';
+  }
 
   particleSystemContainer.add(particleSystem.instance);
   configEntries.forEach(

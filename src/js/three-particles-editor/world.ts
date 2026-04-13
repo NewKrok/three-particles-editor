@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { WebGPURenderer } from 'three/webgpu';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
@@ -6,14 +7,14 @@ import { TextureId } from './texture-config';
 import { getTexture } from './assets';
 
 let scene: THREE.Scene;
-let renderer: THREE.WebGLRenderer;
+let renderer: WebGPURenderer;
 let camera: THREE.PerspectiveCamera;
 let controls: OrbitControls;
 let stats: Stats;
 let mesh: THREE.Mesh;
-let depthRenderTarget: THREE.WebGLRenderTarget | null = null;
+let depthRenderTarget: THREE.RenderTarget | null = null;
 
-export const createWorld = (targetQuery: string): THREE.Scene => {
+export const createWorld = async (targetQuery: string): Promise<THREE.Scene> => {
   const container = document.querySelector(targetQuery);
   if (!container) {
     throw new Error(`Container not found: ${targetQuery}`);
@@ -27,19 +28,17 @@ export const createWorld = (targetQuery: string): THREE.Scene => {
   scene.add(mesh);
   setTerrain();
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new WebGPURenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  (renderer as any).useLegacyLights = true; // Previously physicallyCorrectLights = false
   renderer.toneMapping = 0;
   renderer.toneMappingExposure = 1;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = true as unknown as THREE.ShadowMapType;
+  await renderer.init();
   container.appendChild(renderer.domElement);
 
   // Create depth render target for soft particles
-  depthRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+  depthRenderTarget = new THREE.RenderTarget(window.innerWidth, window.innerHeight, {
     depthTexture: new THREE.DepthTexture(window.innerWidth, window.innerHeight),
   });
 
@@ -76,8 +75,14 @@ const onWindowResize = (): void => {
 
 export const updateWorld = (
   softParticlesEnabled = false,
-  particleContainer?: THREE.Object3D
+  particleContainer?: THREE.Object3D,
+  computeNode?: unknown
 ): void => {
+  // Dispatch GPU compute for WebGPU particle simulation
+  if (computeNode) {
+    (renderer as any).compute(computeNode);
+  }
+
   if (softParticlesEnabled && depthRenderTarget) {
     // Hide particle system during depth pass to avoid feedback loop
     // (the particle shader reads the depth texture that would be written to)

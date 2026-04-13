@@ -8,7 +8,37 @@ import terser from '@rollup/plugin-terser';
 import esbuild from 'rollup-plugin-esbuild';
 import replace from '@rollup/plugin-replace';
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
+
+// Ensure a single three.js instance across the bundle.
+//
+// Problem: `three/tsl` re-exports from `three/webgpu` which is a self-contained
+// 82K-line build containing its own copy of three.js internals. Meanwhile, bare
+// `import * as THREE from 'three'` resolves to `three.module.js` — a separate
+// copy. Two instances means the TSL node registry (where `If`, `Fn`, etc. live)
+// is split, causing null references at runtime.
+//
+// Solution: redirect bare `'three'` imports to `'three/webgpu'` so the entire
+// bundle shares the single WebGPU-capable three.js build.
+function dedupeThree() {
+  return {
+    name: 'dedupe-three',
+    resolveId(source) {
+      if (source === 'three') {
+        return { id: fileURLToPath(import.meta.resolve('three/webgpu')), moduleSideEffects: true };
+      }
+      if (source.startsWith('three/')) {
+        try {
+          return { id: fileURLToPath(import.meta.resolve(source)), moduleSideEffects: true };
+        } catch {
+          return null;
+        }
+      }
+      return null;
+    },
+  };
+}
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
@@ -98,9 +128,11 @@ export default {
     // some cases you'll need additional configuration -
     // consult the documentation for details:
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
+    dedupeThree(),
+
     resolve({
       browser: true,
-      dedupe: ['svelte', 'three'],
+      dedupe: ['svelte'],
       exportConditions: ['svelte', 'module', 'import', 'default'],
       mainFields: ['module', 'main', 'browser'],
       extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx', '.json', '.svelte'],
