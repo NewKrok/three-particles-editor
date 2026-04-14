@@ -432,7 +432,9 @@ const resolveSubEmitterTextures = (config: any): void => {
 };
 
 const resolveMeshGeometry = (config: any): void => {
-  if (config.renderer?.rendererType === 'MESH' && config.renderer?.mesh?.geometryType) {
+  if (config.renderer?.rendererType === 'MESH') {
+    if (!config.renderer.mesh) config.renderer.mesh = {};
+    if (!config.renderer.mesh.geometryType) config.renderer.mesh.geometryType = 'BOX';
     config.renderer.mesh.geometry = createGeometry(config.renderer.mesh.geometryType);
   }
   // Recursively resolve for sub-emitters

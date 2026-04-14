@@ -16,15 +16,6 @@ export const createGeneralEntries = ({
   const folder = parentFolder.addFolder('General');
   const forceRecreate = forceRecreateParticleSystem ?? recreateParticleSystem;
 
-  if (!particleSystemConfig.renderer.rendererType) {
-    particleSystemConfig.renderer.rendererType = 'POINTS';
-  }
-
-  folder
-    .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED', 'TRAIL', 'MESH'])
-    .onChange(forceRecreate)
-    .listen();
-
   folder
     .add(particleSystemConfig, 'duration', 0.0, 30, 0.01)
     .onChange(recreateParticleSystem)

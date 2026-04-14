@@ -26,6 +26,18 @@ export const createRendererEntries = ({
   const folder = parentFolder.addFolder('Renderer');
   folder.close();
 
+  if (!particleSystemConfig.renderer.rendererType) {
+    particleSystemConfig.renderer.rendererType = 'POINTS';
+  }
+
+  folder
+    .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED', 'TRAIL', 'MESH'])
+    .onChange(() => {
+      rebuild();
+      recreateParticleSystem();
+    })
+    .listen();
+
   const setConfigByTexture = (textureId: string): void => {
     lastUsedTextureId = textureId;
     const texture = getTexture(textureId);
