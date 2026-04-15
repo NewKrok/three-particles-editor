@@ -76,6 +76,15 @@ export const particleExamples = [
   //   name: 'Ethereal Wisps',
   // },
   {
+    name: 'Bouncing Rain',
+  },
+  {
+    name: 'Flame Barrier',
+  },
+  {
+    name: 'Bubble Pop',
+  },
+  {
     name: 'Particle Galaxy',
   },
   {

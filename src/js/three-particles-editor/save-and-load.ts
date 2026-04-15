@@ -95,6 +95,20 @@ export const copyToClipboard = (particleSystemConfig) => {
     });
   }
 
+  // Include collision planes if present
+  if (particleSystemConfig.collisionPlanes && particleSystemConfig.collisionPlanes.length > 0) {
+    serialized.collisionPlanes = particleSystemConfig.collisionPlanes.map((cp: any) => {
+      const result: any = {};
+      if (cp.isActive !== undefined) result.isActive = cp.isActive;
+      if (cp.mode) result.mode = cp.mode;
+      if (cp.position) result.position = { x: cp.position.x, y: cp.position.y, z: cp.position.z };
+      if (cp.normal) result.normal = { x: cp.normal.x, y: cp.normal.y, z: cp.normal.z };
+      if (cp.dampen !== undefined) result.dampen = cp.dampen;
+      if (cp.lifetimeLoss !== undefined) result.lifetimeLoss = cp.lifetimeLoss;
+      return result;
+    });
+  }
+
   // Include sub-emitters if present
   const subEmitters = serializeSubEmitters(particleSystemConfig.subEmitters);
   if (subEmitters) {

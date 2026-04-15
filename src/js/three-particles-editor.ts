@@ -26,6 +26,7 @@ import {
   flushEmitQueue,
   registerCurveDataLength,
   encodeForceFieldsForGPU,
+  encodeCollisionPlanesForGPU,
 } from '@newkrok/three-particles/webgpu';
 import { convertToNewFormat } from './three-particles-editor/config-converter';
 import {
@@ -57,6 +58,7 @@ import { createTransformEntries } from './three-particles-editor/entries/transfo
 import { createVelocityOverLifeTimeEntries } from './three-particles-editor/entries/velocity-over-lifetime-entries';
 import { createSubEmitterEntries } from './three-particles-editor/entries/sub-emitter-entries';
 import { createForceFieldEntries } from './three-particles-editor/entries/force-field-entries';
+import { createCollisionPlaneEntries } from './three-particles-editor/entries/collision-plane-entries';
 import { createTrailEntries } from './three-particles-editor/entries/trail-entries';
 import { createMeshEntries, createGeometry } from './three-particles-editor/entries/mesh-entries';
 import { generateDefaultName } from './utils/name-utils';
@@ -90,6 +92,7 @@ type EditorData = {
   showWorldAxes: boolean;
   showShape: boolean;
   showForceFields: boolean;
+  showCollisionPlanes: boolean;
   frustumCulled: boolean;
   useIndividualUpdate: boolean;
   useLiveUpdate: boolean;
@@ -159,6 +162,7 @@ const defaultEditorData: EditorData = {
   showWorldAxes: false,
   showShape: false,
   showForceFields: false,
+  showCollisionPlanes: false,
   frustumCulled: true,
   useIndividualUpdate: false,
   useLiveUpdate: false,
@@ -307,6 +311,7 @@ export const createParticleSystemEditor = async (targetQuery: string): Promise<v
           flushEmitQueue,
           registerCurveDataLength,
           encodeForceFieldsForGPU,
+          encodeCollisionPlanesForGPU,
         });
         webGPUAvailable = true;
       }
@@ -575,6 +580,7 @@ const subEditorDefaults = {
   showWorldAxes: false,
   showShape: false,
   showForceFields: false,
+  showCollisionPlanes: false,
   frustumCulled: true,
   useIndividualUpdate: false,
   useLiveUpdate: false,
@@ -884,6 +890,14 @@ const createPanel = (config: any = particleSystemConfig): void => {
       parentFolder: panel,
       particleSystemConfig: config,
       recreateParticleSystem: () => recreateParticleSystem(true, ['forceFields']),
+      scene,
+    })
+  );
+  configEntries.push(
+    createCollisionPlaneEntries({
+      parentFolder: panel,
+      particleSystemConfig: config,
+      recreateParticleSystem: () => recreateParticleSystem(true, ['collisionPlanes']),
       scene,
     })
   );

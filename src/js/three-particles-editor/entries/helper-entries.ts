@@ -6,6 +6,7 @@ import type { ParticleSystem, ParticleSystemConfig } from '@newkrok/three-partic
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { updateShapeHelper } from '../shape-helper';
 import { updateForceFieldHelperVisibility } from './force-field-entries';
+import { updateCollisionPlaneHelperVisibility } from './collision-plane-entries';
 
 const worldAxesHelper = new THREE.AxesHelper(5);
 const localAxesHelper = new THREE.AxesHelper(1);
@@ -180,6 +181,18 @@ export const createHelperEntries = ({
     .add(particleSystemConfig._editorData, 'showForceFields')
     .name('Show force fields')
     .onChange(updateForceFieldHelpers)
+    .listen();
+
+  if (particleSystemConfig._editorData.showCollisionPlanes === undefined) {
+    particleSystemConfig._editorData.showCollisionPlanes = false;
+  }
+  const updateCollisionPlaneHelpers = (): void => {
+    updateCollisionPlaneHelperVisibility(scene, particleSystemConfig);
+  };
+  folder
+    .add(particleSystemConfig._editorData, 'showCollisionPlanes')
+    .name('Show collision planes')
+    .onChange(updateCollisionPlaneHelpers)
     .listen();
 
   folder
