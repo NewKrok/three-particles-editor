@@ -502,7 +502,32 @@ const recreateParticleSystem = (markAsDirty = true, liveUpdateKeys?: string[]): 
   }
 
   // Convert old configuration format to new format before creating particle system
+  // convertToNewFormat deep-clones so it won't mutate activeConfig (preserves lil-gui refs)
   const convertedConfig = convertToNewFormat(activeConfig);
+
+  // Restore non-serializable THREE.js objects lost during deep clone
+  if (activeConfig.map) convertedConfig.map = activeConfig.map;
+  if (activeConfig.renderer?.softParticles?.depthTexture)
+    convertedConfig.renderer.softParticles.depthTexture =
+      activeConfig.renderer.softParticles.depthTexture;
+  if (activeConfig.renderer?.mesh?.geometry)
+    convertedConfig.renderer.mesh.geometry = activeConfig.renderer.mesh.geometry;
+  // Restore sub-emitter maps and geometries
+  if (activeConfig.subEmitters) {
+    const restoreSubEmitterRefs = (source: any[], target: any[]) => {
+      source.forEach((sub: any, i: number) => {
+        if (target[i]?.config && sub.config) {
+          if (sub.config.map) target[i].config.map = sub.config.map;
+          if (sub.config.renderer?.mesh?.geometry)
+            target[i].config.renderer.mesh.geometry = sub.config.renderer.mesh.geometry;
+          if (sub.config.subEmitters && target[i].config.subEmitters)
+            restoreSubEmitterRefs(sub.config.subEmitters, target[i].config.subEmitters);
+        }
+      });
+    };
+    if (convertedConfig.subEmitters)
+      restoreSubEmitterRefs(activeConfig.subEmitters, convertedConfig.subEmitters);
+  }
 
   // WebGPU: POINTS rendererType uses gl_PointCoord which is not available in WGSL.
   // Force INSTANCED when WebGPU is active (same approach as the three-particles demos).
@@ -822,7 +847,7 @@ const createPanel = (config: any = particleSystemConfig): void => {
     createVelocityOverLifeTimeEntries({
       parentFolder: panel,
       particleSystemConfig: config,
-      recreateParticleSystem: () => recreateParticleSystem(true, ['velocityOverLifetime']),
+      recreateParticleSystem,
     })
   );
   configEntries.push(

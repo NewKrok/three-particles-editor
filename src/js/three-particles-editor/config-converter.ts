@@ -137,9 +137,12 @@ interface LegacyParticleSystemConfig {
 }
 
 export const convertToNewFormat = (oldConfig: LegacyParticleSystemConfig): ParticleSystemConfig => {
-  // Use type assertion to handle the conversion from legacy config to new format
-  // This is necessary because the structure of legacy configs can vary
-  const newConfig = { ...oldConfig } as unknown as ParticleSystemConfig;
+  // Deep clone to avoid mutating the original config (e.g. breaking lil-gui references)
+  const newConfig = JSON.parse(
+    JSON.stringify(oldConfig, (k, v) =>
+      k === 'map' || k === 'geometry' || k === 'depthTexture' ? undefined : v
+    )
+  ) as unknown as ParticleSystemConfig;
 
   // Convert MinMaxNumber properties to Constant | RandomBetweenTwoConstants | LifetimeCurve
   if (oldConfig.startDelay !== undefined) {
