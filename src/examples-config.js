@@ -76,6 +76,9 @@ export const particleExamples = [
   //   name: 'Ethereal Wisps',
   // },
   {
+    name: 'Feather Blaze',
+  },
+  {
     name: 'Soft Smoke',
   },
   {
