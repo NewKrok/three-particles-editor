@@ -32,7 +32,10 @@ export const createRendererEntries = ({
 
   folder
     .add(particleSystemConfig.renderer, 'rendererType', ['POINTS', 'INSTANCED', 'TRAIL', 'MESH'])
-    .onChange(() => {
+    .onChange((value: string) => {
+      if (value === 'MESH') {
+        particleSystemConfig.renderer.depthWrite = true;
+      }
       rebuild();
       recreateParticleSystem();
     })
