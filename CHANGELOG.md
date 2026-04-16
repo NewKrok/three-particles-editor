@@ -1,3 +1,17 @@
+# [2.11.0](https://github.com/NewKrok/three-particles-editor/compare/v2.10.0...v2.11.0) (2026-04-16)
+
+### Bug Fixes
+
+- enable depthWrite when switching to MESH renderer type ([4a51614](https://github.com/NewKrok/three-particles-editor/commit/4a51614f9d1dd2cfc0fa9775974c59f9444789e3))
+- live update structural change detection, throttle full recreate, and force field improvements ([e296bf3](https://github.com/NewKrok/three-particles-editor/commit/e296bf32e2aaa13b5b875de2885e2b2c0bfc28d9))
+
+### Features
+
+- add collision planes editor with debug helpers and examples ([ce77158](https://github.com/NewKrok/three-particles-editor/commit/ce771584d82aa5e24354e06f2d732c3ec4d745fc))
+- add Feather Blaze example ([422b09e](https://github.com/NewKrok/three-particles-editor/commit/422b09eeecaeecebd829e18d076fdc570dca2cff))
+- add GPU particle examples and fix velocity editor bug ([a049f68](https://github.com/NewKrok/three-particles-editor/commit/a049f68e9eb3873c6c410d3c7604f5079eb6460b))
+- add WebGPU rendering support with GPU/CPU simulation backend ([5bff49a](https://github.com/NewKrok/three-particles-editor/commit/5bff49a549826fe58a0ce6a5a5dea61765e0566b))
+
 # [2.10.0](https://github.com/NewKrok/three-particles-editor/compare/v2.9.0...v2.10.0) (2026-03-30)
 
 ### Bug Fixes
