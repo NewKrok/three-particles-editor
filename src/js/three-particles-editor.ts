@@ -15,19 +15,8 @@ import {
   createParticleSystem,
   getDefaultParticleSystemConfig,
   updateParticleSystems,
-  registerTSLMaterialFactory,
 } from '@newkrok/three-particles';
-import {
-  createTSLParticleMaterial,
-  createTSLTrailMaterial,
-  createComputePipeline,
-  writeParticleToModifierBuffers,
-  deactivateParticleInModifierBuffers,
-  flushEmitQueue,
-  registerCurveDataLength,
-  encodeForceFieldsForGPU,
-  encodeCollisionPlanesForGPU,
-} from '@newkrok/three-particles/webgpu';
+import { enableWebGPU } from '@newkrok/three-particles/webgpu';
 import { convertToNewFormat } from './three-particles-editor/config-converter';
 import {
   createWorld,
@@ -302,17 +291,7 @@ export const createParticleSystemEditor = async (targetQuery: string): Promise<v
     if (navigator.gpu) {
       const adapter = await navigator.gpu.requestAdapter();
       if (adapter) {
-        registerTSLMaterialFactory({
-          createTSLParticleMaterial,
-          createTSLTrailMaterial,
-          createComputePipeline,
-          writeParticleToModifierBuffers,
-          deactivateParticleInModifierBuffers,
-          flushEmitQueue,
-          registerCurveDataLength,
-          encodeForceFieldsForGPU,
-          encodeCollisionPlanesForGPU,
-        });
+        enableWebGPU();
         webGPUAvailable = true;
       }
     }
