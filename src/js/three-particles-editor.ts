@@ -190,7 +190,27 @@ let configDirty = false;
 let isInitializing = false;
 let webGPUAvailable = false;
 let backendBadge: HTMLElement | null = null;
+
+// Snapshot of structural feature state captured at particle system creation time.
+// Used to detect when a live-update cannot be applied (e.g. on WebGPU the shader is
+// compiled once and cannot add/remove feature branches at runtime).
+type CreationSnapshot = {
+  forceFieldCount: number;
+  collisionPlaneCount: number;
+  colorOverLifetimeActive: boolean;
+  opacityOverLifetimeActive: boolean;
+  sizeOverLifetimeActive: boolean;
+  rotationOverLifetimeActive: boolean;
+  noiseActive: boolean;
+};
+let creationSnapshot: CreationSnapshot | null = null;
 const configEntries: ConfigEntry[] = [];
+
+// Throttle timer for full recreate when live update is enabled.
+// Avoids excessive dispose+create cycles while dragging sliders/color pickers.
+let liveRecreateTimer: ReturnType<typeof setTimeout> | null = null;
+const LIVE_RECREATE_THROTTLE_MS = 100;
+
 let currentPanel: GUI | null = null;
 let editorContext: EditorContext = {
   type: 'root',
@@ -443,21 +463,76 @@ const resolveMeshGeometry = (config: any): void => {
 const recreateParticleSystem = (markAsDirty = true, liveUpdateKeys?: string[]): void => {
   const activeConfig = getActiveConfig();
 
-  // Live-update path
+  // Live-update path — applies a partial config update via the engine's updateConfig API.
+  // Falls through to full recreate when:
+  //  1. A structural feature toggle changed (e.g. colorOverLifetime became active when it
+  //     was inactive at creation, or force field count went from 0 → >0). The GPU shader
+  //     is compiled once and cannot add/remove feature branches at runtime.
+  //  2. The update touches curve-based keys whose data is baked into a GPU texture at
+  //     creation time (colorOverLifetime, opacityOverLifetime, sizeOverLifetime,
+  //     rotationOverLifetime). The engine's updateConfig does not re-bake these.
   if (markAsDirty && liveUpdateKeys && particleSystem && activeConfig._editorData?.useLiveUpdate) {
-    const partial: Record<string, unknown> = {};
-    for (const key of liveUpdateKeys) {
-      if (activeConfig[key] !== undefined) {
-        partial[key] = activeConfig[key];
+    // Keys whose bezier/curve data is baked into a GPU texture at creation time.
+    // Changing their data (not just isActive) requires a full recreate on GPU.
+    const GPU_BAKED_CURVE_KEYS = [
+      'colorOverLifetime',
+      'opacityOverLifetime',
+      'sizeOverLifetime',
+      'rotationOverLifetime',
+    ];
+
+    const touchesBakedCurves =
+      webGPUAvailable && liveUpdateKeys.some((k) => GPU_BAKED_CURVE_KEYS.includes(k));
+
+    let structuralChange = false;
+    if (creationSnapshot != null) {
+      const hasFF = (activeConfig.forceFields?.length ?? 0) > 0;
+      const hasCP = (activeConfig.collisionPlanes?.length ?? 0) > 0;
+      structuralChange =
+        hasFF !== creationSnapshot.forceFieldCount > 0 ||
+        hasCP !== creationSnapshot.collisionPlaneCount > 0 ||
+        !!activeConfig.colorOverLifetime?.isActive !== creationSnapshot.colorOverLifetimeActive ||
+        !!activeConfig.opacityOverLifetime?.isActive !==
+          creationSnapshot.opacityOverLifetimeActive ||
+        !!activeConfig.sizeOverLifetime?.isActive !== creationSnapshot.sizeOverLifetimeActive ||
+        !!activeConfig.rotationOverLifetime?.isActive !==
+          creationSnapshot.rotationOverLifetimeActive ||
+        !!activeConfig.noise?.isActive !== creationSnapshot.noiseActive;
+    }
+
+    if (!structuralChange && !touchesBakedCurves) {
+      const partial: Record<string, unknown> = {};
+      for (const key of liveUpdateKeys) {
+        if (activeConfig[key] !== undefined) {
+          partial[key] = activeConfig[key];
+        }
       }
+      particleSystem.updateConfig(partial);
+      if (!isInitializing) {
+        configDirty = true;
+      }
+      return;
     }
-    particleSystem.updateConfig(partial);
-    if (!isInitializing) {
-      configDirty = true;
-    }
+    // Structural change or baked-curve update detected — fall through to full recreate
+  }
+
+  // Throttle full recreate for continuous interactions (slider / color picker drag).
+  // Keys that come from one-shot actions (add/remove force field, toggle checkbox) call
+  // recreateParticleSystem without liveUpdateKeys, so they bypass this throttle.
+  if (liveUpdateKeys && !isInitializing) {
+    if (markAsDirty) configDirty = true;
+    if (liveRecreateTimer) return;
+    liveRecreateTimer = setTimeout(() => {
+      liveRecreateTimer = null;
+      doFullRecreate(getActiveConfig(), markAsDirty);
+    }, LIVE_RECREATE_THROTTLE_MS);
     return;
   }
 
+  doFullRecreate(activeConfig, markAsDirty);
+};
+
+const doFullRecreate = (activeConfig: any, markAsDirty: boolean): void => {
   // Full recreate path
   resumeTime();
   if (particleSystem) {
@@ -525,6 +600,18 @@ const recreateParticleSystem = (markAsDirty = true, liveUpdateKeys?: string[]): 
   }
 
   particleSystem = createParticleSystem(convertedConfig);
+
+  // Capture structural state at creation time so the live-update path can detect
+  // when a full recreate is needed (e.g. WebGPU shader recompilation).
+  creationSnapshot = {
+    forceFieldCount: activeConfig.forceFields?.length ?? 0,
+    collisionPlaneCount: activeConfig.collisionPlanes?.length ?? 0,
+    colorOverLifetimeActive: !!activeConfig.colorOverLifetime?.isActive,
+    opacityOverLifetimeActive: !!activeConfig.opacityOverLifetime?.isActive,
+    sizeOverLifetimeActive: !!activeConfig.sizeOverLifetime?.isActive,
+    rotationOverLifetimeActive: !!activeConfig.rotationOverLifetime?.isActive,
+    noiseActive: !!activeConfig.noise?.isActive,
+  };
 
   // Update backend indicator badge
   if (backendBadge) {
@@ -736,9 +823,9 @@ const createPanel = (config: any = particleSystemConfig): void => {
   let rateOverDistanceCtrl: any = null;
 
   const handleBigNumbersToggle = (enabled: boolean): void => {
-    const maxParticles = enabled ? 100000 : 1000;
-    const rateMax = enabled ? 10000 : 500;
-    const burstMax = enabled ? 10000 : 1000;
+    const maxParticles = enabled ? 500000 : 1000;
+    const rateMax = enabled ? 100000 : 500;
+    const burstMax = enabled ? 100000 : 1000;
 
     if (maxParticlesCtrl) maxParticlesCtrl.max(maxParticles);
     if (rateOverTimeCtrl) rateOverTimeCtrl.max(rateMax);
@@ -869,6 +956,7 @@ const createPanel = (config: any = particleSystemConfig): void => {
       parentFolder: panel,
       particleSystemConfig: config,
       recreateParticleSystem: () => recreateParticleSystem(true, ['forceFields']),
+      forceRecreateParticleSystem: recreateParticleSystem,
       scene,
     })
   );
@@ -877,6 +965,7 @@ const createPanel = (config: any = particleSystemConfig): void => {
       parentFolder: panel,
       particleSystemConfig: config,
       recreateParticleSystem: () => recreateParticleSystem(true, ['collisionPlanes']),
+      forceRecreateParticleSystem: recreateParticleSystem,
       scene,
     })
   );

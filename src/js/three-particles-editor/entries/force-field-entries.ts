@@ -12,6 +12,7 @@ type ForceFieldEntriesParams = {
   parentFolder: any;
   particleSystemConfig: any;
   recreateParticleSystem: () => void;
+  forceRecreateParticleSystem: () => void;
   scene: THREE.Scene;
 };
 
@@ -74,22 +75,22 @@ const createForceFieldFolder = (
       const posFolder = folder.addFolder('Position');
       typeControllers.push(posFolder);
       posFolder
-        .add(ff.position, 'x', -20, 20, 0.1)
+        .add(ff.position, 'x', -100, 100, 0.1)
         .onChange(() => recreateAndUpdateHelpers(particleSystemConfig))
         .listen();
       posFolder
-        .add(ff.position, 'y', -20, 20, 0.1)
+        .add(ff.position, 'y', -100, 100, 0.1)
         .onChange(() => recreateAndUpdateHelpers(particleSystemConfig))
         .listen();
       posFolder
-        .add(ff.position, 'z', -20, 20, 0.1)
+        .add(ff.position, 'z', -100, 100, 0.1)
         .onChange(() => recreateAndUpdateHelpers(particleSystemConfig))
         .listen();
 
       // Range
       typeControllers.push(
         folder
-          .add(ff, 'range', 0.1, 50, 0.1)
+          .add(ff, 'range', 0.1, 100, 0.1)
           .name('Range')
           .onChange(() => recreateAndUpdateHelpers(particleSystemConfig))
           .listen()
@@ -165,7 +166,7 @@ const createForceFieldFolder = (
       }
       strengthControllers.push(
         folder
-          .add(constantStrengthObj, 'value', -20, 20, 0.1)
+          .add(constantStrengthObj, 'value', -100, 100, 0.1)
           .name('Strength')
           .onChange((v: number) => {
             ff.strength = v;
@@ -179,7 +180,7 @@ const createForceFieldFolder = (
       }
       strengthControllers.push(
         folder
-          .add(ff.strength, 'min', -20, 20, 0.1)
+          .add(ff.strength, 'min', -100, 100, 0.1)
           .name('Strength Min')
           .onChange((v: number) => {
             ff.strength.min = Math.min(v, ff.strength.max ?? v);
@@ -189,7 +190,7 @@ const createForceFieldFolder = (
       );
       strengthControllers.push(
         folder
-          .add(ff.strength, 'max', -20, 20, 0.1)
+          .add(ff.strength, 'max', -100, 100, 0.1)
           .name('Strength Max')
           .onChange((v: number) => {
             ff.strength.max = Math.max(v, ff.strength.min ?? v);
@@ -228,6 +229,18 @@ const recreateAndUpdateHelpers = (particleSystemConfig: any): void => {
   // Also recreate the particle system with updated force fields
   if (currentConfig?._recreateParticleSystem) {
     currentConfig._recreateParticleSystem();
+  }
+};
+
+// Like recreateAndUpdateHelpers but uses forceRecreateParticleSystem (no throttle)
+// for one-shot actions like add/remove force field.
+const forceRecreateAndUpdateHelpers = (particleSystemConfig: any): void => {
+  if (currentScene && particleSystemConfig._editorData?.showForceFields) {
+    deselectForceField();
+    createForceFieldHelpers(currentScene, particleSystemConfig.forceFields || []);
+  }
+  if (currentConfig?._forceRecreateParticleSystem) {
+    currentConfig._forceRecreateParticleSystem();
   }
 };
 
@@ -273,7 +286,7 @@ const rebuildForceFieldFolders = (
       () => {
         particleSystemConfig.forceFields.splice(index, 1);
         rebuildForceFieldFolders(particleSystemConfig, recreateParticleSystem);
-        recreateAndUpdateHelpers(particleSystemConfig);
+        forceRecreateAndUpdateHelpers(particleSystemConfig);
       }
     );
     forceFieldFolders.push(folderData);
@@ -320,6 +333,7 @@ export const createForceFieldEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
+  forceRecreateParticleSystem,
   scene,
 }: ForceFieldEntriesParams): {
   onReset?: () => void;
@@ -328,6 +342,7 @@ export const createForceFieldEntries = ({
   currentScene = scene;
   currentConfig = particleSystemConfig;
   currentConfig._recreateParticleSystem = recreateParticleSystem;
+  currentConfig._forceRecreateParticleSystem = forceRecreateParticleSystem;
 
   const folder = parentFolder.addFolder('Force Fields');
   folder.close();
@@ -352,7 +367,7 @@ export const createForceFieldEntries = ({
       };
       particleSystemConfig.forceFields.push(newFF);
       rebuildForceFieldFolders(particleSystemConfig, recreateParticleSystem);
-      recreateAndUpdateHelpers(particleSystemConfig);
+      forceRecreateAndUpdateHelpers(particleSystemConfig);
     },
   };
   folder.add(addObj, 'addForceField').name('+ Add Force Field');

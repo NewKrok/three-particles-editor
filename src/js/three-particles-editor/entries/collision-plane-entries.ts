@@ -15,6 +15,7 @@ type CollisionPlaneEntriesParams = {
   parentFolder: any;
   particleSystemConfig: any;
   recreateParticleSystem: () => void;
+  forceRecreateParticleSystem: () => void;
   scene: THREE.Scene;
 };
 
@@ -44,6 +45,18 @@ const recreateAndUpdateHelpers = (): void => {
   }
   if (currentConfig?._recreateCollisionPlanePS) {
     currentConfig._recreateCollisionPlanePS();
+  }
+};
+
+// Like recreateAndUpdateHelpers but uses forceRecreateParticleSystem (no throttle)
+// for one-shot actions like add/remove collision plane.
+const forceRecreateAndUpdateHelpers = (): void => {
+  if (currentScene && currentConfig?._editorData?.showCollisionPlanes) {
+    deselectCollisionPlane();
+    createCollisionPlaneHelpers(currentScene, currentConfig.collisionPlanes || []);
+  }
+  if (currentConfig?._forceRecreateCollisionPlanePS) {
+    currentConfig._forceRecreateCollisionPlanePS();
   }
 };
 
@@ -194,7 +207,7 @@ const rebuildCollisionPlaneFolders = (
       () => {
         particleSystemConfig.collisionPlanes.splice(index, 1);
         rebuildCollisionPlaneFolders(particleSystemConfig, recreateParticleSystem);
-        recreateAndUpdateHelpers();
+        forceRecreateAndUpdateHelpers();
       }
     );
     collisionPlaneFolders.push(folderData);
@@ -218,6 +231,7 @@ export const createCollisionPlaneEntries = ({
   parentFolder,
   particleSystemConfig,
   recreateParticleSystem,
+  forceRecreateParticleSystem,
   scene,
 }: CollisionPlaneEntriesParams): {
   onReset?: () => void;
@@ -226,6 +240,7 @@ export const createCollisionPlaneEntries = ({
   currentScene = scene;
   currentConfig = particleSystemConfig;
   currentConfig._recreateCollisionPlanePS = recreateParticleSystem;
+  currentConfig._forceRecreateCollisionPlanePS = forceRecreateParticleSystem;
 
   const folder = parentFolder.addFolder('Collision Planes');
   folder.close();
@@ -249,7 +264,7 @@ export const createCollisionPlaneEntries = ({
       };
       particleSystemConfig.collisionPlanes.push(newCP);
       rebuildCollisionPlaneFolders(particleSystemConfig, recreateParticleSystem);
-      recreateAndUpdateHelpers();
+      forceRecreateAndUpdateHelpers();
     },
   };
   folder.add(addObj, 'addCollisionPlane').name('+ Add Collision Plane');
