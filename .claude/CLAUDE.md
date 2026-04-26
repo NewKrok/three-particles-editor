@@ -23,7 +23,7 @@ This is a **particle system editor** for ThreeJS, implemented in Unity style. Th
 
 ### Main Dependencies
 
-- `@newkrok/three-particles` (v2.0.3) - The particle system engine
+- `@newkrok/three-particles` (v3.0.0) - The particle system engine
 - `@newkrok/three-utils` - Utility functions
 - `lil-gui` - GUI panel for parameter editing
 - `prismjs` - Syntax highlighting (for configuration display)
@@ -327,6 +327,6 @@ Detailed step-by-step guides for common tasks:
 
 ---
 
-**Last updated:** 2026-03-28
-**Editor version:** 2.9.0
-**@newkrok/three-particles version:** 2.12.0
+**Last updated:** 2026-04-26
+**Editor version:** 2.12.0
+**@newkrok/three-particles version:** 3.0.0

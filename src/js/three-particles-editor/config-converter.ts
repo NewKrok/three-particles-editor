@@ -74,7 +74,7 @@ const updateStartLifetime = (
 
 /**
  * Converts an old particle system configuration to the new format
- * compatible with @newkrok/three-particles 2.0.2
+ * compatible with @newkrok/three-particles 3.x
  */
 /**
  * Legacy configuration type (pre-2.0.0)

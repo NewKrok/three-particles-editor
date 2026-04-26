@@ -21,8 +21,8 @@
       </p>
 
       <p>
-        This open-source project supports loading both legacy 1.x.x configurations and the latest
-        2.x.x format. Exporting is currently available only in the 2.x.x format.
+        This open-source project supports loading legacy 1.x.x and 2.x.x configurations and the
+        latest 3.x.x format. Exporting is currently available only in the 3.x.x format.
       </p>
       <div class="about-details">
         <p><strong>Version:</strong> __APP_VERSION__</p>
