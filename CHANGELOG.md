@@ -1,3 +1,9 @@
+# [2.12.0](https://github.com/NewKrok/three-particles-editor/compare/v2.11.0...v2.12.0) (2026-04-26)
+
+### Features
+
+- add Sparkler Trail example showcasing v3.0.0 world space ([c8f0f31](https://github.com/NewKrok/three-particles-editor/commit/c8f0f3134f4626f508b60219ec504211a2a1c67d))
+
 # [2.11.0](https://github.com/NewKrok/three-particles-editor/compare/v2.10.0...v2.11.0) (2026-04-16)
 
 ### Bug Fixes
